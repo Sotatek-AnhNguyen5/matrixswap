@@ -1,8 +1,9 @@
 import styled from "styled-components";
 import { FaAngleDown, FaSearch } from "react-icons/fa";
-import { useState } from "react";
+import { useMemo, useState } from "react";
 import Modal from "react-modal";
 import DefaultToken from "../../json/defaultTokens.json";
+import {startsWith} from "lodash";
 
 const ButtonSelect = styled.button`
   display: flex;
@@ -49,7 +50,7 @@ const InputWrapper = styled.div`
 
 const TokenRow = styled.div`
   margin-top: 5px;
-  display: flex;
+  display: ${(props) => (props.isShow ? "flex" : "none")};
   align-items: center;
   flex-flow: column;
   cursor: pointer;
@@ -91,10 +92,11 @@ const customStyles = {
     transform: "translate(-50%, -50%)",
     backgroundColor: "#1F2633",
     borderRadius: "10px",
+    width:"400px",
   },
 };
 
-const SelectTokenButton = ({onSetSelectedToken}) => {
+const SelectTokenButton = ({ onSetSelectedToken }) => {
   const [isModalOpen, setIsModalOpen] = useState(false);
   const [selectedToken, setSelectedToken] = useState({});
   const [filterKey, setFilterKey] = useState();
@@ -103,8 +105,13 @@ const SelectTokenButton = ({onSetSelectedToken}) => {
   const onSelectToken = (token) => {
     setSelectedToken(token);
     closeModal();
-    onSetSelectedToken(token)
-  }
+    onSetSelectedToken(token);
+  };
+
+  const listToken = useMemo(() => {
+    return DefaultToken.tokens
+      .filter((e) => e.chainId === 137)
+  }, [DefaultToken.tokens, filterKey]);
 
   return (
     <>
@@ -122,12 +129,16 @@ const SelectTokenButton = ({onSetSelectedToken}) => {
       >
         <InputWrapper>
           <FaSearch />
-          <input onChange={e => setFilterKey(e.target.value)} placeholder='Try "DAI"' type="text" />
+          <input
+            onChange={(e) => setFilterKey(e.target.value)}
+            placeholder='Try "DAI"'
+            type="text"
+          />
         </InputWrapper>
         <div style={{ marginTop: "20px", height: "450px", overflow: "auto" }}>
-          {DefaultToken.tokens.filter(e => e.chainId === 137).filter(e => e.name.startsWith(filterKey) || !filterKey).map((e) => {
+          {listToken.map((e) => {
             return (
-              <TokenRow onClick={() => onSelectToken(e)} key={e.address}>
+              <TokenRow isShow={startsWith(e.name, filterKey) || startsWith(e.symbol, filterKey) || !filterKey} onClick={() => onSelectToken(e)} key={e.address}>
                 <div className="token-item">
                   <div className="token-logo">
                     <img src={e.logoURI} alt="" />

@@ -9,7 +9,7 @@ const QUICKSWAP_FACTORY_ADDRESS = "0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32";
 const USDT_ADDRESS = "0xc2132D05D31c914a87C6611C10748AEb04B58e8F";
 const WETH_ADDRESS = "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619";
 
-const useTVL = (token0, token1) => {
+const useTVL = (token0, token1, totalSupply, totalSupplyStakingToken) => {
   const { library } = useWeb3React();
   const [value, setValue] = useState(0);
 
@@ -39,11 +39,14 @@ const useTVL = (token0, token1) => {
           pairContract.methods.token0().call(),
           pairContract.methods.getReserves().call(),
         ]);
-        const tokenRate = new BigNumber(reverse._reserve1).div(reverse._reserve0)
-        const totalSupplyUsdt = new BigNumber(
-          isUsedToken0 ? token0.reserves : token1.reserves
-        )
-          .div(new BigNumber(10).pow(isUsedToken0 ? token0.decimals : token1.decimals))
+        const tokenRate = new BigNumber(reverse._reserve1).div(
+          reverse._reserve0
+        );
+        const tokenHold = new BigNumber(totalSupply)
+          .div(totalSupplyStakingToken)
+          .times(isUsedToken0 ? token0.reserves : token1.reserves);
+        const totalSupplyUsdt = new BigNumber(tokenHold)
+          .div(new BigNumber(10).pow(6))
           .times(tokenRate)
           .times(2);
 
@@ -71,10 +74,10 @@ const useTVL = (token0, token1) => {
       //   console.log(token0, reverse);
       // }
     };
-    if (token0.address && token1.address) {
+    if (token0.address && token1.address && totalSupply) {
       getData();
     }
-  }, [token0.address, token1.address]);
+  }, [token0.address, token1.address, totalSupply]);
   return value;
 };
 

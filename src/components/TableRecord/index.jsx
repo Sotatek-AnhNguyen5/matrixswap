@@ -41,6 +41,12 @@ const DataRow = styled.div`
   width: 100%;
   padding: 10px;
 `;
+
+const ValueSide = styled.div`
+  text-align: left;
+  width: 30%;
+  white-space: nowrap;
+`;
 const ClaimButton = styled.button`
   background-color: ${(props) => (props.isActive ? "#3ee046" : "#999999")};
   color: ${(props) => (props.isActive ? "#fff" : "#564c52")};
@@ -68,13 +74,19 @@ const TableRecord = ({ data }) => {
   const [isZap, setIsZap] = useState(true);
   const [index, setIndex] = useState(0);
   const farmAddress = data.stakingRewards;
-  const [token0, token1, stakingToken, reserves, totalSupply] =
+  const [token0, token1, stakingToken, reserves, totalSupply, totalSupplyStakingToken] =
     useGetPairToken(farmAddress);
 
-  const usdtValue = useTVL(token0, token1);
-  const [reward, balance] = useFarmUserInfo(farmAddress, index);
+  const usdtValue = useTVL(token0, token1, totalSupply, totalSupplyStakingToken);
+  const [reward, balance, refreshFarmInfo] = useFarmUserInfo(
+    farmAddress,
+    index
+  );
   const apr = useCalculateApr(farmAddress, usdtValue);
 
+  const daily = useMemo(() => {
+    return new BigNumber(apr).div(365).toFixed(2);
+  }, [apr]);
   const onGetReward = async () => {
     const farmContract = new library.eth.Contract(FarmABI, farmAddress);
     farmContract.methods
@@ -95,8 +107,8 @@ const TableRecord = ({ data }) => {
         <Td style={{ textAlign: "left", paddingLeft: "20px" }}>
           {token0.symbol} - {token1.symbol}
         </Td>
-        <Td>{apr}</Td>
-        <Td>0%</Td>
+        <Td>{apr} %</Td>
+        <Td>{daily} %</Td>
         <Td>{usdtValue} $</Td>
         <Td>{!isSelected ? <FaAngleLeft /> : <FaAngleDown />}</Td>
       </Tr>
@@ -105,15 +117,15 @@ const TableRecord = ({ data }) => {
           <TdSecond colSpan={2}>
             <DataRow>
               <div>Start date</div>
-              <div>24 Step 2021 9:00 UTC</div>
+              <ValueSide>24 Step 2021 9:00 UTC</ValueSide>
             </DataRow>
             <DataRow>
               <div>Your Stake</div>
-              <div>{balance}</div>
+              <ValueSide>{balance}</ValueSide>
             </DataRow>
             <DataRow>
               <div>Reward</div>
-              <div>
+              <ValueSide>
                 {reward}{" "}
                 <ClaimButton
                   disabled={new BigNumber(reward).isZero()}
@@ -122,10 +134,11 @@ const TableRecord = ({ data }) => {
                 >
                   Claim
                 </ClaimButton>
-              </div>
+              </ValueSide>
             </DataRow>
           </TdSecond>
-          <TdSecond colSpan={3}>
+          <td/>
+          <TdSecond colSpan={2}>
             <div style={{ display: "flex", justifyContent: "flex-start" }}>
               <TabLabel isActive={isZap} onClick={() => setIsZap(true)}>
                 Zap
@@ -138,9 +151,11 @@ const TableRecord = ({ data }) => {
               {isZap ? (
                 <ZapTab
                   stakingToken={stakingToken}
+                  totalSupplyStakingToken={totalSupplyStakingToken}
                   totalSupply={totalSupply}
                   reserves={reserves}
                   token0={token0}
+                  changeTab={() => setIsZap(false)}
                 />
               ) : (
                 <FarmingTab
@@ -149,6 +164,8 @@ const TableRecord = ({ data }) => {
                   farmAddress={data.stakingRewards}
                   token0={token0}
                   token1={token1}
+                  stakedBalance={balance}
+                  refreshStakedBalance={refreshFarmInfo}
                 />
               )}
             </div>

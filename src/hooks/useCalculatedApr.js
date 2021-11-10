@@ -21,18 +21,15 @@ const useCalculateApr = (farmAddress, tvl, index) => {
         farmContract.methods.rewardRate().call(),
       ]);
       const rewardRatePerYear = new BigNumber(rewardRate)
+        .div(new BigNumber(10).pow(18))
         .times(86400)
         .times(365);
-      console.log('reward rate',rewardRate);
-      console.log(rewardRatePerYear.toFixed());
       const rewardToUSD = await convertToUsdt(
         rewardRatePerYear,
         library,
         rewardsToken
       );
-      console.log(rewardToUSD.toFixed());
-      console.log(tvl);
-      setValue(rewardToUSD.div(tvl).toFixed());
+      setValue(rewardToUSD.div(tvl).times(100).toFixed());
     };
     if (farmAddress && tvl) {
       getData();
@@ -62,7 +59,7 @@ const convertToUsdt = async (amount, library, address) => {
     ? new BigNumber(reserves._reserve0).div(reserves._reserve1)
     : new BigNumber(reserves._reserve1).div(reserves._reserve0);
 
-  return new BigNumber(amount).times(tokenRate);
+    return new BigNumber(amount).times(tokenRate).times(new BigNumber(10).pow(12));
 };
 
 export default useCalculateApr;

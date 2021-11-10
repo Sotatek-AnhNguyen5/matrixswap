@@ -8,6 +8,7 @@ const useGetPairToken = (FarmAddress) => {
   const [token0, setToken0] = useState({});
   const [token1, setToken1] = useState({});
   const [totalSupply, setTotalSupply] = useState(0);
+  const [totalSupplyStakingToken, setTotalSupplyStakingToken] = useState(0);
   const [reserves, setReserves] = useState(0);
   const [stakingToken, setStakingToken] = useState("");
   const { library } = useWeb3React();
@@ -15,22 +16,24 @@ const useGetPairToken = (FarmAddress) => {
   useEffect(() => {
     const getData = async () => {
       const farmContract = new library.eth.Contract(FarmABI, FarmAddress);
-      const stakingTokenAddress = await farmContract.methods
-        .stakingToken()
-        .call();
-      setStakingToken(stakingTokenAddress)
-      const stakingRewardContract = new library.eth.Contract(
+      const [stakingTokenAddress, totalSupplyAmount] = await Promise.all([
+        farmContract.methods.stakingToken().call(),
+        farmContract.methods.totalSupply().call(),
+      ]);
+      setStakingToken(stakingTokenAddress);
+      setTotalSupply(totalSupplyAmount);
+      const stakingTokenContract = new library.eth.Contract(
         StakingRewardABI,
         stakingTokenAddress
       );
-      const [token0, token1, reserves, totalSupplyAmount] = await Promise.all([
-        stakingRewardContract.methods.token0().call(),
-        stakingRewardContract.methods.token1().call(),
-        stakingRewardContract.methods.getReserves().call(),
-        stakingRewardContract.methods.totalSupply().call(),
+      const [token0, token1, reserves, totalSupplyST] = await Promise.all([
+        stakingTokenContract.methods.token0().call(),
+        stakingTokenContract.methods.token1().call(),
+        stakingTokenContract.methods.getReserves().call(),
+        stakingTokenContract.methods.totalSupply().call(),
       ]);
       setReserves(reserves);
-      setTotalSupply(totalSupplyAmount);
+      setTotalSupplyStakingToken(totalSupplyST);
       const [token0Info, token1Info] = await Promise.all([
         getTokenInfo(token0, library),
         getTokenInfo(token1, library),
@@ -43,7 +46,7 @@ const useGetPairToken = (FarmAddress) => {
     getData();
   }, [FarmAddress]);
 
-  return [token0, token1, stakingToken, reserves, totalSupply];
+  return [token0, token1, stakingToken, reserves, totalSupply, totalSupplyStakingToken];
 };
 
 const getTokenInfo = async (address, library) => {

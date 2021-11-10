@@ -9,24 +9,21 @@ const useFarmUserInfo = (farmAddress, index) => {
   const [balance, setBalance] = useState(0);
   const { library, account } = useWeb3React();
 
-  useEffect(() => {
-    const getData = async () => {
-      const farmContract = new library.eth.Contract(FarmABI, farmAddress);
-      const [rewards, balance] = await Promise.all([
-        farmContract.methods.rewards(account).call(),
-        farmContract.methods.balanceOf(account).call(),
-      ]);
-      setReward(
-        new BigNumber(rewards).div(new BigNumber(10).pow(18)).toFixed()
-      );
-      setBalance(
-        new BigNumber(balance).div(new BigNumber(10).pow(18)).toFixed()
-      );
-    };
+  const getData = async () => {
+    const farmContract = new library.eth.Contract(FarmABI, farmAddress);
+    const [rewards, balance] = await Promise.all([
+      farmContract.methods.rewards(account).call(),
+      farmContract.methods.balanceOf(account).call(),
+    ]);
+    setReward(new BigNumber(rewards).div(new BigNumber(10).pow(18)).toFixed());
+    setBalance(new BigNumber(balance).div(new BigNumber(10).pow(18)).toFixed());
+  };
 
+  useEffect(() => {
     getData(farmAddress);
   }, [index]);
-  return [reward, balance];
+
+  return [reward, balance, getData];
 };
 
 export default useFarmUserInfo;

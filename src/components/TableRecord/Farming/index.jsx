@@ -41,11 +41,12 @@ const ButtonAction = styled.div`
   border-radius: 6px;
 `;
 
-const FarmingTab = ({ farmAddress, stakingToken, token0, token1 }) => {
+const FarmingTab = ({ farmAddress, stakingToken, token0, token1, stakedBalance, refreshStakedBalance }) => {
   const { library, account } = useWeb3React();
   const [allowance, setAllowance] = useState(0);
   const [balance, setBalance] = useState(0);
   const inputRef = useRef();
+  const inputRefUnstake = useRef();
 
   const getBalance = async () => {
     const stakingTokenContract = new library.eth.Contract(
@@ -98,14 +99,25 @@ const FarmingTab = ({ farmAddress, stakingToken, token0, token1 }) => {
           toast("Withdraw successfully!");
         })
         .once("confirmation", function (e) {
-          setAllowance(value);
+          toast("Withdraw successfully!");
           getBalance();
+          refreshStakedBalance();
         });
     } catch (e) {
       console.log(e);
       toast("Withdraw failed!");
     }
   };
+
+  const onChangeRangeStake = (e) => {
+    const percent = e.target.value;
+    inputRef.current.value = new BigNumber(balance).times(percent).div(100).toFixed();
+  }
+
+  const onChangeRangeWithDraw = (e) => {
+    const percent = e.target.value;
+    inputRefUnstake.current.value = new BigNumber(stakedBalance).times(percent).div(100).toFixed();
+  }
 
   useEffect(() => {
     const getAllowance = async () => {
@@ -159,7 +171,7 @@ const FarmingTab = ({ farmAddress, stakingToken, token0, token1 }) => {
       <div style={{ display: "flex", marginTop: "20px" }}>
         <InputWrapper>
           <InputNumber inputRef={inputRef} />
-          <InputRange min="0" max="11" type="range" />
+          <InputRange onChange={(e) => onChangeRangeStake(e)} min="1" max="100" type="range" />
         </InputWrapper>
         <ButtonWrapper>
           {new BigNumber(allowance).isZero() ? (
@@ -173,12 +185,12 @@ const FarmingTab = ({ farmAddress, stakingToken, token0, token1 }) => {
         <span>
           Your Staked
         </span>
-        <span>{balance}</span>
+        <span>{stakedBalance}</span>
       </BalanceRow>
       <div style={{ display: "flex", marginTop: "20px" }}>
         <InputWrapper>
-          <InputNumber inputRef={inputRef} />
-          <InputRange min="0" max="11" type="range" />
+          <InputNumber inputRef={inputRefUnstake} />
+          <InputRange onChange={(e) => onChangeRangeWithDraw(e)} min="1" max="100" type="range" />
         </InputWrapper>
         <ButtonWrapper>
           <ButtonAction onClick={() => onWithdraw()}>Unstake</ButtonAction>

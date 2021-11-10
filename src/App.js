@@ -32,11 +32,11 @@ function App() {
           <Table>
             <thead>
               <tr>
-                <th style={{ width: "30%" }}></th>
-                <th style={{ width: "30%" }}>APR</th>
-                <th style={{ width: "15%" }}>Daily</th>
-                <th style={{ width: "15%" }}>TLV</th>
-                <th style={{ width: "10%" }}></th>
+                <th style={{ width: "20%" }}></th>
+                <th style={{ width: "25%" }}>APR</th>
+                <th style={{ width: "10%" }}>Daily</th>
+                <th style={{ width: "25%" }}>TLV</th>
+                <th style={{ width: "20%" }}></th>
               </tr>
             </thead>
             <tbody>

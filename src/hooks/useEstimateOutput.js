@@ -12,6 +12,7 @@ const useEstimateOutput = (
   token0,
   selectedToken,
   reservers,
+  totalSupplyStakingToken,
   totalSupply
 ) => {
   const { library } = useWeb3React();
@@ -34,12 +35,12 @@ const useEstimateOutput = (
 
       const pairWETHSelectTokenContract = new library.eth.Contract(
         QuickSwapPair,
-        pairWETHSelectToken,
+        pairWETHSelectToken
       );
 
       const pairWETH0tokenContract = new library.eth.Contract(
         QuickSwapPair,
-        pairWETH0token,
+        pairWETH0token
       );
 
       const [
@@ -47,11 +48,13 @@ const useEstimateOutput = (
         selectTokenReverse,
         token0Address,
         token0Reserve,
+        token0decimals,
       ] = await Promise.all([
         pairWETHSelectTokenContract.methods.token0().call(),
         pairWETHSelectTokenContract.methods.getReserves().call(),
         pairWETH0tokenContract.methods.token0().call(),
         pairWETH0tokenContract.methods.getReserves().call(),
+        pairWETH0tokenContract.methods.decimals().call(),
       ]);
 
       const isSelectToken0Eth =
@@ -63,7 +66,11 @@ const useEstimateOutput = (
         : new BigNumber(selectTokenReverse._reserve1).div(
             selectTokenReverse._reserve0
           );
-      const amountETH = new BigNumber(amount).div(2).times(selectTokenRate);
+      const amountETH = new BigNumber(amount)
+        .times(new BigNumber(10).pow(selectedToken.decimals))
+        .times(selectTokenRate)
+        .div(new BigNumber(10).pow(18))
+
       const isToken0Eth =
         token0Address.toLowerCase() === WETH_ADDRESS.toLowerCase();
       const token0Rate = isToken0Eth
@@ -73,12 +80,14 @@ const useEstimateOutput = (
         : new BigNumber(token0Reserve._reserve1).div(
             selectTokenReverse._reserve0
           );
-      const convertedValue = amountETH
-        .div(token0Rate)
-        .div(reservers._reserve0)
-        .times(totalSupply)
-        .div(new BigNumber(10).pow(18))
-        .toFixed();
+
+      const amountToken0 = new BigNumber(amountETH).times(token0Rate);
+
+      const convertedValue = new BigNumber(totalSupply)
+          .div(totalSupplyStakingToken)
+          .times(amountToken0.times(new BigNumber(10).pow(token0decimals)))
+          .div(new BigNumber(10).pow(18))
+          .toFixed();
       setValue(convertedValue);
     };
 

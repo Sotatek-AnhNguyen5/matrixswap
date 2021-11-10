@@ -50,7 +50,7 @@ const ZapButton = styled.button`
 
 const ADDRESS_ZAP = "0xAdc41681bCAF8011314f2df3b49CBbB7b82F1892";
 
-const ZapTab = ({ stakingToken, token0, totalSupply, reserves }) => {
+const ZapTab = ({ stakingToken, token0, totalSupplyStakingToken, reserves, totalSupply,changeTab }) => {
   const [selectedToken, setSelectedToken] = useState({});
   const [tokenBalance, setTokenBalance] = useState(0);
   const [lpBalance, setLpBalance] = useState(0);
@@ -62,9 +62,10 @@ const ZapTab = ({ stakingToken, token0, totalSupply, reserves }) => {
     token0,
     selectedToken,
     reserves,
-    totalSupply
+    totalSupplyStakingToken,
+    totalSupply,
   );
-  // outputNumberRef.current.value = estimateOutput;
+  const inputRef = useRef();
 
   const getLpBalance = async () => {
     const stakingTokenContract = new library.eth.Contract(LpABI, stakingToken);
@@ -91,6 +92,13 @@ const ZapTab = ({ stakingToken, token0, totalSupply, reserves }) => {
     }
   };
 
+  const onChangeRangeStake = (e) => {
+    const percent = e.target.value;
+    const value = new BigNumber(tokenBalance).times(percent).div(100).toFixed();
+    onChangeAmount(value);
+    inputRef.current.value = value;
+  }
+
   const onZap = async () => {
     const zapContract = new library.eth.Contract(ZapABI.abi, ADDRESS_ZAP);
     const value = new BigNumber(amount)
@@ -106,9 +114,10 @@ const ZapTab = ({ stakingToken, token0, totalSupply, reserves }) => {
           console.log(e);
           toast("Send Tx successfully!");
         })
-        .once("confirmation", function (e) {
-          getBalance();
-          getLpBalance();
+        .once("confirmation", async function (e) {
+          await getBalance();
+          await getLpBalance();
+          changeTab();
           toast.success("Zap successfully!");
         });
     } catch (e) {
@@ -179,10 +188,11 @@ const ZapTab = ({ stakingToken, token0, totalSupply, reserves }) => {
           withSelectToken={true}
           onSetSelectedToken={setSelectedToken}
           onChange={onChangeAmount}
+          inputRef={inputRef}
         />
       </InputWrapper>
       <div style={{ marginTop: "10px" }}>
-        <InputRange min="0" max="11" type="range" />
+        <InputRange onClick={(e) => onChangeRangeStake(e)} min="1" max="100" type="range" />
       </div>
       <BalanceRow>
         <span>To LP</span>
