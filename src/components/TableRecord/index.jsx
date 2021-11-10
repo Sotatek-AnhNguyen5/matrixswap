@@ -120,7 +120,7 @@ const TableRecord = ({ data }) => {
               <ValueSide>24 Step 2021 9:00 UTC</ValueSide>
             </DataRow>
             <DataRow>
-              <div>Your Stake</div>
+              <div>Your Staked</div>
               <ValueSide>{balance}</ValueSide>
             </DataRow>
             <DataRow>

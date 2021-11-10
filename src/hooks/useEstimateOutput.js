@@ -69,7 +69,8 @@ const useEstimateOutput = (
       const amountETH = new BigNumber(amount)
         .times(new BigNumber(10).pow(selectedToken.decimals))
         .times(selectTokenRate)
-        .div(new BigNumber(10).pow(18))
+        .div(new BigNumber(10).pow(18));
+      console.log(amountETH.toFixed());
 
       const isToken0Eth =
         token0Address.toLowerCase() === WETH_ADDRESS.toLowerCase();
@@ -81,13 +82,14 @@ const useEstimateOutput = (
             selectTokenReverse._reserve0
           );
 
-      const amountToken0 = new BigNumber(amountETH).times(token0Rate);
+      const amountToken0 = new BigNumber(amountETH).times(token0Rate).div(2);
+      console.log(amountToken0.toFixed());
 
       const convertedValue = new BigNumber(totalSupply)
-          .div(totalSupplyStakingToken)
-          .times(amountToken0.times(new BigNumber(10).pow(token0decimals)))
-          .div(new BigNumber(10).pow(18))
-          .toFixed();
+        .div(totalSupplyStakingToken)
+        .times(amountToken0.times(new BigNumber(10).pow(token0decimals)))
+        .div(new BigNumber(10).pow(18))
+        .toFixed();
       setValue(convertedValue);
     };
 

@@ -87,12 +87,13 @@ const FarmingTab = ({ farmAddress, stakingToken, token0, token1, stakedBalance, 
 
   const onWithdraw = () => {
     const farmContract = new library.eth.Contract(FarmABI, farmAddress);
-    const value = new BigNumber(inputRef.current.value)
+    const valueUnstake = new BigNumber(inputRefUnstake.current.value)
       .times(new BigNumber(10).pow(18))
       .toFixed();
+    console.log(valueUnstake);
     try {
       farmContract.methods
-        .stake(value)
+        .stake(valueUnstake)
         .send({ from: account })
         .once("receipt", function (e) {
           console.log(e);
@@ -126,7 +127,7 @@ const FarmingTab = ({ farmAddress, stakingToken, token0, token1, stakedBalance, 
         stakingToken
       );
 
-      const [allowance, balance] = await Promise.all([
+      const [allowance] = await Promise.all([
         stakingTokenContract.methods.allowance(account, farmAddress).call(),
         getBalance(),
       ]);
