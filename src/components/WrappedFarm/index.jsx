@@ -4,7 +4,6 @@ import { FACTORY_ADDRESS } from "../../utils";
 import { DEFAULT_PAIR } from "../../const";
 import { useState, useMemo, useEffect } from "react";
 import TableRecord from "../TableRecord";
-import useConvertToUsdt from "../../hooks/useConvertToUsdt";
 
 const WrappedFarm = () => {
   const { library, active } = useWeb3React();

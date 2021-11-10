@@ -27,7 +27,7 @@ const ButtonWrapper = styled.div`
   display: flex;
   flex-flow: column;
   align-items: center;
-  justify-content: space-between;
+  justify-content: center;
 `;
 
 const ButtonAction = styled.div`
@@ -41,7 +41,7 @@ const ButtonAction = styled.div`
   border-radius: 6px;
 `;
 
-const FarmingTab = ({ farmAddress, stakingToken }) => {
+const FarmingTab = ({ farmAddress, stakingToken, token0, token1 }) => {
   const { library, account } = useWeb3React();
   const [allowance, setAllowance] = useState(0);
   const [balance, setBalance] = useState(0);
@@ -52,10 +52,14 @@ const FarmingTab = ({ farmAddress, stakingToken }) => {
       StakingTokenABI,
       stakingToken
     );
-    const balance = await stakingTokenContract.methods.balanceOf(account).call();
-    const balanceToNumber = new BigNumber(balance).div(new BigNumber(10).pow(18)).toFixed();
+    const balance = await stakingTokenContract.methods
+      .balanceOf(account)
+      .call();
+    const balanceToNumber = new BigNumber(balance)
+      .div(new BigNumber(10).pow(18))
+      .toFixed();
     setBalance(balanceToNumber);
-  }
+  };
 
   const onStake = () => {
     const farmContract = new library.eth.Contract(FarmABI, farmAddress);
@@ -66,14 +70,14 @@ const FarmingTab = ({ farmAddress, stakingToken }) => {
       farmContract.methods
         .stake(value)
         .send({ from: account })
-        .on("receipt", function (e) {
+        .once("receipt", function (e) {
           console.log(e);
           toast("Stake successfully!");
         })
-        .on("confirmation", function (e) {
+        .once("confirmation", function (e) {
           setAllowance(value);
           getBalance();
-        })
+        });
     } catch (e) {
       console.log(e);
       toast("Stake failed!");
@@ -89,9 +93,13 @@ const FarmingTab = ({ farmAddress, stakingToken }) => {
       farmContract.methods
         .stake(value)
         .send({ from: account })
-        .on("receipt", function (e) {
+        .once("receipt", function (e) {
           console.log(e);
           toast("Withdraw successfully!");
+        })
+        .once("confirmation", function (e) {
+          setAllowance(value);
+          getBalance();
         });
     } catch (e) {
       console.log(e);
@@ -127,13 +135,13 @@ const FarmingTab = ({ farmAddress, stakingToken }) => {
       stakingTokenContract.methods
         .approve(farmAddress, value)
         .send({ from: account })
-        .on("receipt", function (e) {
+        .once("receipt", function (e) {
           console.log(e);
           toast("Send approve tx successfully");
         })
-        .on("confirmation", function (e) {
+        .once("confirmation", function (e) {
           setAllowance(value);
-        })
+        });
     } catch (e) {
       console.log(e);
       toast("Approve failed");
@@ -143,8 +151,10 @@ const FarmingTab = ({ farmAddress, stakingToken }) => {
   return (
     <div>
       <BalanceRow>
-        <span>From Token</span>
-        <span>Balance: {balance}</span>
+        <span>
+          LP {token0.symbol}-{token1.symbol} balance:
+        </span>
+        <span>{balance}</span>
       </BalanceRow>
       <div style={{ display: "flex", marginTop: "20px" }}>
         <InputWrapper>
@@ -157,7 +167,20 @@ const FarmingTab = ({ farmAddress, stakingToken }) => {
           ) : (
             <ButtonAction onClick={() => onStake()}>Stake</ButtonAction>
           )}
-
+        </ButtonWrapper>
+      </div>
+      <BalanceRow>
+        <span>
+          Your Staked
+        </span>
+        <span>{balance}</span>
+      </BalanceRow>
+      <div style={{ display: "flex", marginTop: "20px" }}>
+        <InputWrapper>
+          <InputNumber inputRef={inputRef} />
+          <InputRange min="0" max="11" type="range" />
+        </InputWrapper>
+        <ButtonWrapper>
           <ButtonAction onClick={() => onWithdraw()}>Unstake</ButtonAction>
         </ButtonWrapper>
       </div>

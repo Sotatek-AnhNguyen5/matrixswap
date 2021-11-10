@@ -7,6 +7,8 @@ import StakingRewardABI from "../abi/stakingRewardABi.json";
 const useGetPairToken = (FarmAddress) => {
   const [token0, setToken0] = useState({});
   const [token1, setToken1] = useState({});
+  const [totalSupply, setTotalSupply] = useState(0);
+  const [reserves, setReserves] = useState(0);
   const [stakingToken, setStakingToken] = useState("");
   const { library } = useWeb3React();
 
@@ -21,21 +23,27 @@ const useGetPairToken = (FarmAddress) => {
         StakingRewardABI,
         stakingTokenAddress
       );
-      const [token0, token1] = await Promise.all([
+      const [token0, token1, reserves, totalSupplyAmount] = await Promise.all([
         stakingRewardContract.methods.token0().call(),
         stakingRewardContract.methods.token1().call(),
+        stakingRewardContract.methods.getReserves().call(),
+        stakingRewardContract.methods.totalSupply().call(),
       ]);
+      setReserves(reserves);
+      setTotalSupply(totalSupplyAmount);
       const [token0Info, token1Info] = await Promise.all([
         getTokenInfo(token0, library),
         getTokenInfo(token1, library),
       ]);
+      token0Info.reserves = reserves._reserve0;
+      token1Info.reserves = reserves._reserve1;
       setToken0(token0Info);
       setToken1(token1Info);
     };
     getData();
   }, [FarmAddress]);
 
-  return [token0, token1, stakingToken];
+  return [token0, token1, stakingToken, reserves, totalSupply];
 };
 
 const getTokenInfo = async (address, library) => {
@@ -50,6 +58,7 @@ const getTokenInfo = async (address, library) => {
     name,
     symbol,
     decimals,
+    address,
   };
 };
 

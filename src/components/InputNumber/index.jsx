@@ -32,10 +32,15 @@ const InputNumber = ({
   withSelectToken = false,
   inputRef,
   onSetSelectedToken,
+  onChange,
 }) => {
   return (
     <InputWrapper color={color}>
-      <input ref={inputRef} type="number" />
+      <input
+        onChange={(e) => onChange(e.target.value)}
+        ref={inputRef}
+        type="number"
+      />
       {withSelectToken && (
         <SelectTokenButton onSetSelectedToken={onSetSelectedToken} />
       )}

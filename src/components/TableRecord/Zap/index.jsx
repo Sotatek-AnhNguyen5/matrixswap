@@ -8,9 +8,24 @@ import BigNumber from "bignumber.js";
 import LpABI from "../../../abi/stakingRewardABi.json";
 import ZapABI from "../../../abi/zapABI.json";
 import { toast } from "react-toastify";
+import useEstimateOutput from "../../../hooks/useEstimateOutput";
 
 const InputRange = styled.input`
   width: 100%;
+`;
+
+const FakeInput = styled.div`
+  width: 100%;
+  display: flex;
+  align-items: flex-start;
+
+  box-sizing: border-box;
+  border-radius: 6px;
+  padding: 15px 20px;
+  font-size: 20px;
+  border: solid 1px white;
+  background-color: #333333;
+  font-weight: 500;
 `;
 
 const InputWrapper = styled.div`
@@ -35,13 +50,21 @@ const ZapButton = styled.button`
 
 const ADDRESS_ZAP = "0xAdc41681bCAF8011314f2df3b49CBbB7b82F1892";
 
-const ZapTab = ({ stakingToken }) => {
+const ZapTab = ({ stakingToken, token0, totalSupply, reserves }) => {
   const [selectedToken, setSelectedToken] = useState({});
   const [tokenBalance, setTokenBalance] = useState(0);
   const [lpBalance, setLpBalance] = useState(0);
   const [allowance, setAllowance] = useState(0);
   const { library, account } = useWeb3React();
-  const inputRef = useRef();
+  const [amount, onChangeAmount] = useState(0);
+  const estimateOutput = useEstimateOutput(
+    amount,
+    token0,
+    selectedToken,
+    reserves,
+    totalSupply
+  );
+  // outputNumberRef.current.value = estimateOutput;
 
   const getLpBalance = async () => {
     const stakingTokenContract = new library.eth.Contract(LpABI, stakingToken);
@@ -70,30 +93,24 @@ const ZapTab = ({ stakingToken }) => {
 
   const onZap = async () => {
     const zapContract = new library.eth.Contract(ZapABI.abi, ADDRESS_ZAP);
-    const value = new BigNumber(inputRef.current.value)
+    const value = new BigNumber(amount)
       .times(new BigNumber(10).pow(selectedToken.decimals))
       .toFixed();
     const fromAddress = selectedToken.address;
     const toAddress = stakingToken;
     try {
-      const params = {
-        fromAddress,
-        value,
-        toAddress,
-        account,
-      };
       zapContract.methods
         .zapInTokenV2(fromAddress, value, toAddress, account)
         .send({ from: account })
-        .on("receipt", function (e) {
+        .once("receipt", function (e) {
           console.log(e);
           toast("Send Tx successfully!");
         })
-        .on("confirmation", function(e) {
+        .once("confirmation", function (e) {
           getBalance();
           getLpBalance();
           toast.success("Zap successfully!");
-        })
+        });
     } catch (e) {
       console.log(e);
       toast("Zap failed!");
@@ -112,11 +129,11 @@ const ZapTab = ({ stakingToken }) => {
       tokenContract.methods
         .approve(ADDRESS_ZAP, value)
         .send({ from: account })
-        .on("receipt", function (e) {
+        .once("receipt", function (e) {
           console.log(e);
           toast("Send approve successfully");
         })
-        .on("confirmation", function () {
+        .once("confirmation", function () {
           setAllowance(value);
         });
     } catch (e) {
@@ -139,7 +156,6 @@ const ZapTab = ({ stakingToken }) => {
         const allowanceAmount = await tokenContract.methods
           .allowance(account, ADDRESS_ZAP)
           .call();
-        console.log(allowance);
         setAllowance(allowanceAmount);
       }
     };
@@ -162,7 +178,7 @@ const ZapTab = ({ stakingToken }) => {
         <InputNumber
           withSelectToken={true}
           onSetSelectedToken={setSelectedToken}
-          inputRef={inputRef}
+          onChange={onChangeAmount}
         />
       </InputWrapper>
       <div style={{ marginTop: "10px" }}>
@@ -173,12 +189,8 @@ const ZapTab = ({ stakingToken }) => {
         <span>Balance: {lpBalance}</span>
       </BalanceRow>
       <div style={{ marginTop: "10px" }}>
-        <InputNumber color="#989898" />
+        <FakeInput>{estimateOutput}</FakeInput>
       </div>
-      <BalanceRow>
-        <span>Price</span>
-        <span>0.0123123 per 1 {selectedToken.symbol}</span>
-      </BalanceRow>
       <div style={{ display: "flex" }}>
         {new BigNumber(allowance).isZero() ? (
           <ZapButton onClick={() => onApprove()}>Approve</ZapButton>

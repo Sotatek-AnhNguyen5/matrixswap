@@ -6,7 +6,11 @@ import ZapTab from "./Zap";
 import FarmingTab from "./Farming";
 import useGetPairToken from "../../hooks/useGetPairToken";
 import useFarmUserInfo from "../../hooks/useReward";
-import useConvertToUsdt from "../../hooks/useConvertToUsdt";
+import useTVL from "../../hooks/useTVL";
+import useCalculateApr from "../../hooks/useCalculatedApr";
+import { toast } from "react-toastify";
+import FarmABI from "../../abi/FarmABI.json";
+import BigNumber from "bignumber.js";
 
 const Td = styled.td`
   text-align: center;
@@ -38,8 +42,8 @@ const DataRow = styled.div`
   padding: 10px;
 `;
 const ClaimButton = styled.button`
-  background-color: #999999;
-  color: #564c52;
+  background-color: ${(props) => (props.isActive ? "#3ee046" : "#999999")};
+  color: ${(props) => (props.isActive ? "#fff" : "#564c52")};
   font-size: 20px;
   padding: 4px 8px;
   margin-left: 30px;
@@ -59,13 +63,31 @@ const TabLabel = styled.div`
 `;
 
 const TableRecord = ({ data }) => {
+  const { library, account } = useWeb3React();
   const [isSelected, setIsSelected] = useState(false);
   const [isZap, setIsZap] = useState(true);
-  const [token0, token1, stakingToken] = useGetPairToken(data.stakingRewards);
-  const [reward, balance] = useFarmUserInfo(data.stakingRewards);
-  // console.log(data.stakingRewards);
+  const [index, setIndex] = useState(0);
+  const farmAddress = data.stakingRewards;
+  const [token0, token1, stakingToken, reserves, totalSupply] =
+    useGetPairToken(farmAddress);
 
-  // const usdtValue = useConvertToUsdt("0x554f074d9cCda8F483d1812d4874cBebD682644E", 10);
+  const usdtValue = useTVL(token0, token1);
+  const [reward, balance] = useFarmUserInfo(farmAddress, index);
+  const apr = useCalculateApr(farmAddress, usdtValue);
+
+  const onGetReward = async () => {
+    const farmContract = new library.eth.Contract(FarmABI, farmAddress);
+    farmContract.methods
+      .getReward()
+      .send({ from: account })
+      .once("hash", function (e) {
+        toast("Send tx get reward successfully!");
+      })
+      .once("confirmation", function (e) {
+        toast("get reward successfully!");
+        setIndex((e) => (e += 1));
+      });
+  };
 
   return (
     <>
@@ -73,9 +95,9 @@ const TableRecord = ({ data }) => {
         <Td style={{ textAlign: "left", paddingLeft: "20px" }}>
           {token0.symbol} - {token1.symbol}
         </Td>
+        <Td>{apr}</Td>
         <Td>0%</Td>
-        <Td>0%</Td>
-        <Td>0$</Td>
+        <Td>{usdtValue} $</Td>
         <Td>{!isSelected ? <FaAngleLeft /> : <FaAngleDown />}</Td>
       </Tr>
       {isSelected && (
@@ -92,7 +114,14 @@ const TableRecord = ({ data }) => {
             <DataRow>
               <div>Reward</div>
               <div>
-                {reward} <ClaimButton>Claim</ClaimButton>
+                {reward}{" "}
+                <ClaimButton
+                  disabled={new BigNumber(reward).isZero()}
+                  isActive={!new BigNumber(reward).isZero()}
+                  onClick={() => onGetReward()}
+                >
+                  Claim
+                </ClaimButton>
               </div>
             </DataRow>
           </TdSecond>
@@ -107,11 +136,19 @@ const TableRecord = ({ data }) => {
             </div>
             <div style={{ padding: "10px" }}>
               {isZap ? (
-                <ZapTab stakingToken={stakingToken} />
+                <ZapTab
+                  stakingToken={stakingToken}
+                  totalSupply={totalSupply}
+                  reserves={reserves}
+                  token0={token0}
+                />
               ) : (
                 <FarmingTab
                   stakingToken={stakingToken}
+                  reserves={reserves}
                   farmAddress={data.stakingRewards}
+                  token0={token0}
+                  token1={token1}
                 />
               )}
             </div>
