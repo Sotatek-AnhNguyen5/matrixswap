@@ -47,13 +47,11 @@ const useEstimateOutput = (
         selectTokenReverse,
         token0Address,
         token0Reserve,
-        token0decimals,
       ] = await Promise.all([
         pairWETHSelectTokenContract.methods.token0().call(),
         pairWETHSelectTokenContract.methods.getReserves().call(),
         pairWETH0tokenContract.methods.token0().call(),
         pairWETH0tokenContract.methods.getReserves().call(),
-        pairWETH0tokenContract.methods.decimals().call(),
       ]);
 
       const isSelectToken0Eth =

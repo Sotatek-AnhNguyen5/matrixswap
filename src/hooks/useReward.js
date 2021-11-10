@@ -6,7 +6,6 @@ import BigNumber from "bignumber.js";
 import { find } from "lodash";
 
 const useFarmUserInfo = (farmAddress, index) => {
-  const [tvl, setTvl] = useState(0);
   const [reward, setReward] = useState(0);
   const [balance, setBalance] = useState(0);
   const { library, account } = useWeb3React();
@@ -18,7 +17,7 @@ const useFarmUserInfo = (farmAddress, index) => {
     const farmInfo = find(stakeInfo, { farmAddress });
     farmInfo && setStartDate(farmInfo.startDate);
     const [rewards, balance, rewardToken] = await Promise.all([
-      farmContract.methods.rewards(account).call(),
+      farmContract.methods.earned(account).call(),
       farmContract.methods.balanceOf(account).call(),
       farmContract.methods.rewardsToken().call(),
     ]);
