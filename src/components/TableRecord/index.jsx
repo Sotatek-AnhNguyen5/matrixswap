@@ -11,6 +11,7 @@ import useCalculateApr from "../../hooks/useCalculatedApr";
 import { toast } from "react-toastify";
 import FarmABI from "../../abi/FarmABI.json";
 import BigNumber from "bignumber.js";
+import { startsWith } from "lodash";
 
 const Td = styled.td`
   text-align: center;
@@ -32,6 +33,7 @@ const TdSecond = styled(Td)`
 const Tr = styled.tr`
   background-color: #333333;
   border-radius: 10px;
+  display: ${props => props.isShow ? 'table-row' : 'none'}
 `;
 
 const DataRow = styled.div`
@@ -68,17 +70,28 @@ const TabLabel = styled.div`
   }
 `;
 
-const TableRecord = ({ data }) => {
+const TableRecord = ({ data, filterKey }) => {
   const { library, account } = useWeb3React();
   const [isSelected, setIsSelected] = useState(false);
   const [isZap, setIsZap] = useState(true);
   const [index, setIndex] = useState(0);
   const farmAddress = data.stakingRewards;
-  const [token0, token1, stakingToken, reserves, totalSupply, totalSupplyStakingToken] =
-    useGetPairToken(farmAddress);
+  const [
+    token0,
+    token1,
+    stakingToken,
+    reserves,
+    totalSupply,
+    totalSupplyStakingToken,
+  ] = useGetPairToken(farmAddress);
 
-  const usdtValue = useTVL(token0, token1, totalSupply, totalSupplyStakingToken);
-  const [reward, balance, refreshFarmInfo] = useFarmUserInfo(
+  const usdtValue = useTVL(
+    token0,
+    token1,
+    totalSupply,
+    totalSupplyStakingToken
+  );
+  const [reward, balance, refreshFarmInfo, startStakeDate] = useFarmUserInfo(
     farmAddress,
     index
   );
@@ -101,9 +114,19 @@ const TableRecord = ({ data }) => {
       });
   };
 
+  const isShow = useMemo(() => {
+    const wrappedTokenSymbol = `${token0.symbol}-${token1.symbol}`;
+    return (
+      !filterKey ||
+      startsWith(token0.symbol, filterKey) ||
+      startsWith(token1.symbol, filterKey) ||
+      startsWith(wrappedTokenSymbol, filterKey)
+    );
+  }, [filterKey]);
+
   return (
     <>
-      <Tr onClick={() => setIsSelected((value) => !value)}>
+      <Tr isShow={isShow} onClick={() => setIsSelected((value) => !value)}>
         <Td style={{ textAlign: "left", paddingLeft: "20px" }}>
           {token0.symbol} - {token1.symbol}
         </Td>
@@ -113,11 +136,11 @@ const TableRecord = ({ data }) => {
         <Td>{!isSelected ? <FaAngleLeft /> : <FaAngleDown />}</Td>
       </Tr>
       {isSelected && (
-        <Tr style={{ marginTop: "10px" }}>
+        <Tr isShow={isShow} style={{ marginTop: "10px" }}>
           <TdSecond colSpan={2}>
             <DataRow>
               <div>Start date</div>
-              <ValueSide>24 Step 2021 9:00 UTC</ValueSide>
+              <ValueSide> {startStakeDate} </ValueSide>
             </DataRow>
             <DataRow>
               <div>Your Staked</div>
@@ -137,7 +160,7 @@ const TableRecord = ({ data }) => {
               </ValueSide>
             </DataRow>
           </TdSecond>
-          <td/>
+          <td />
           <TdSecond colSpan={2}>
             <div style={{ display: "flex", justifyContent: "flex-start" }}>
               <TabLabel isActive={isZap} onClick={() => setIsZap(true)}>
@@ -156,6 +179,7 @@ const TableRecord = ({ data }) => {
                   reserves={reserves}
                   token0={token0}
                   changeTab={() => setIsZap(false)}
+                  refreshStakeBalance={refreshFarmInfo}
                 />
               ) : (
                 <FarmingTab

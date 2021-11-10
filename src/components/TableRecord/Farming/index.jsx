@@ -6,6 +6,8 @@ import React, { useEffect, useRef, useState } from "react";
 import BigNumber from "bignumber.js";
 import { toast } from "react-toastify";
 import StakingTokenABI from "../../../abi/stakingRewardABi.json";
+import moment from "moment";
+import { isEmpty, find } from "lodash";
 
 const BalanceRow = styled.div`
   display: flex;
@@ -41,7 +43,14 @@ const ButtonAction = styled.div`
   border-radius: 6px;
 `;
 
-const FarmingTab = ({ farmAddress, stakingToken, token0, token1, stakedBalance, refreshStakedBalance }) => {
+const FarmingTab = ({
+  farmAddress,
+  stakingToken,
+  token0,
+  token1,
+  stakedBalance,
+  refreshStakedBalance,
+}) => {
   const { library, account } = useWeb3React();
   const [allowance, setAllowance] = useState(0);
   const [balance, setBalance] = useState(0);
@@ -62,6 +71,19 @@ const FarmingTab = ({ farmAddress, stakingToken, token0, token1, stakedBalance, 
     setBalance(balanceToNumber);
   };
 
+  const saveToStorage = () => {
+    const stakeInfo = JSON.parse(localStorage.getItem("stakeInfo")) || [];
+    const farmInfo = find(stakeInfo, { farmAddress });
+    if (isEmpty(farmInfo)) {
+      const farm = {
+        farmAddress,
+        startDate: moment().format(),
+      };
+      stakeInfo.push(farm);
+      localStorage.setItem("stakeInfo", JSON.stringify(stakeInfo));
+    }
+  };
+
   const onStake = () => {
     const farmContract = new library.eth.Contract(FarmABI, farmAddress);
     const value = new BigNumber(inputRef.current.value)
@@ -72,12 +94,13 @@ const FarmingTab = ({ farmAddress, stakingToken, token0, token1, stakedBalance, 
         .stake(value)
         .send({ from: account })
         .once("receipt", function (e) {
-          console.log(e);
           toast("Stake successfully!");
         })
         .once("confirmation", function (e) {
+          saveToStorage();
           setAllowance(value);
           getBalance();
+          refreshStakedBalance();
         });
     } catch (e) {
       console.log(e);
@@ -93,7 +116,7 @@ const FarmingTab = ({ farmAddress, stakingToken, token0, token1, stakedBalance, 
     console.log(valueUnstake);
     try {
       farmContract.methods
-        .stake(valueUnstake)
+        .withdraw(valueUnstake)
         .send({ from: account })
         .once("receipt", function (e) {
           console.log(e);
@@ -112,13 +135,19 @@ const FarmingTab = ({ farmAddress, stakingToken, token0, token1, stakedBalance, 
 
   const onChangeRangeStake = (e) => {
     const percent = e.target.value;
-    inputRef.current.value = new BigNumber(balance).times(percent).div(100).toFixed();
-  }
+    inputRef.current.value = new BigNumber(balance)
+      .times(percent)
+      .div(100)
+      .toFixed();
+  };
 
   const onChangeRangeWithDraw = (e) => {
     const percent = e.target.value;
-    inputRefUnstake.current.value = new BigNumber(stakedBalance).times(percent).div(100).toFixed();
-  }
+    inputRefUnstake.current.value = new BigNumber(stakedBalance)
+      .times(percent)
+      .div(100)
+      .toFixed();
+  };
 
   useEffect(() => {
     const getAllowance = async () => {
@@ -172,7 +201,12 @@ const FarmingTab = ({ farmAddress, stakingToken, token0, token1, stakedBalance, 
       <div style={{ display: "flex", marginTop: "20px" }}>
         <InputWrapper>
           <InputNumber inputRef={inputRef} />
-          <InputRange onChange={(e) => onChangeRangeStake(e)} min="1" max="100" type="range" />
+          <InputRange
+            onChange={(e) => onChangeRangeStake(e)}
+            min="1"
+            max="100"
+            type="range"
+          />
         </InputWrapper>
         <ButtonWrapper>
           {new BigNumber(allowance).isZero() ? (
@@ -183,15 +217,18 @@ const FarmingTab = ({ farmAddress, stakingToken, token0, token1, stakedBalance, 
         </ButtonWrapper>
       </div>
       <BalanceRow>
-        <span>
-          Your Staked
-        </span>
+        <span>Your Staked</span>
         <span>{stakedBalance}</span>
       </BalanceRow>
       <div style={{ display: "flex", marginTop: "20px" }}>
         <InputWrapper>
           <InputNumber inputRef={inputRefUnstake} />
-          <InputRange onChange={(e) => onChangeRangeWithDraw(e)} min="1" max="100" type="range" />
+          <InputRange
+            onChange={(e) => onChangeRangeWithDraw(e)}
+            min="1"
+            max="100"
+            type="range"
+          />
         </InputWrapper>
         <ButtonWrapper>
           <ButtonAction onClick={() => onWithdraw()}>Unstake</ButtonAction>

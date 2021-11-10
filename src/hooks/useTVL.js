@@ -4,6 +4,7 @@ import QuickSwapPair from "../abi/QuickSwapPair.json";
 import { useWeb3React } from "@web3-react/core";
 import web3 from "web3";
 import BigNumber from "bignumber.js";
+import { isValidAddress } from "../utils";
 
 const QUICKSWAP_FACTORY_ADDRESS = "0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32";
 const USDT_ADDRESS = "0xc2132D05D31c914a87C6611C10748AEb04B58e8F";
@@ -26,10 +27,10 @@ const useTVL = (token0, token1, totalSupply, totalSupplyStakingToken) => {
       ]);
 
       if (
-        web3.utils.isAddress(pairAddress2) ||
-        web3.utils.isAddress(pairAddress1)
+        isValidAddress(pairAddress2) ||
+        isValidAddress(pairAddress1)
       ) {
-        const isUsedToken0 = web3.utils.isAddress(pairAddress1);
+        const isUsedToken0 = isValidAddress(pairAddress1);
         const pairContract = new library.eth.Contract(
           QuickSwapPair,
           isUsedToken0 ? pairAddress1 : pairAddress2
@@ -81,29 +82,24 @@ const useTVL = (token0, token1, totalSupply, totalSupplyStakingToken) => {
   return value;
 };
 
-// const convertToUsdtThroughWETH = async (amount, library, address) => {
-//   const factoryContract = new library.eth.Contract(
-//     QuickSwapFactoryABI,
-//     QUICKSWAP_FACTORY_ADDRESS
-//   );
-//   const pairWETH = await factoryContract.methods
-//     .getPair(WETH_ADDRESS, address)
-//     .call();
+const tokenToWeth = async (amount, library, token) => {
+  const factoryContract = new library.eth.Contract(
+    QuickSwapFactoryABI,
+    QUICKSWAP_FACTORY_ADDRESS
+  );
 
-//   const pairUsdtContract = new library.eth.Contract(QuickSwapPair, pairWETH);
+  const pairWETH = await factoryContract.methods
+    .getPair(WETH_ADDRESS, token.address)
+    .call();
 
-//   const [token0, reserves] = await Promise.all([
-//     pairUsdtContract.methods.token0().call(),
-//     pairUsdtContract.methods.getReserves().call(),
-//   ]);
+  const pairContract = new library.eth.Contract(QuickSwapPair, pairWETH);
 
-//   const isToken0WETH = token0.toLowerCase() === WETH_ADDRESS.toLowerCase();
-//   const tokenRate = isToken0WETH
-//     ? new BigNumber(reserves._reserve0).div(reserves._reserve1)
-//     : new BigNumber(reserves._reserve1).div(reserves._reserve0);
-
-//   const amountETHValue = new BigNumber(amount).times(tokenRate);
-// };
+  const [reserves] = await Promise.all([
+    pairContract.methods.getReserves().call(),
+  ]);
+  const tokenRate = new BigNumber(reserves._reserve0).div(reserves._reserve1);
+  return new BigNumber(amount).times(tokenRate).times(new BigNumber(10).pow(12));
+};
 
 const WETHtoUSDT = async (amount, library) => {
   const factoryContract = new library.eth.Contract(

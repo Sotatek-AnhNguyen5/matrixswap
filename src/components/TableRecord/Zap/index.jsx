@@ -50,7 +50,7 @@ const ZapButton = styled.button`
 
 const ADDRESS_ZAP = "0xAdc41681bCAF8011314f2df3b49CBbB7b82F1892";
 
-const ZapTab = ({ stakingToken, token0, totalSupplyStakingToken, reserves, totalSupply,changeTab }) => {
+const ZapTab = ({ stakingToken, token0, totalSupplyStakingToken, reserves, totalSupply, changeTab, refreshStakeBalance }) => {
   const [selectedToken, setSelectedToken] = useState({});
   const [tokenBalance, setTokenBalance] = useState(0);
   const [lpBalance, setLpBalance] = useState(0);
@@ -117,6 +117,7 @@ const ZapTab = ({ stakingToken, token0, totalSupplyStakingToken, reserves, total
         .once("confirmation", async function (e) {
           await getBalance();
           await getLpBalance();
+          refreshStakeBalance();
           changeTab();
           toast.success("Zap successfully!");
         });

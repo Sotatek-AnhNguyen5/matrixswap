@@ -4,8 +4,11 @@ import { FACTORY_ADDRESS } from "../../utils";
 import { DEFAULT_PAIR } from "../../const";
 import { useState, useMemo, useEffect } from "react";
 import TableRecord from "../TableRecord";
+import styled from "styled-components";
 
-const WrappedFarm = () => {
+
+
+const WrappedFarm = ({filterKey}) => {
   const { library, active } = useWeb3React();
   const [data, setData] = useState([]);
 
@@ -29,9 +32,13 @@ const WrappedFarm = () => {
     }
   }, [active]);
 
-  return data.map((e, index) => {
-    return <TableRecord key={index} data={e} />;
-  });
+  return (
+    <>
+      {data.map((e, index) => {
+        return <TableRecord key={index} filterKey={filterKey} data={e} />;
+      })}
+    </>
+  );
 };
 
 export default WrappedFarm;
