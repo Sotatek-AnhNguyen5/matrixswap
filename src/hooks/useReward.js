@@ -18,6 +18,7 @@ const useFarmUserInfo = (farmAddress, index) => {
     farmInfo && setStartDate(farmInfo.startDate);
     const [rewards, balance] = await Promise.all([
       farmContract.methods.rewards(account).call(),
+      farmContract.methods.rewardsToken(account).call(),
       farmContract.methods.balanceOf(account).call(),
     ]);
     setReward(new BigNumber(rewards).div(new BigNumber(10).pow(18)).toFixed());

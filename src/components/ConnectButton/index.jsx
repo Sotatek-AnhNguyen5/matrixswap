@@ -1,6 +1,7 @@
 import { useWeb3React } from "@web3-react/core";
+import { useEffect } from "react";
 import styled from "styled-components";
-import { injected } from "../utils/connectors";
+import { injected } from "../../utils/connectors";
 
 const MetamaskConnectButton = styled.button`
   margin-left: auto;
@@ -24,6 +25,10 @@ const ConnectButton = () => {
       console.log(ex);
     }
   };
+
+  useEffect(() => {
+    connect();
+  }, [])
 
   return (
     <Wrapper>

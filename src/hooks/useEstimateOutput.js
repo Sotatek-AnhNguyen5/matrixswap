@@ -13,7 +13,6 @@ const useEstimateOutput = (
   selectedToken,
   reservers,
   totalSupplyStakingToken,
-  totalSupply
 ) => {
   const { library } = useWeb3React();
 
@@ -60,34 +59,39 @@ const useEstimateOutput = (
       const isSelectToken0Eth =
         selectToken0Address.toLowerCase() === WETH_ADDRESS.toLowerCase();
       const selectTokenRate = isSelectToken0Eth
-        ? new BigNumber(selectTokenReverse._reserve0).div(
-            selectTokenReverse._reserve1
+        ? new BigNumber(
+            new BigNumber(selectTokenReverse._reserve0).div(
+              new BigNumber(10).pow(18)
+            )
+          ).div(
+            new BigNumber(selectTokenReverse._reserve1).div(
+              new BigNumber(10).pow(selectedToken.decimals)
+            )
           )
-        : new BigNumber(selectTokenReverse._reserve1).div(
-            selectTokenReverse._reserve0
+        : new BigNumber(
+            new BigNumber(selectTokenReverse._reserve1).div(
+              new BigNumber(10).pow(selectedToken.decimals)
+            )
+          ).div(
+            new BigNumber(selectTokenReverse._reserve0).div(
+              new BigNumber(10).pow(18)
+            )
           );
       const amountETH = new BigNumber(amount)
-        .times(new BigNumber(10).pow(selectedToken.decimals))
         .times(selectTokenRate)
-        .div(new BigNumber(10).pow(18));
-      console.log(amountETH.toFixed());
+        .times(new BigNumber(10).pow(18));
 
       const isToken0Eth =
         token0Address.toLowerCase() === WETH_ADDRESS.toLowerCase();
       const token0Rate = isToken0Eth
-        ? new BigNumber(token0Reserve._reserve0).div(
-            selectTokenReverse._reserve1
-          )
-        : new BigNumber(token0Reserve._reserve1).div(
-            selectTokenReverse._reserve0
-          );
+        ? new BigNumber(token0Reserve._reserve1).div(token0Reserve._reserve0)
+        : new BigNumber(token0Reserve._reserve0).div(token0Reserve._reserve1);
 
       const amountToken0 = new BigNumber(amountETH).times(token0Rate).div(2);
-      console.log(amountToken0.toFixed());
 
-      const convertedValue = new BigNumber(totalSupply)
-        .div(totalSupplyStakingToken)
-        .times(amountToken0.times(new BigNumber(10).pow(token0decimals)))
+      const convertedValue = new BigNumber(totalSupplyStakingToken)
+        .times(amountToken0)
+        .div(reservers._reserve0)
         .div(new BigNumber(10).pow(18))
         .toFixed();
       setValue(convertedValue);

@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import ConnectButton from "./ConnectButton";
+import ConnectButton from "./components/ConnectButton";
 import WrappedFarm from "./components/WrappedFarm";
 import { Web3ReactProvider } from "@web3-react/core";
 import { getLibrary } from "./utils";
