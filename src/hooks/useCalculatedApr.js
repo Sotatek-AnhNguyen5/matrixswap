@@ -29,7 +29,7 @@ const useCalculateApr = (farmAddress, tvl, index) => {
         library,
         rewardsToken
       );
-      setValue(rewardToUSD.div(tvl).times(100).toFixed());
+      setValue(rewardToUSD.div(tvl).times(100).toFixed(2));
     };
     if (farmAddress && tvl) {
       getData();

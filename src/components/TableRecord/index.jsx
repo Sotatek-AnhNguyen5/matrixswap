@@ -12,6 +12,7 @@ import { toast } from "react-toastify";
 import FarmABI from "../../abi/FarmABI.json";
 import BigNumber from "bignumber.js";
 import { startsWith } from "lodash";
+import { moneyFormatter } from "../../utils";
 
 const Td = styled.td`
   text-align: center;
@@ -132,7 +133,7 @@ const TableRecord = ({ data, filterKey }) => {
         </Td>
         <Td>{apr} %</Td>
         <Td>{daily} %</Td>
-        <Td>{usdtValue} $</Td>
+        <Td>{moneyFormatter(usdtValue)} $</Td>
         <Td>{!isSelected ? <FaAngleLeft /> : <FaAngleDown />}</Td>
       </Tr>
       {isSelected && (
@@ -149,7 +150,7 @@ const TableRecord = ({ data, filterKey }) => {
             <DataRow>
               <div>Reward</div>
               <ValueSide>
-                {reward}{" "}
+                {reward} dQUICK
                 <ClaimButton
                   disabled={new BigNumber(reward).isZero()}
                   isActive={!new BigNumber(reward).isZero()}
