@@ -115,7 +115,7 @@ const ZapTab = ({
     const toAddress = stakingToken;
     try {
       zapContract.methods
-        .zapInTokenV2(fromAddress, value, toAddress, account)
+        .zapInToken (fromAddress, value, toAddress, account)
         .send({ from: account })
         .once("receipt", function (e) {
           console.log(e);
