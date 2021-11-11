@@ -12,7 +12,7 @@ import { toast } from "react-toastify";
 import FarmABI from "../../abi/FarmABI.json";
 import BigNumber from "bignumber.js";
 import { startsWith } from "lodash";
-import { moneyFormatter } from "../../utils";
+import { convertDate, moneyFormatter } from "../../utils";
 
 const Td = styled.td`
   text-align: center;
@@ -96,6 +96,7 @@ const TableRecord = ({ data, filterKey }) => {
     farmAddress,
     index
   );
+
   const apr = useCalculateApr(farmAddress, usdtValue);
 
   const daily = useMemo(() => {
@@ -106,12 +107,11 @@ const TableRecord = ({ data, filterKey }) => {
     farmContract.methods
       .getReward()
       .send({ from: account })
-      .once("hash", function (e) {
-        toast("Send tx get reward successfully!");
-      })
-      .once("confirmation", function (e) {
-        toast("get reward successfully!");
-        setIndex((e) => (e += 1));
+      .on("confirmation", async function (number) {
+        if(number === 5) {
+          await refreshFarmInfo();
+          toast("get reward successfully!");
+        }
       });
   };
 
@@ -141,7 +141,7 @@ const TableRecord = ({ data, filterKey }) => {
           <TdSecond colSpan={2}>
             <DataRow>
               <div>Start date</div>
-              <ValueSide> {startStakeDate} </ValueSide>
+              <ValueSide> {convertDate(startStakeDate)} </ValueSide>
             </DataRow>
             <DataRow>
               <div>Your Staked</div>
@@ -179,6 +179,7 @@ const TableRecord = ({ data, filterKey }) => {
                   totalSupply={totalSupply}
                   reserves={reserves}
                   token0={token0}
+                  token1={token1}
                   changeTab={() => setIsZap(false)}
                   refreshStakeBalance={refreshFarmInfo}
                 />

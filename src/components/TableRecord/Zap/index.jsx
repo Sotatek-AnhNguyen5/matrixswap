@@ -1,7 +1,6 @@
 import { useState, useEffect, useRef } from "react";
 import styled from "styled-components";
 import InputNumber from "../../InputNumber";
-import SelectTokenButton from "../../SelecTokenButton";
 import IERC20ABI from "../../../abi/IERC20ABI.json";
 import { useWeb3React } from "@web3-react/core";
 import BigNumber from "bignumber.js";
@@ -9,10 +8,9 @@ import LpABI from "../../../abi/stakingRewardABi.json";
 import ZapABI from "../../../abi/zapABI.json";
 import { toast } from "react-toastify";
 import useEstimateOutput from "../../../hooks/useEstimateOutput";
-
-const InputRange = styled.input`
-  width: 100%;
-`;
+import InputRange from "react-input-range";
+import useCheckZapToken from "../../../hooks/useCheckZapToken";
+import { ADDRESS_ZAP } from "../../../const";
 
 const FakeInput = styled.div`
   width: 100%;
@@ -48,22 +46,31 @@ const ZapButton = styled.button`
   cursor: pointer;
 `;
 
-const ADDRESS_ZAP = "0xAdc41681bCAF8011314f2df3b49CBbB7b82F1892";
-
-const ZapTab = ({ stakingToken, token0, totalSupplyStakingToken, reserves, totalSupply, changeTab, refreshStakeBalance }) => {
+const ZapTab = ({
+  stakingToken,
+  token0,
+  token1,
+  totalSupplyStakingToken,
+  reserves,
+  totalSupply,
+  changeTab,
+  refreshStakeBalance,
+}) => {
   const [selectedToken, setSelectedToken] = useState({});
   const [tokenBalance, setTokenBalance] = useState(0);
   const [lpBalance, setLpBalance] = useState(0);
   const [allowance, setAllowance] = useState(0);
   const { library, account } = useWeb3React();
   const [amount, onChangeAmount] = useState(0);
+  const isZapAble = useCheckZapToken(selectedToken, token0, token1);
+  const [zapValuePercent, setZapValuePercent] = useState(0);
   const estimateOutput = useEstimateOutput(
     amount,
     token0,
     selectedToken,
     reserves,
     totalSupplyStakingToken,
-    totalSupply,
+    token1,
   );
   const inputRef = useRef();
 
@@ -92,12 +99,12 @@ const ZapTab = ({ stakingToken, token0, totalSupplyStakingToken, reserves, total
     }
   };
 
-  const onChangeRangeStake = (e) => {
-    const percent = e.target.value;
+  const onChangeRangeStake = (percent) => {
     const value = new BigNumber(tokenBalance).times(percent).div(100).toFixed();
     onChangeAmount(value);
     inputRef.current.value = value;
-  }
+    setZapValuePercent(percent);
+  };
 
   const onZap = async () => {
     const zapContract = new library.eth.Contract(ZapABI.abi, ADDRESS_ZAP);
@@ -192,8 +199,14 @@ const ZapTab = ({ stakingToken, token0, totalSupplyStakingToken, reserves, total
           inputRef={inputRef}
         />
       </InputWrapper>
-      <div style={{ marginTop: "10px" }}>
-        <InputRange onClick={(e) => onChangeRangeStake(e)} min="1" max="100" type="range" />
+      <div style={{ marginTop: "20px", marginBottom: "20px" }}>
+        <InputRange
+          onChange={(e) => onChangeRangeStake(e)}
+          maxValue={100}
+          minValue={0}
+          value={zapValuePercent}
+          formatLabel={(value) => `${value}%`}
+        />
       </div>
       <BalanceRow>
         <span>To LP</span>
@@ -202,6 +215,9 @@ const ZapTab = ({ stakingToken, token0, totalSupplyStakingToken, reserves, total
       <div style={{ marginTop: "10px" }}>
         <FakeInput>{estimateOutput}</FakeInput>
       </div>
+      <small style={{ color: "red" }}>
+          {!isZapAble && "Cannot zap this token."}
+        </small>
       <div style={{ display: "flex" }}>
         {new BigNumber(allowance).isZero() ? (
           <ZapButton onClick={() => onApprove()}>Approve</ZapButton>

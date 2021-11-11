@@ -4,6 +4,7 @@ import WrappedFarm from "./components/WrappedFarm";
 import { Web3ReactProvider } from "@web3-react/core";
 import { getLibrary } from "./utils";
 import "react-toastify/dist/ReactToastify.css";
+import "react-input-range/lib/css/index.css";
 import { ToastContainer, toast } from "react-toastify";
 import { useState } from "react";
 

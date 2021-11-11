@@ -8,6 +8,8 @@ import { toast } from "react-toastify";
 import StakingTokenABI from "../../../abi/stakingRewardABi.json";
 import moment from "moment";
 import { isEmpty, find } from "lodash";
+import InputRange from 'react-input-range';
+
 
 const BalanceRow = styled.div`
   display: flex;
@@ -15,14 +17,13 @@ const BalanceRow = styled.div`
   justify-content: space-between;
 `;
 
-const InputRange = styled.input`
-  width: 100%;
-  margin-top: 10px;
-`;
 
 const InputWrapper = styled.div`
   width: 100%;
   margin-right: 30px;
+  .input-wrapper {
+    margin-bottom: 20px;
+  }
 `;
 
 const ButtonWrapper = styled.div`
@@ -54,6 +55,8 @@ const FarmingTab = ({
   const { library, account } = useWeb3React();
   const [allowance, setAllowance] = useState(0);
   const [balance, setBalance] = useState(0);
+  const [stakeRange, setStakeRange] = useState(0);
+  const [unStakeRange, setUnStakeRange] = useState(0);
   const inputRef = useRef();
   const inputRefUnstake = useRef();
 
@@ -93,14 +96,13 @@ const FarmingTab = ({
       farmContract.methods
         .stake(value)
         .send({ from: account })
-        .once("receipt", function (e) {
-          toast("Stake successfully!");
-        })
-        .once("confirmation", function (e) {
-          saveToStorage();
-          setAllowance(value);
-          getBalance();
-          refreshStakedBalance();
+        .on("confirmation", async function (number) {
+          if (number === 5) {
+            saveToStorage();
+            await Promise.all([refreshStakedBalance(), getBalance()])
+            inputRef.current.value = '';
+            toast("Stake successfully!");
+          }
         });
     } catch (e) {
       console.log(e);
@@ -118,14 +120,12 @@ const FarmingTab = ({
       farmContract.methods
         .withdraw(valueUnstake)
         .send({ from: account })
-        .once("receipt", function (e) {
-          console.log(e);
-          toast("Withdraw successfully!");
-        })
-        .once("confirmation", function (e) {
-          toast("Withdraw successfully!");
-          getBalance();
-          refreshStakedBalance();
+        .on("confirmation", async function (number) {
+          if (number === 5) {
+            await Promise.all([getBalance(), refreshStakedBalance()])
+            toast("Withdraw successfully!");
+            inputRefUnstake.current.value = "";
+          }
         });
     } catch (e) {
       console.log(e);
@@ -133,16 +133,16 @@ const FarmingTab = ({
     }
   };
 
-  const onChangeRangeStake = (e) => {
-    const percent = e.target.value;
+  const onChangeRangeStake = (percent) => {
+    setStakeRange(percent);
     inputRef.current.value = new BigNumber(balance)
       .times(percent)
       .div(100)
       .toFixed();
   };
 
-  const onChangeRangeWithDraw = (e) => {
-    const percent = e.target.value;
+  const onChangeRangeWithDraw = (percent) => {
+    setUnStakeRange(percent);
     inputRefUnstake.current.value = new BigNumber(stakedBalance)
       .times(percent)
       .div(100)
@@ -203,9 +203,10 @@ const FarmingTab = ({
           <InputNumber inputRef={inputRef} />
           <InputRange
             onChange={(e) => onChangeRangeStake(e)}
-            min="1"
-            max="100"
-            type="range"
+            maxValue={100}
+            minValue={0}
+            value={stakeRange}
+            formatLabel={value => `${value}%`}
           />
         </InputWrapper>
         <ButtonWrapper>
@@ -216,7 +217,7 @@ const FarmingTab = ({
           )}
         </ButtonWrapper>
       </div>
-      <BalanceRow>
+      <BalanceRow style={{marginTop: 30}}>
         <span>Your Staked</span>
         <span>{stakedBalance}</span>
       </BalanceRow>
@@ -225,9 +226,10 @@ const FarmingTab = ({
           <InputNumber inputRef={inputRefUnstake} />
           <InputRange
             onChange={(e) => onChangeRangeWithDraw(e)}
-            min="1"
-            max="100"
-            type="range"
+            maxValue={100}
+            minValue={0}
+            value={unStakeRange}
+            formatLabel={value => `${value}%`}
           />
         </InputWrapper>
         <ButtonWrapper>

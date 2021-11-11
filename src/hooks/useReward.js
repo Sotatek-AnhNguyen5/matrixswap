@@ -16,10 +16,9 @@ const useFarmUserInfo = (farmAddress, index) => {
     const stakeInfo = JSON.parse(localStorage.getItem("stakeInfo")) || [];
     const farmInfo = find(stakeInfo, { farmAddress });
     farmInfo && setStartDate(farmInfo.startDate);
-    const [rewards, balance, rewardToken] = await Promise.all([
+    const [rewards, balance] = await Promise.all([
       farmContract.methods.earned(account).call(),
       farmContract.methods.balanceOf(account).call(),
-      farmContract.methods.rewardsToken().call(),
     ]);
     // const rewardTokenContract = new library.eth.Contract(IERC20, rewardToken);
     // const rewardSymbol = await rewardTokenContract.methods.symbol().call();
@@ -30,7 +29,7 @@ const useFarmUserInfo = (farmAddress, index) => {
 
   useEffect(() => {
     getData(farmAddress);
-  }, [index]);
+  }, []);
 
   return [reward, balance, getData, startDate];
 };

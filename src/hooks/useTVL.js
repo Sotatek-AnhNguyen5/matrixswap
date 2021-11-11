@@ -2,7 +2,6 @@ import { useState, useEffect } from "react";
 import QuickSwapFactoryABI from "../abi/quickswapFactoryABI.json";
 import QuickSwapPair from "../abi/QuickSwapPair.json";
 import { useWeb3React } from "@web3-react/core";
-import web3 from "web3";
 import BigNumber from "bignumber.js";
 import { isValidAddress } from "../utils";
 
@@ -26,10 +25,7 @@ const useTVL = (token0, token1, totalSupply, totalSupplyStakingToken) => {
         factoryContract.methods.getPair(token1.address, USDT_ADDRESS).call(),
       ]);
 
-      if (
-        isValidAddress(pairAddress2) ||
-        isValidAddress(pairAddress1)
-      ) {
+      if (isValidAddress(pairAddress2) || isValidAddress(pairAddress1)) {
         const isUsedToken0 = isValidAddress(pairAddress1);
         const pairContract = new library.eth.Contract(
           QuickSwapPair,
@@ -52,28 +48,22 @@ const useTVL = (token0, token1, totalSupply, totalSupplyStakingToken) => {
           .times(2);
 
         setValue(totalSupplyUsdt.toFixed(6));
-      }
-      // if (!pairAddress1) {
-      //   [pairAddress1, pairAddress2] = await Promise.all([
-      //     factoryContract.methods.getPair(tokenAddress0, WETH_ADDRESS).call(),
-      //     factoryContract.methods.getPair(tokenAddress1, WETH_ADDRESS).call(),
-      //   ]);
-      // }
+        return
+      } 
 
-      // if (
-      //   web3.utils.isAddress(pairAddress2) ||
-      //   web3.utils.isAddress(pairAddress1)
-      // ) {
-      //   const pairContract = new library.eth.Contract(
-      //     QuickSwapPair,
-      //     web3.utils.isAddress(pairAddress2) ?? web3.utils.isAddress(pairAddress1)
-      //   );
-      //   const [token0, reverse] = await Promise.all([
-      //     pairContract.methods.token0().call(),
-      //     pairContract.methods.getReserves().call(),
-      //   ]);
-      //   console.log(token0, reverse);
-      // }
+      let [pair0, pair1] = await Promise.all([
+        factoryContract.methods.getPair(token0.address, WETH_ADDRESS).call(),
+        factoryContract.methods.getPair(token1.address, WETH_ADDRESS).call(),
+      ]);
+
+      if (isValidAddress(pairAddress2) || isValidAddress(pairAddress1)) {
+        const isUsedToken0 = isValidAddress(pair0);
+        const pairContract = new library.eth.Contract(
+          QuickSwapPair,
+          isUsedToken0 ? pair0 : pair1
+        );
+      }
+
     };
     if (token0.address && token1.address && totalSupply) {
       getData();
@@ -94,11 +84,18 @@ const tokenToWeth = async (amount, library, token) => {
 
   const pairContract = new library.eth.Contract(QuickSwapPair, pairWETH);
 
-  const [reserves] = await Promise.all([
+  const [token0, reserves] = await Promise.all([
+    pairContract.methods.token0().call(),
     pairContract.methods.getReserves().call(),
   ]);
-  const tokenRate = new BigNumber(reserves._reserve0).div(reserves._reserve1);
-  return new BigNumber(amount).times(tokenRate).times(new BigNumber(10).pow(12));
+
+  const tokenRate =
+    token0.toLowercase() === WETH_ADDRESS.toLowerCase()
+      ? new BigNumber(reserves._reserve0).div(reserves._reserve1)
+      : new BigNumber(reserves._reserve1).div(reserves._reserve0);
+  return new BigNumber(amount)
+    .times(tokenRate)
+    .times(new BigNumber(10).pow(12));
 };
 
 const WETHtoUSDT = async (amount, library) => {
@@ -117,6 +114,8 @@ const WETHtoUSDT = async (amount, library) => {
     pairContract.methods.getReserves().call(),
   ]);
   const tokenRate = new BigNumber(reserves._reserve0).div(reserves._reserve1);
-  return new BigNumber(amount).times(tokenRate).times(new BigNumber(10).pow(12));
+  return new BigNumber(amount)
+    .times(tokenRate)
+    .times(new BigNumber(10).pow(12));
 };
 export default useTVL;

@@ -35,7 +35,7 @@ const InputNumber = ({
   onChange,
 }) => {
   return (
-    <InputWrapper color={color}>
+    <InputWrapper color={color} className={'input-wrapper'}>
       <input
         onChange={(e) => onChange && onChange(e.target.value)}
         ref={inputRef}

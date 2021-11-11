@@ -13,6 +13,7 @@ const useEstimateOutput = (
   selectedToken,
   reservers,
   totalSupplyStakingToken,
+  token1
 ) => {
   const { library } = useWeb3React();
 
@@ -25,74 +26,91 @@ const useEstimateOutput = (
         QUICKSWAP_FACTORY_ADDRESS
       );
 
-      let [pairWETHSelectToken, pairWETH0token] = await Promise.all([
-        factoryContract.methods
-          .getPair(selectedToken.address, WETH_ADDRESS)
-          .call(),
-        factoryContract.methods.getPair(token0.address, WETH_ADDRESS).call(),
-      ]);
+      if (
+        selectedToken.address.toLowerCase() === token0.address.toLowerCase() ||
+        selectedToken.address.toLowerCase() === token1.address.toLowerCase()
+      ) {
+        const isToken0 =
+          selectedToken.address.toLowerCase() === token0.address.toLowerCase();
+        const amountToHex = new BigNumber(amount)
+          .times(new BigNumber(10).pow(selectedToken.decimals))
+          .div(2);
 
-      const pairWETHSelectTokenContract = new library.eth.Contract(
-        QuickSwapPair,
-        pairWETHSelectToken
-      );
+        const convertedValue = new BigNumber(totalSupplyStakingToken)
+          .times(amountToHex)
+          .div(isToken0 ? reservers._reserve0 : reservers._reserve1)
+          .div(new BigNumber(10).pow(18))
+          .toFixed();
+        setValue(convertedValue);
+      } else {
+        let [pairWETHSelectToken, pairWETH0token] = await Promise.all([
+          factoryContract.methods
+            .getPair(selectedToken.address, WETH_ADDRESS)
+            .call(),
+          factoryContract.methods.getPair(token0.address, WETH_ADDRESS).call(),
+        ]);
 
-      const pairWETH0tokenContract = new library.eth.Contract(
-        QuickSwapPair,
-        pairWETH0token
-      );
+        const pairWETHSelectTokenContract = new library.eth.Contract(
+          QuickSwapPair,
+          pairWETHSelectToken
+        );
 
-      const [
-        selectToken0Address,
-        selectTokenReverse,
-        token0Address,
-        token0Reserve,
-      ] = await Promise.all([
-        pairWETHSelectTokenContract.methods.token0().call(),
-        pairWETHSelectTokenContract.methods.getReserves().call(),
-        pairWETH0tokenContract.methods.token0().call(),
-        pairWETH0tokenContract.methods.getReserves().call(),
-      ]);
+        const pairWETH0tokenContract = new library.eth.Contract(
+          QuickSwapPair,
+          pairWETH0token
+        );
 
-      const isSelectToken0Eth =
-        selectToken0Address.toLowerCase() === WETH_ADDRESS.toLowerCase();
-      const selectTokenRate = isSelectToken0Eth
-        ? new BigNumber(
-            new BigNumber(selectTokenReverse._reserve0).div(
-              new BigNumber(10).pow(18)
+        const [
+          selectToken0Address,
+          selectTokenReverse,
+          token0Address,
+          token0Reserve,
+        ] = await Promise.all([
+          pairWETHSelectTokenContract.methods.token0().call(),
+          pairWETHSelectTokenContract.methods.getReserves().call(),
+          pairWETH0tokenContract.methods.token0().call(),
+          pairWETH0tokenContract.methods.getReserves().call(),
+        ]);
+
+        const isSelectToken0Eth =
+          selectToken0Address.toLowerCase() === WETH_ADDRESS.toLowerCase();
+        const selectTokenRate = isSelectToken0Eth
+          ? new BigNumber(
+              new BigNumber(selectTokenReverse._reserve0).div(
+                new BigNumber(10).pow(18)
+              )
+            ).div(
+              new BigNumber(selectTokenReverse._reserve1).div(
+                new BigNumber(10).pow(selectedToken.decimals)
+              )
             )
-          ).div(
-            new BigNumber(selectTokenReverse._reserve1).div(
-              new BigNumber(10).pow(selectedToken.decimals)
-            )
-          )
-        : new BigNumber(
-            new BigNumber(selectTokenReverse._reserve1).div(
-              new BigNumber(10).pow(selectedToken.decimals)
-            )
-          ).div(
-            new BigNumber(selectTokenReverse._reserve0).div(
-              new BigNumber(10).pow(18)
-            )
-          );
-      const amountETH = new BigNumber(amount)
-        .times(selectTokenRate)
-        .times(new BigNumber(10).pow(18));
+          : new BigNumber(
+              new BigNumber(selectTokenReverse._reserve1).div(
+                new BigNumber(10).pow(selectedToken.decimals)
+              )
+            ).div(
+              new BigNumber(selectTokenReverse._reserve0).div(
+                new BigNumber(10).pow(18)
+              )
+            );
+        const amountETH = new BigNumber(amount)
+          .times(selectTokenRate)
+          .times(new BigNumber(10).pow(18));
 
-      const isToken0Eth =
-        token0Address.toLowerCase() === WETH_ADDRESS.toLowerCase();
-      const token0Rate = isToken0Eth
-        ? new BigNumber(token0Reserve._reserve1).div(token0Reserve._reserve0)
-        : new BigNumber(token0Reserve._reserve0).div(token0Reserve._reserve1);
+        const isToken0Eth =
+          token0Address.toLowerCase() === WETH_ADDRESS.toLowerCase();
+        const token0Rate = isToken0Eth
+          ? new BigNumber(token0Reserve._reserve1).div(token0Reserve._reserve0)
+          : new BigNumber(token0Reserve._reserve0).div(token0Reserve._reserve1);
 
-      const amountToken0 = new BigNumber(amountETH).times(token0Rate).div(2);
-
-      const convertedValue = new BigNumber(totalSupplyStakingToken)
-        .times(amountToken0)
-        .div(reservers._reserve0)
-        .div(new BigNumber(10).pow(18))
-        .toFixed();
-      setValue(convertedValue);
+        const amountToken0 = new BigNumber(amountETH).times(token0Rate).div(2);
+        const convertedValue = new BigNumber(totalSupplyStakingToken)
+          .times(amountToken0)
+          .div(reservers._reserve0)
+          .div(new BigNumber(10).pow(18))
+          .toFixed();
+        setValue(convertedValue);
+      }
     };
 
     if (amount && selectedToken.address) {
