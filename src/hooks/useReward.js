@@ -9,7 +9,7 @@ const useFarmUserInfo = (farmAddress, index) => {
   const [reward, setReward] = useState(0);
   const [balance, setBalance] = useState(0);
   const { library, account } = useWeb3React();
-  const [startDate, setStartDate] = useState("-");
+  const [startDate, setStartDate] = useState("");
 
   const getData = async () => {
     const farmContract = new library.eth.Contract(FarmABI, farmAddress);
