@@ -49,10 +49,6 @@ export const DEFAULT_PAIR = [
     reserveUSD: "7494005.9990835438551146",
   },
   {
-    id: "0x096c5ccb33cfc5732bcd1f3195c13dbefc4c82f4",
-    reserveUSD: "6015207.8808858366705498",
-  },
-  {
     id: "0xf7135272a5584eb116f5a77425118a8b4a2ddfdb",
     reserveUSD: "5837365.1591132677531158",
   },
