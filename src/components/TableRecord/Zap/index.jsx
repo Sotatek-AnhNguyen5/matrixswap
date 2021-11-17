@@ -1,4 +1,4 @@
-import { useState, useEffect, useRef } from "react";
+import React, { useState, useEffect, useRef, useMemo } from "react";
 import styled from "styled-components";
 import InputNumber from "../../InputNumber";
 import IERC20ABI from "../../../abi/IERC20ABI.json";
@@ -10,7 +10,10 @@ import { toast } from "react-toastify";
 import useEstimateOutput from "../../../hooks/useEstimateOutput";
 import InputRange from "react-input-range";
 import useCheckZapToken from "../../../hooks/useCheckZapToken";
-import { ADDRESS_ZAP } from "../../../const";
+import { ADDRESS_ZAP, PROTOCOL_FUNCTION } from "../../../const";
+import useApproveCallBack from "../../../hooks/useApproveCallBack";
+import SubmitButton from "../../SubmitButton";
+import useZapCallback from "../../../hooks/useZapCallback";
 
 const FakeInput = styled.div`
   width: 100%;
@@ -52,18 +55,22 @@ const ZapTab = ({
   token1,
   totalSupplyStakingToken,
   reserves,
-  totalSupply,
   changeTab,
   refreshStakeBalance,
+  type,
+  getLpBalance,
+  lpBalance
 }) => {
+  const { library, account } = useWeb3React();
   const [selectedToken, setSelectedToken] = useState({});
   const [tokenBalance, setTokenBalance] = useState(0);
-  const [lpBalance, setLpBalance] = useState(0);
-  const [allowance, setAllowance] = useState(0);
-  const { library, account } = useWeb3React();
   const [amount, onChangeAmount] = useState(0);
   const isZapAble = useCheckZapToken(selectedToken, token0, token1);
   const [zapValuePercent, setZapValuePercent] = useState(0);
+  const [approve, loadingApprove, allowance] = useApproveCallBack(
+    selectedToken.address,
+    ADDRESS_ZAP
+  );
   const estimateOutput = useEstimateOutput(
     amount,
     token0,
@@ -71,19 +78,9 @@ const ZapTab = ({
     reserves,
     totalSupplyStakingToken,
     token1,
+    type
   );
   const inputRef = useRef();
-
-  const getLpBalance = async () => {
-    const stakingTokenContract = new library.eth.Contract(LpABI, stakingToken);
-    const balance = await stakingTokenContract.methods
-      .balanceOf(account)
-      .call();
-    const balanceToNumber = new BigNumber(balance)
-      .div(new BigNumber(10).pow(18))
-      .toFixed();
-    setLpBalance(balanceToNumber);
-  };
 
   const getBalance = async () => {
     if (selectedToken.address) {
@@ -106,84 +103,35 @@ const ZapTab = ({
     setZapValuePercent(percent);
   };
 
-  const onZap = async () => {
-    const zapContract = new library.eth.Contract(ZapABI.abi, ADDRESS_ZAP);
+  const onFinishZap = async () => {
+    await getBalance();
+    await getLpBalance();
+    await refreshStakeBalance();
+    changeTab();
+    toast.success("Zap successfully!");
+  };
+
+  const params = useMemo(() => {
+    const protocolType = PROTOCOL_FUNCTION[type].fullnameHash;
+    const from = selectedToken.address;
     const value = new BigNumber(amount)
       .times(new BigNumber(10).pow(selectedToken.decimals))
       .toFixed();
-    const fromAddress = selectedToken.address;
-    const toAddress = stakingToken;
-    try {
-      zapContract.methods
-        .zapInToken (fromAddress, value, toAddress, account)
-        .send({ from: account })
-        .once("receipt", function (e) {
-          console.log(e);
-          toast("Send Tx successfully!");
-        })
-        .once("confirmation", async function (e) {
-          await getBalance();
-          await getLpBalance();
-          refreshStakeBalance();
-          changeTab();
-          toast.success("Zap successfully!");
-        });
-    } catch (e) {
-      console.log(e);
-      toast("Zap failed!");
-    }
-  };
+    return {
+      protocolType,
+      from,
+      amount: value,
+      to: stakingToken,
+      receiver: account,
+    };
+  }, [type, selectedToken.address, amount]);
 
-  const onApprove = () => {
-    const tokenContract = new library.eth.Contract(
-      IERC20ABI,
-      selectedToken.address
-    );
-    const value = new BigNumber(99999999)
-      .times(new BigNumber(10).pow(selectedToken.decimals))
-      .toFixed();
-    try {
-      tokenContract.methods
-        .approve(ADDRESS_ZAP, value)
-        .send({ from: account })
-        .once("receipt", function (e) {
-          console.log(e);
-          toast("Send approve successfully");
-        })
-        .once("confirmation", function () {
-          setAllowance(value);
-        });
-    } catch (e) {
-      console.log(e);
-      toast("Approve failed");
-    }
-  };
+  const [onZap, zapLoading] = useZapCallback(params, onFinishZap);
 
   useEffect(() => {
     getBalance();
   }, [selectedToken.address]);
 
-  useEffect(() => {
-    const getAllowance = async () => {
-      if (selectedToken.address) {
-        const tokenContract = new library.eth.Contract(
-          IERC20ABI,
-          selectedToken.address
-        );
-        const allowanceAmount = await tokenContract.methods
-          .allowance(account, ADDRESS_ZAP)
-          .call();
-        setAllowance(allowanceAmount);
-      }
-    };
-    getAllowance();
-  }, [selectedToken.address]);
-
-  useEffect(() => {
-    if (stakingToken) {
-      getLpBalance();
-    }
-  }, [stakingToken]);
 
   return (
     <div>
@@ -216,13 +164,25 @@ const ZapTab = ({
         <FakeInput>{estimateOutput}</FakeInput>
       </div>
       <small style={{ color: "red" }}>
-          {!isZapAble && "Cannot zap this token."}
-        </small>
-      <div style={{ display: "flex" }}>
+        {!isZapAble && "Cannot zap this token."}
+      </small>
+      <div
+        style={{ display: "flex", justifyContent: "end", marginTop: "20px" }}
+      >
         {new BigNumber(allowance).isZero() ? (
-          <ZapButton onClick={() => onApprove()}>Approve</ZapButton>
+          <SubmitButton
+            label={"approve"}
+            loading={loadingApprove}
+            labelLoading={"approving"}
+            onClick={approve}
+          />
         ) : (
-          <ZapButton onClick={() => onZap()}>Zap</ZapButton>
+          <SubmitButton
+            label={"zap"}
+            loading={zapLoading}
+            labelLoading={"zapping"}
+            onClick={onZap}
+          />
         )}
       </div>
     </div>

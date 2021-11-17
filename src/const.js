@@ -1,4 +1,24 @@
-export const ADDRESS_ZAP = "0x1764796D79D52EE429B9E20e38c93767095b4Ae5";
+import web3 from "web3";
+export const ADDRESS_ZAP = "0x7e63f8FF1cB81164b62700627BE64E9b9C46aCA4";
+export const QUICKSWAP_FACTORY_ADDRESS = "0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32";
+export const SUSHI_FACTORY_ADDRESS = "0xc35dadb65012ec5796536bd9864ed8773abc74c4";
+
+export const PROTOCOL_FUNCTION = {
+  quick: {
+    fullnameHash: web3.utils.soliditySha3("QUICKSWAP"),
+    fullname: "QUICKSWAP",
+    stake: "stake",
+    unStake: "withdraw",
+    getReward: "getReward",
+  },
+  sushi: {
+    fullnameHash: web3.utils.soliditySha3("SUSHISWAP"),
+    fullname: "SUSHISWAP",
+    stake: "deposit",
+    unStake: "withdrawAll",
+    getReward: "claim"
+  }
+}
 export const DEFAULT_PAIR = [
   {
     id: "0xdc9232e2df177d7a12fdff6ecbab114e2231198d",
@@ -376,4 +396,8 @@ export const DEFAULT_PAIR = [
     id: "0x8bab360e41468dff5326df636e2377a858ad0670",
     reserveUSD: "70954.7117334447658980",
   },
+];
+
+export const exampleSushiFarm = [
+  '0x3add3034fcf921f20c74c6149fb44921709595b1',
 ];

@@ -8,14 +8,14 @@ const MetamaskConnectButton = styled.button`
 `;
 
 const Wrapper = styled.div`
-    display: flex;
-    padding: 20px;
-    flex-direction: column;
-    align-items: flex-end;
-`
+  display: flex;
+  padding: 20px;
+  flex-direction: column;
+  align-items: flex-end;
+`;
 
 const ConnectButton = () => {
-  const { active, account, library, activate, deactivate, connector } =
+  const { active, account, activate } =
     useWeb3React();
 
   const connect = async () => {
@@ -28,15 +28,17 @@ const ConnectButton = () => {
 
   useEffect(() => {
     connect();
-  }, [])
+  }, []);
 
   return (
     <Wrapper>
-      <MetamaskConnectButton onClick={connect}>
-        Connect to Metamask
-      </MetamaskConnectButton>
+      {!active && (
+        <MetamaskConnectButton onClick={connect}>
+          Connect to Metamask
+        </MetamaskConnectButton>
+      )}
       {active ? (
-        <span style={{textAlign: "right"}}>
+        <span style={{ textAlign: "right" }}>
           Connected with <b> {account}</b>
         </span>
       ) : (

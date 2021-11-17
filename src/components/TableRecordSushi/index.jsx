@@ -2,18 +2,18 @@ import styled from "styled-components";
 import { FaAngleDown, FaAngleLeft } from "react-icons/fa";
 import React, { useState, useMemo } from "react";
 import { useWeb3React } from "@web3-react/core";
-import ZapTab from "./Zap";
-import FarmingTab from "./Farming";
-import useGetPairToken from "../../hooks/useGetPairToken";
 import useFarmUserInfo from "../../hooks/useFarmUserInfo";
-import useTVL from "../../hooks/useTVL";
-import useCalculateApr from "../../hooks/useCalculatedApr";
 import { toast } from "react-toastify";
+import FarmABI from "../../abi/FarmABI.json";
 import BigNumber from "bignumber.js";
 import {find, isEmpty, startsWith} from "lodash";
 import { convertDate, moneyFormatter } from "../../utils";
-import SubmitButton from "../SubmitButton";
+import useLpTokenInfo from "../../hooks/useLpTokenInfo";
+import useCalculateApr from "../../hooks/useCalculatedApr";
+import ZapTab from "../TableRecord/Zap";
+import FarmingTab from "../TableRecord/Farming";
 import useGetRewardCallback from "../../hooks/useGetRewardCallback";
+import SubmitButton from "../SubmitButton";
 import useTokenBalance from "../../hooks/useTokenBalance";
 
 const Td = styled.td`
@@ -28,6 +28,11 @@ const Td = styled.td`
   &:first-child {
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
+  }
+
+  a {
+    color: white;
+    text-decoration: none;
   }
 `;
 
@@ -66,42 +71,32 @@ const TabLabel = styled.div`
   }
 `;
 
-const TableRecord = ({ data, filterKey, type }) => {
+const TableRecordSushi = ({ data, filterKey, type }) => {
   const [isSelected, setIsSelected] = useState(false);
   const [isZap, setIsZap] = useState(true);
-  const farmAddress = data.stakingRewards;
-  const [
-    token0,
-    token1,
-    stakingToken,
-    reserves,
-    totalSupply,
-    totalSupplyStakingToken,
-  ] = useGetPairToken(farmAddress);
-
-  const usdtValue = useTVL(
-    token0,
-    token1,
-    totalSupply,
-    totalSupplyStakingToken
-  );
-  const [reward, balance, refreshFarmInfo, startStakeDate] =
-    useFarmUserInfo(farmAddress);
-  const [lpBalance, getLpBalance] = useTokenBalance(stakingToken);
-
-  const apr = useCalculateApr(farmAddress, usdtValue);
-
+  const farmAddress = data.rewardAddress;
+  const tvl = data.valueLockedUSD;
+  const apr = useCalculateApr(farmAddress, tvl, "sushi");
   const daily = useMemo(() => {
     return new BigNumber(apr).div(365).toFixed(2);
   }, [apr]);
+
+  const lpToken = useLpTokenInfo(data.tokenAddress);
+  const [lpBalance, getLpBalance] = useTokenBalance(data.tokenAddress);
+  const [reward, balance, refreshFarmInfo, startStakeDate] = useFarmUserInfo(
+    farmAddress,
+    "sushi",
+    data.poolIndex
+  );
 
   const onFinishGetReward = async () => {
     await refreshFarmInfo();
     toast("get reward successfully!");
   };
+
   const [onGetReward, loadingGetReward] = useGetRewardCallback(
     farmAddress,
-    "quick",
+    "sushi",
     onFinishGetReward
   );
 
@@ -110,7 +105,9 @@ const TableRecord = ({ data, filterKey, type }) => {
       filterKey,
       (e) =>
         e.value === type ||
-        [token0.symbol, token1.symbol].indexOf(e.value.toUpperCase()) !== -1
+        [lpToken.token0.symbol.toUpperCase(), lpToken.token1.symbol.toUpperCase()].indexOf(
+          e.value.toUpperCase()
+        ) !== -1
     );
     return isEmpty(filterKey) || isExists;
   }, [filterKey]);
@@ -119,11 +116,16 @@ const TableRecord = ({ data, filterKey, type }) => {
     <>
       <Tr isShow={isShow} onClick={() => setIsSelected((value) => !value)}>
         <Td style={{ textAlign: "left", paddingLeft: "20px" }}>
-          {token0.symbol} - {token1.symbol}
+          <a
+            target="_blank"
+            href={`https://polygonscan.com/address/${farmAddress}`}
+          >
+            {lpToken.token0.symbol} - {lpToken.token1.symbol}
+          </a>
         </Td>
         <Td>{apr} %</Td>
         <Td>{daily} %</Td>
-        <Td>{moneyFormatter(usdtValue)} $</Td>
+        <Td>{moneyFormatter(tvl)} $</Td>
         <Td>{!isSelected ? <FaAngleLeft /> : <FaAngleDown />}</Td>
       </Tr>
       {isSelected && (
@@ -140,7 +142,7 @@ const TableRecord = ({ data, filterKey, type }) => {
             <DataRow>
               <div>Reward</div>
               <ValueSide>
-                {reward} dQUICK
+                {reward} Sushi
                 <SubmitButton
                   disabled={new BigNumber(reward).isZero()}
                   label={"Claim"}
@@ -165,39 +167,36 @@ const TableRecord = ({ data, filterKey, type }) => {
             <div style={{ padding: "10px" }}>
               {isZap ? (
                 <ZapTab
-                  stakingToken={stakingToken}
-                  totalSupplyStakingToken={totalSupplyStakingToken}
-                  totalSupply={totalSupply}
-                  reserves={reserves}
-                  token0={token0}
-                  token1={token1}
+                  stakingToken={lpToken.address}
+                  totalSupplyStakingToken={lpToken.totalSupply}
+                  reserves={lpToken.reserves}
+                  token0={lpToken.token0}
+                  token1={lpToken.token1}
                   changeTab={() => setIsZap(false)}
                   refreshStakeBalance={refreshFarmInfo}
-                  type={"quick"}
+                  type={"sushi"}
                   lpBalance={lpBalance}
                   getLpBalance={getLpBalance}
                 />
               ) : (
                 <FarmingTab
-                  stakingToken={stakingToken}
-                  reserves={reserves}
-                  farmAddress={data.stakingRewards}
-                  token0={token0}
-                  token1={token1}
+                  stakingToken={lpToken.address}
+                  farmAddress={farmAddress}
+                  token0={lpToken.token0}
+                  token1={lpToken.token1}
                   stakedBalance={balance}
                   refreshStakedBalance={refreshFarmInfo}
-                  type={"quick"}
+                  type={"sushi"}
                   lpBalance={lpBalance}
                   getLpBalance={getLpBalance}
                 />
               )}
             </div>
           </TdSecond>
-          {/* <TdSecond/> */}
         </Tr>
       )}
     </>
   );
 };
 
-export default TableRecord;
+export default TableRecordSushi;

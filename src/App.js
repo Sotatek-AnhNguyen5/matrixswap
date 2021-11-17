@@ -7,6 +7,7 @@ import "react-toastify/dist/ReactToastify.css";
 import "react-input-range/lib/css/index.css";
 import { ToastContainer, toast } from "react-toastify";
 import { useState } from "react";
+import Select from "react-select";
 
 const Table = styled.table`
   width: 80%;
@@ -14,9 +15,11 @@ const Table = styled.table`
   border-spacing: 0px;
   border-collapse: separate;
   border-spacing: 0 15px;
+
   th {
     color: #656565;
   }
+
   thead {
     tr {
       border: 1px solid white;
@@ -50,35 +53,64 @@ const InputWrapper = styled.div`
     background-color: #333333;
     color: ${(props) => props.color ?? "white"};
     font-weight: 500;
+
     &:focus {
       outline: 0;
     }
   }
 `;
 
+const options = [
+  { value: "quick", label: "QuickSwap" },
+  { value: "sushi", label: "SushiSwap" },
+  { value: "wbtc", label: "WBTC" },
+  { value: "weth", label: "WETH" },
+  { value: "usdc", label: "USDC" },
+  { value: "usdt", label: "USDT" },
+  { value: "link", label: "LINK" },
+  { value: "aave", label: "AAVE" },
+  { value: "quick", label: "QUICK" },
+  { value: "dai", label: "DAI" },
+  { value: "wmatic", label: "WMATIC" },
+];
+
 function App() {
-  const [filterKey, setFilterKey] = useState();
+  const [filterKey, setFilterKey] = useState([]);
   return (
     <Web3ReactProvider getLibrary={getLibrary}>
       <AppWrapper className="App">
         <ConnectButton />
         <InputWrapper>
-          <input
-            value={filterKey}
-            onChange={(e) => setFilterKey(e.target.value)}
-            type="text"
-            placeholder="search"
+          <Select
+            defaultValue={filterKey}
+            isMulti
+            name="colors"
+            options={options}
+            className="basic-multi-select"
+            classNamePrefix="select"
+            openMenuOnClick={false}
+            onChange={(value) => setFilterKey(value)}
+            selectProps={{ openMenuOnClick: false }}
+            theme={(theme) => ({
+              ...theme,
+              borderRadius: 0,
+              colors: {
+                ...theme.colors,
+                primary25: "hotpink",
+                primary: "black",
+              },
+            })}
           />
         </InputWrapper>
         <div style={{ marginTop: "50px" }} className="Table">
           <Table>
             <thead>
               <tr>
-                <th style={{ width: "20%" }}></th>
+                <th style={{ width: "20%" }}/>
                 <th style={{ width: "25%" }}>APR</th>
                 <th style={{ width: "10%" }}>Daily</th>
                 <th style={{ width: "25%" }}>TVL</th>
-                <th style={{ width: "20%" }}></th>
+                <th style={{ width: "20%" }}/>
               </tr>
             </thead>
             <tbody>

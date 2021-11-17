@@ -49,7 +49,7 @@ const useGetPairToken = (FarmAddress) => {
   return [token0, token1, stakingToken, reserves, totalSupply, totalSupplyStakingToken];
 };
 
-const getTokenInfo = async (address, library) => {
+export const getTokenInfo = async (address, library) => {
   const token0Contract = new library.eth.Contract(ERC20ABI, address);
   const [name, symbol, decimals] = await Promise.all([
     token0Contract.methods.name().call(),

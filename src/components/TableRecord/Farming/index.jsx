@@ -8,8 +8,11 @@ import { toast } from "react-toastify";
 import StakingTokenABI from "../../../abi/stakingRewardABi.json";
 import moment from "moment";
 import { isEmpty, find } from "lodash";
-import InputRange from 'react-input-range';
-
+import InputRange from "react-input-range";
+import useStakeCallback from "../../../hooks/useStakeCallback";
+import useApproveCallBack from "../../../hooks/useApproveCallBack";
+import SubmitButton from "../../SubmitButton";
+import useUnStakeCallBack from "../../../hooks/useUnstakeCallBack";
 
 const BalanceRow = styled.div`
   display: flex;
@@ -17,10 +20,10 @@ const BalanceRow = styled.div`
   justify-content: space-between;
 `;
 
-
 const InputWrapper = styled.div`
   width: 100%;
   margin-right: 30px;
+
   .input-wrapper {
     margin-bottom: 20px;
   }
@@ -51,28 +54,44 @@ const FarmingTab = ({
   token1,
   stakedBalance,
   refreshStakedBalance,
+  type,
+  lpBalance,
+  getLpBalance,
 }) => {
-  const { library, account } = useWeb3React();
-  const [allowance, setAllowance] = useState(0);
-  const [balance, setBalance] = useState(0);
   const [stakeRange, setStakeRange] = useState(0);
   const [unStakeRange, setUnStakeRange] = useState(0);
   const inputRef = useRef();
   const inputRefUnstake = useRef();
+  const [approve, loadingApprove, allowance] = useApproveCallBack(
+    stakingToken,
+    farmAddress
+  );
 
-  const getBalance = async () => {
-    const stakingTokenContract = new library.eth.Contract(
-      StakingTokenABI,
-      stakingToken
-    );
-    const balance = await stakingTokenContract.methods
-      .balanceOf(account)
-      .call();
-    const balanceToNumber = new BigNumber(balance)
-      .div(new BigNumber(10).pow(18))
-      .toFixed();
-    setBalance(balanceToNumber);
+
+  const onFinishStake = async () => {
+    saveToStorage();
+    await Promise.all([refreshStakedBalance(), getLpBalance()]);
+    inputRef.current.value = "";
+    toast("Stake successfully!");
   };
+  const onFinishUnStake = async () => {
+    await Promise.all([getLpBalance(), refreshStakedBalance()]);
+    toast("Withdraw successfully!");
+    inputRefUnstake.current.value = "";
+  };
+
+  const [stake, loadingStake] = useStakeCallback(
+    farmAddress,
+    inputRef,
+    onFinishStake,
+    type
+  );
+  const [unStakeCallBack, loadingUnstake] = useUnStakeCallBack(
+    farmAddress,
+    inputRefUnstake.current && inputRefUnstake.current.value,
+    onFinishUnStake,
+    type
+  );
 
   const saveToStorage = () => {
     const stakeInfo = JSON.parse(localStorage.getItem("stakeInfo")) || [];
@@ -87,55 +106,9 @@ const FarmingTab = ({
     }
   };
 
-  const onStake = () => {
-    const farmContract = new library.eth.Contract(FarmABI, farmAddress);
-    const value = new BigNumber(inputRef.current.value)
-      .times(new BigNumber(10).pow(18))
-      .toFixed();
-    try {
-      farmContract.methods
-        .stake(value)
-        .send({ from: account })
-        .on("confirmation", async function (number) {
-          if (number === 5) {
-            saveToStorage();
-            await Promise.all([refreshStakedBalance(), getBalance()])
-            inputRef.current.value = '';
-            toast("Stake successfully!");
-          }
-        });
-    } catch (e) {
-      console.log(e);
-      toast("Stake failed!");
-    }
-  };
-
-  const onWithdraw = () => {
-    const farmContract = new library.eth.Contract(FarmABI, farmAddress);
-    const valueUnstake = new BigNumber(inputRefUnstake.current.value)
-      .times(new BigNumber(10).pow(18))
-      .toFixed();
-    console.log(valueUnstake);
-    try {
-      farmContract.methods
-        .withdraw(valueUnstake)
-        .send({ from: account })
-        .on("confirmation", async function (number) {
-          if (number === 5) {
-            await Promise.all([getBalance(), refreshStakedBalance()])
-            toast("Withdraw successfully!");
-            inputRefUnstake.current.value = "";
-          }
-        });
-    } catch (e) {
-      console.log(e);
-      toast("Withdraw failed!");
-    }
-  };
-
   const onChangeRangeStake = (percent) => {
     setStakeRange(percent);
-    inputRef.current.value = new BigNumber(balance)
+    inputRef.current.value = new BigNumber(lpBalance)
       .times(percent)
       .div(100)
       .toFixed();
@@ -149,54 +122,13 @@ const FarmingTab = ({
       .toFixed();
   };
 
-  useEffect(() => {
-    const getAllowance = async () => {
-      const stakingTokenContract = new library.eth.Contract(
-        StakingTokenABI,
-        stakingToken
-      );
-
-      const [allowance] = await Promise.all([
-        stakingTokenContract.methods.allowance(account, farmAddress).call(),
-        getBalance(),
-      ]);
-      setAllowance(allowance);
-    };
-    getAllowance();
-  }, []);
-
-  const onApprove = () => {
-    const stakingTokenContract = new library.eth.Contract(
-      StakingTokenABI,
-      stakingToken
-    );
-    const value = new BigNumber(99999999)
-      .times(new BigNumber(10).pow(18))
-      .toFixed();
-    try {
-      stakingTokenContract.methods
-        .approve(farmAddress, value)
-        .send({ from: account })
-        .once("receipt", function (e) {
-          console.log(e);
-          toast("Send approve tx successfully");
-        })
-        .once("confirmation", function (e) {
-          setAllowance(value);
-        });
-    } catch (e) {
-      console.log(e);
-      toast("Approve failed");
-    }
-  };
-
   return (
     <div>
       <BalanceRow>
         <span>
           LP {token0.symbol}-{token1.symbol} balance:
         </span>
-        <span>{balance}</span>
+        <span>{lpBalance}</span>
       </BalanceRow>
       <div style={{ display: "flex", marginTop: "20px" }}>
         <InputWrapper>
@@ -206,18 +138,28 @@ const FarmingTab = ({
             maxValue={100}
             minValue={0}
             value={stakeRange}
-            formatLabel={value => `${value}%`}
+            formatLabel={(value) => `${value}%`}
           />
         </InputWrapper>
         <ButtonWrapper>
           {new BigNumber(allowance).isZero() ? (
-            <ButtonAction onClick={() => onApprove()}>Approve</ButtonAction>
+            <SubmitButton
+              label={"approve"}
+              loading={loadingApprove}
+              labelLoading={"approving"}
+              onClick={approve}
+            />
           ) : (
-            <ButtonAction onClick={() => onStake()}>Stake</ButtonAction>
+            <SubmitButton
+              label={"stake"}
+              loading={loadingStake}
+              labelLoading={"staking"}
+              onClick={stake}
+            />
           )}
         </ButtonWrapper>
       </div>
-      <BalanceRow style={{marginTop: 30}}>
+      <BalanceRow style={{ marginTop: 30 }}>
         <span>Your Staked</span>
         <span>{stakedBalance}</span>
       </BalanceRow>
@@ -229,11 +171,16 @@ const FarmingTab = ({
             maxValue={100}
             minValue={0}
             value={unStakeRange}
-            formatLabel={value => `${value}%`}
+            formatLabel={(value) => `${value}%`}
           />
         </InputWrapper>
         <ButtonWrapper>
-          <ButtonAction onClick={() => onWithdraw()}>Unstake</ButtonAction>
+          <SubmitButton
+            label={"Unstake"}
+            loading={loadingUnstake}
+            labelLoading={"Unstaking"}
+            onClick={unStakeCallBack}
+          />
         </ButtonWrapper>
       </div>
     </div>
