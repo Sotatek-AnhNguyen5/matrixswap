@@ -61,8 +61,8 @@ const InputWrapper = styled.div`
 `;
 
 const options = [
-  { value: "quick", label: "QuickSwap" },
-  { value: "sushi", label: "SushiSwap" },
+  { value: "quickswap", label: "QuickSwap" },
+  { value: "sushiswap", label: "SushiSwap" },
   { value: "wbtc", label: "WBTC" },
   { value: "weth", label: "WETH" },
   { value: "usdc", label: "USDC" },

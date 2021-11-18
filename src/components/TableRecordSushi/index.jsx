@@ -76,7 +76,8 @@ const TableRecordSushi = ({ data, filterKey, type }) => {
   const [isZap, setIsZap] = useState(true);
   const farmAddress = data.rewardAddress;
   const tvl = data.valueLockedUSD;
-  const apr = useCalculateApr(farmAddress, tvl, "sushi");
+  const rewardTokens = data.rewardTokens;
+  const apr = useCalculateApr(farmAddress, tvl, "sushi", rewardTokens[0]);
   const daily = useMemo(() => {
     return new BigNumber(apr).div(365).toFixed(2);
   }, [apr]);
@@ -142,7 +143,7 @@ const TableRecordSushi = ({ data, filterKey, type }) => {
             <DataRow>
               <div>Reward</div>
               <ValueSide>
-                {reward} Sushi
+                {reward} ADDY
                 <SubmitButton
                   disabled={new BigNumber(reward).isZero()}
                   label={"Claim"}

@@ -13,6 +13,10 @@ export function isValidAddress(address) {
   return address !== zero_address && web3.utils.isAddress(address);
 }
 
+export function unWrappedTokenSymbol(symbol) {
+  return symbol === 'WETH' ? 'ETH' : symbol;
+}
+
 export function moneyFormatter(num, digits = 2) {
   const lookup = [
     { value: 1, symbol: "" },

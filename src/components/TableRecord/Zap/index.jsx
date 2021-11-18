@@ -4,8 +4,6 @@ import InputNumber from "../../InputNumber";
 import IERC20ABI from "../../../abi/IERC20ABI.json";
 import { useWeb3React } from "@web3-react/core";
 import BigNumber from "bignumber.js";
-import LpABI from "../../../abi/stakingRewardABi.json";
-import ZapABI from "../../../abi/zapABI.json";
 import { toast } from "react-toastify";
 import useEstimateOutput from "../../../hooks/useEstimateOutput";
 import InputRange from "react-input-range";
@@ -14,6 +12,9 @@ import { ADDRESS_ZAP, PROTOCOL_FUNCTION } from "../../../const";
 import useApproveCallBack from "../../../hooks/useApproveCallBack";
 import SubmitButton from "../../SubmitButton";
 import useZapCallback from "../../../hooks/useZapCallback";
+import { find } from "lodash";
+import DefaultToken from "../../../json/defaultTokens.json";
+import { unWrappedTokenSymbol } from "../../../utils";
 
 const FakeInput = styled.div`
   width: 100%;
@@ -27,6 +28,20 @@ const FakeInput = styled.div`
   border: solid 1px white;
   background-color: #333333;
   font-weight: 500;
+
+  div {
+    margin-left: auto;
+
+    img {
+      width: 30px;
+      height: 30px;
+      border-radius: 50%;
+
+      &:first-child {
+        margin-right: 10px;
+      }
+    }
+  }
 `;
 
 const InputWrapper = styled.div`
@@ -39,16 +54,6 @@ const BalanceRow = styled.div`
   justify-content: space-between;
 `;
 
-const ZapButton = styled.button`
-  padding: 10px 20px;
-  min-width: 100px;
-  background-color: #3ee046;
-  margin-top: 10px;
-  margin-left: auto;
-  border: 0;
-  cursor: pointer;
-`;
-
 const ZapTab = ({
   stakingToken,
   token0,
@@ -59,13 +64,13 @@ const ZapTab = ({
   refreshStakeBalance,
   type,
   getLpBalance,
-  lpBalance
+  lpBalance,
 }) => {
   const { library, account } = useWeb3React();
   const [selectedToken, setSelectedToken] = useState({});
   const [tokenBalance, setTokenBalance] = useState(0);
   const [amount, onChangeAmount] = useState(0);
-  const isZapAble = useCheckZapToken(selectedToken, token0, token1);
+  const isZapAble = useCheckZapToken(selectedToken, token0, token1, type);
   const [zapValuePercent, setZapValuePercent] = useState(0);
   const [approve, loadingApprove, allowance] = useApproveCallBack(
     selectedToken.address,
@@ -126,12 +131,37 @@ const ZapTab = ({
     };
   }, [type, selectedToken.address, amount]);
 
+  const onChangeAmountValue = (e) => {
+    onChangeAmount(e);
+    const percent = new BigNumber(e).div(tokenBalance).times(100);
+    e && setZapValuePercent(percent.gt(100) ? 100 : percent.toNumber());
+  };
+
   const [onZap, zapLoading] = useZapCallback(params, onFinishZap);
+
+  const tokenIcon0 = useMemo(() => {
+    const token = find(
+      DefaultToken.tokens,
+      (e) => e.symbol === unWrappedTokenSymbol(token0.symbol)
+    );
+    return token
+      ? token.logoURI
+      : "https://raw.githubusercontent.com/sameepsi/quickswap-default-token-list/master/assets/dg.jpg";
+  }, [DefaultToken.tokens, token0.symbol]);
+
+  const tokenIcon1 = useMemo(() => {
+    const token = find(
+      DefaultToken.tokens,
+      (e) => e.symbol === unWrappedTokenSymbol(token1.symbol)
+    );
+    return token
+      ? token.logoURI
+      : "https://raw.githubusercontent.com/sameepsi/quickswap-default-token-list/master/assets/dg.jpg";
+  }, [DefaultToken.tokens, token1.symbol]);
 
   useEffect(() => {
     getBalance();
   }, [selectedToken.address]);
-
 
   return (
     <div>
@@ -143,8 +173,9 @@ const ZapTab = ({
         <InputNumber
           withSelectToken={true}
           onSetSelectedToken={setSelectedToken}
-          onChange={onChangeAmount}
+          onChange={(e) => onChangeAmountValue(e)}
           inputRef={inputRef}
+          disabled={new BigNumber(allowance).isZero()}
         />
       </InputWrapper>
       <div style={{ marginTop: "20px", marginBottom: "20px" }}>
@@ -161,7 +192,13 @@ const ZapTab = ({
         <span>Balance: {lpBalance}</span>
       </BalanceRow>
       <div style={{ marginTop: "10px" }}>
-        <FakeInput>{estimateOutput}</FakeInput>
+        <FakeInput>
+          {estimateOutput}
+          <div>
+            <img src={tokenIcon0} alt="" />
+            <img src={tokenIcon1} alt="" />
+          </div>
+        </FakeInput>
       </div>
       <small style={{ color: "red" }}>
         {!isZapAble && "Cannot zap this token."}
@@ -178,10 +215,11 @@ const ZapTab = ({
           />
         ) : (
           <SubmitButton
-            label={"zap"}
+            label={isZapAble ? "zap" : "invalid token"}
             loading={zapLoading}
             labelLoading={"zapping"}
             onClick={onZap}
+            disabled={!isZapAble}
           />
         )}
       </div>

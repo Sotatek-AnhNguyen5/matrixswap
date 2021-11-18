@@ -1,7 +1,6 @@
 import styled from "styled-components";
 import { FaAngleDown, FaAngleLeft } from "react-icons/fa";
 import React, { useState, useMemo } from "react";
-import { useWeb3React } from "@web3-react/core";
 import ZapTab from "./Zap";
 import FarmingTab from "./Farming";
 import useGetPairToken from "../../hooks/useGetPairToken";
@@ -10,7 +9,7 @@ import useTVL from "../../hooks/useTVL";
 import useCalculateApr from "../../hooks/useCalculatedApr";
 import { toast } from "react-toastify";
 import BigNumber from "bignumber.js";
-import {find, isEmpty, startsWith} from "lodash";
+import {find, isEmpty} from "lodash";
 import { convertDate, moneyFormatter } from "../../utils";
 import SubmitButton from "../SubmitButton";
 import useGetRewardCallback from "../../hooks/useGetRewardCallback";
@@ -28,6 +27,10 @@ const Td = styled.td`
   &:first-child {
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
+  }
+  a {
+    color: white;
+    text-decoration: none;
   }
 `;
 
@@ -119,12 +122,17 @@ const TableRecord = ({ data, filterKey, type }) => {
     <>
       <Tr isShow={isShow} onClick={() => setIsSelected((value) => !value)}>
         <Td style={{ textAlign: "left", paddingLeft: "20px" }}>
-          {token0.symbol} - {token1.symbol}
+          <a
+            target="_blank"
+            href={`https://polygonscan.com/address/${farmAddress}`}
+          >
+            {token0.symbol} - {token1.symbol}
+          </a>
         </Td>
         <Td>{apr} %</Td>
         <Td>{daily} %</Td>
         <Td>{moneyFormatter(usdtValue)} $</Td>
-        <Td>{!isSelected ? <FaAngleLeft /> : <FaAngleDown />}</Td>
+        <Td>{isSelected ? <FaAngleLeft /> : <FaAngleDown />}</Td>
       </Tr>
       {isSelected && (
         <Tr isShow={isShow} style={{ marginTop: "10px" }}>
@@ -193,7 +201,6 @@ const TableRecord = ({ data, filterKey, type }) => {
               )}
             </div>
           </TdSecond>
-          {/* <TdSecond/> */}
         </Tr>
       )}
     </>

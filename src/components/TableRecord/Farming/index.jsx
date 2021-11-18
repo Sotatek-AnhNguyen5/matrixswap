@@ -67,7 +67,6 @@ const FarmingTab = ({
     farmAddress
   );
 
-
   const onFinishStake = async () => {
     saveToStorage();
     await Promise.all([refreshStakedBalance(), getLpBalance()]);
@@ -122,6 +121,18 @@ const FarmingTab = ({
       .toFixed();
   };
 
+  const onChangeUnStake = (value) => {
+    const percent = new BigNumber(value).div(stakedBalance).times(100);
+    value &&
+      setUnStakeRange(percent.gt(100) ? 100 : parseInt(percent.toFixed(2)));
+  };
+
+  const onChangeStake = (value) => {
+    const percent = new BigNumber(value).div(lpBalance).times(100);
+    value &&
+      setStakeRange(percent.gt(100) ? 100 : parseInt(percent.toFixed(2)));
+  };
+
   return (
     <div>
       <BalanceRow>
@@ -132,7 +143,11 @@ const FarmingTab = ({
       </BalanceRow>
       <div style={{ display: "flex", marginTop: "20px" }}>
         <InputWrapper>
-          <InputNumber inputRef={inputRef} />
+          <InputNumber
+            disabled={new BigNumber(allowance).isZero()}
+            inputRef={inputRef}
+            onChange={onChangeStake}
+          />
           <InputRange
             onChange={(e) => onChangeRangeStake(e)}
             maxValue={100}
@@ -165,7 +180,11 @@ const FarmingTab = ({
       </BalanceRow>
       <div style={{ display: "flex", marginTop: "20px" }}>
         <InputWrapper>
-          <InputNumber inputRef={inputRefUnstake} />
+          <InputNumber
+            inputRef={inputRefUnstake}
+            onChange={onChangeUnStake}
+            disabled={new BigNumber(stakedBalance).isZero()}
+          />
           <InputRange
             onChange={(e) => onChangeRangeWithDraw(e)}
             maxValue={100}
@@ -180,6 +199,7 @@ const FarmingTab = ({
             loading={loadingUnstake}
             labelLoading={"Unstaking"}
             onClick={unStakeCallBack}
+            disabled={new BigNumber(stakedBalance).isZero()}
           />
         </ButtonWrapper>
       </div>

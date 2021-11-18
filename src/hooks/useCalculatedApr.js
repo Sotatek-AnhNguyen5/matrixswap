@@ -10,7 +10,7 @@ const QUICKSWAP_FACTORY_ADDRESS = "0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32";
 const SUSHI_FACTORY_ADDRESS = "0xc35dadb65012ec5796536bd9864ed8773abc74c4";
 const USDT_ADDRESS = "0xc2132D05D31c914a87C6611C10748AEb04B58e8F";
 
-const useCalculateApr = (farmAddress, tvl, type) => {
+const useCalculateApr = (farmAddress, tvl, type, rewardToken) => {
   const [value, setValue] = useState('NaN');
   const {library} = useWeb3React();
 
@@ -18,18 +18,16 @@ const useCalculateApr = (farmAddress, tvl, type) => {
     const getData = async () => {
       if (type === 'sushi') {
         const farmContract = new library.eth.Contract(SushiFarmABI, farmAddress);
-        const [rewardRate, rewardsToken] = await Promise.all([farmContract.methods.accRewardPerShare().call(), farmContract.methods.token().call()])
+        const [rewardRate] = await Promise.all([farmContract.methods.accRewardPerShare().call()])
         const rewardRatePerYear = new BigNumber(rewardRate)
-          .div(new BigNumber(10).pow(18))
+          .div(new BigNumber(10).pow(rewardToken.decimals))
           .times(86400)
-          .times(365);
-        // const rewardToUSD = await convertToUsdt(
-        //   rewardRatePerYear,
-        //   library,
-        //   rewardsToken,
-        //   "sushi"
-        // );
-        // console.log(rewardRatePerYear);
+          .times(365)
+          .times(rewardToken.price)
+          .div(tvl)
+          .times(100)
+          .toFixed(2);
+        setValue(rewardRatePerYear);
       } else {
         const farmContract = new library.eth.Contract(FarmABI, farmAddress);
         const [rewardsToken, rewardRate] = await Promise.all([

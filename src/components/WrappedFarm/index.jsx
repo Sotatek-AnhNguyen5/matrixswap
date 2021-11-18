@@ -43,11 +43,11 @@ const WrappedFarm = ({filterKey}) => {
 
   return (
     <>
-      {take(data, 10).map((e, index) => {
-        return <TableRecord key={index} filterKey={filterKey} data={e} type={"quick"}/>;
+      {data.map((e, index) => {
+        return <TableRecord key={index} filterKey={filterKey} data={e} type={"quickswap"}/>;
       })}
       {take(dataSushi, 10).map((e, index) => {
-        return <TableRecordSushi key={index} filterKey={filterKey} data={e} type={"sushi"}/>
+        return <TableRecordSushi key={index} filterKey={filterKey} data={e} type={"sushiswap"}/>
       })}
     </>
   );
