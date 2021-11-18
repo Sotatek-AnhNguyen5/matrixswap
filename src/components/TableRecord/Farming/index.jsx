@@ -7,7 +7,7 @@ import BigNumber from "bignumber.js";
 import { toast } from "react-toastify";
 import StakingTokenABI from "../../../abi/stakingRewardABi.json";
 import moment from "moment";
-import { isEmpty, find } from "lodash";
+import { isEmpty, find, findIndex } from "lodash";
 import InputRange from "react-input-range";
 import useStakeCallback from "../../../hooks/useStakeCallback";
 import useApproveCallBack from "../../../hooks/useApproveCallBack";
@@ -74,6 +74,9 @@ const FarmingTab = ({
     toast("Stake successfully!");
   };
   const onFinishUnStake = async () => {
+    if(type === 'sushi' || new BigNumber(stakeRange).eq(100)) {
+      removeFromStorage();
+    }
     await Promise.all([getLpBalance(), refreshStakedBalance()]);
     toast("Withdraw successfully!");
     inputRefUnstake.current.value = "";
@@ -102,6 +105,18 @@ const FarmingTab = ({
       };
       stakeInfo.push(farm);
       localStorage.setItem("stakeInfo", JSON.stringify(stakeInfo));
+    }
+  };
+
+  const removeFromStorage = () => {
+    const stakeInfo = JSON.parse(localStorage.getItem("stakeInfo")) || [];
+    const farmIndex = findIndex(stakeInfo, { farmAddress });
+    if (farmIndex !== -1) {
+      stakeInfo.splice(farmIndex, 1)
+      localStorage.setItem(
+        "stakeInfo",
+        JSON.stringify(stakeInfo)
+      );
     }
   };
 
