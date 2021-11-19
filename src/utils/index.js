@@ -1,6 +1,7 @@
 import web3 from "web3";
 import moment from "moment";
 import { Keccak } from "sha3";
+import {findIndex} from "lodash";
 
 export const FACTORY_ADDRESS = "0x8aaa5e259f74c8114e0a471d9f2adfc66bfe09ed";
 const zero_address = "0x0000000000000000000000000000000000000000";
@@ -53,3 +54,15 @@ export function hashSha3Tokens(token0, token1) {
   hash.update(token0 + token1);
   return hash.digest({ buffer: Buffer.alloc(32)});;
 }
+
+export const removeStakeInfoFromStorage = (farmAddress) => {
+  const stakeInfo = JSON.parse(localStorage.getItem("stakeInfo")) || [];
+  const farmIndex = findIndex(stakeInfo, { farmAddress });
+  if (farmIndex !== -1) {
+    stakeInfo.splice(farmIndex, 1)
+    localStorage.setItem(
+      "stakeInfo",
+      JSON.stringify(stakeInfo)
+    );
+  }
+};

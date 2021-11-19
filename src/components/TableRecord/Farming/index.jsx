@@ -13,6 +13,7 @@ import useStakeCallback from "../../../hooks/useStakeCallback";
 import useApproveCallBack from "../../../hooks/useApproveCallBack";
 import SubmitButton from "../../SubmitButton";
 import useUnStakeCallBack from "../../../hooks/useUnstakeCallBack";
+import {removeStakeInfoFromStorage} from "../../../utils";
 
 const BalanceRow = styled.div`
   display: flex;
@@ -64,7 +65,7 @@ const FarmingTab = ({
   };
   const onFinishUnStake = async () => {
     if(type === 'sushi' || new BigNumber(stakeRange).eq(100) || new BigNumber(stakedBalance).isZero()) {
-      removeFromStorage();
+      removeStakeInfoFromStorage();
     }
     await Promise.all([getLpBalance(), refreshStakedBalance()]);
     toast("Withdraw successfully!");
@@ -97,17 +98,6 @@ const FarmingTab = ({
     }
   };
 
-  const removeFromStorage = () => {
-    const stakeInfo = JSON.parse(localStorage.getItem("stakeInfo")) || [];
-    const farmIndex = findIndex(stakeInfo, { farmAddress });
-    if (farmIndex !== -1) {
-      stakeInfo.splice(farmIndex, 1)
-      localStorage.setItem(
-        "stakeInfo",
-        JSON.stringify(stakeInfo)
-      );
-    }
-  };
 
   const onChangeRangeStake = (percent) => {
     setStakeRange(percent);

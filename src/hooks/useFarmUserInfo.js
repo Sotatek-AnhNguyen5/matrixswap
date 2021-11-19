@@ -3,7 +3,8 @@ import { useWeb3React } from "@web3-react/core";
 import FarmABI from "../abi/FarmABI.json";
 import SushiFarm from "../abi/sushiFarmABI.json";
 import BigNumber from "bignumber.js";
-import { find } from "lodash";
+import {find, findIndex} from "lodash";
+import {removeStakeInfoFromStorage} from "../utils";
 
 const useFarmUserInfo = (farmAddress, type, pId) => {
   const [reward, setReward] = useState(0);
@@ -38,7 +39,12 @@ const useFarmUserInfo = (farmAddress, type, pId) => {
     );
     const stakeInfo = JSON.parse(localStorage.getItem("stakeInfo")) || [];
     const farmInfo = find(stakeInfo, { farmAddress });
-    !new BigNumber(balanceAmount).isZero() && farmInfo ? setStartDate(farmInfo.startDate) : setStartDate("");
+    if(!new BigNumber(balanceAmount).isZero() && farmInfo) {
+      setStartDate(farmInfo.startDate)
+    }else if(farmInfo) {
+      setStartDate("");
+      removeStakeInfoFromStorage(farmAddress);
+    }
   };
 
   useEffect(() => {
