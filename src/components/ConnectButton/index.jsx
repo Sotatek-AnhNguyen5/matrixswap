@@ -1,10 +1,21 @@
 import { useWeb3React } from "@web3-react/core";
-import { useEffect } from "react";
+import { useEffect, useMemo } from "react";
 import styled from "styled-components";
 import { injected } from "../../utils/connectors";
 
 const MetamaskConnectButton = styled.button`
   margin-left: auto;
+`;
+
+const AddressLabel = styled.div`
+  font-weight: 500;
+  color: white;
+  background-color: #3ee046;
+  padding: 10px 20px;
+  border-radius: 10px;
+  min-width: 250px;
+  text-align: center;
+  letter-spacing: 1px;
 `;
 
 const Wrapper = styled.div`
@@ -15,8 +26,7 @@ const Wrapper = styled.div`
 `;
 
 const ConnectButton = () => {
-  const { active, account, activate } =
-    useWeb3React();
+  const { active, account, activate } = useWeb3React();
 
   const connect = async () => {
     try {
@@ -25,6 +35,15 @@ const ConnectButton = () => {
       console.log(ex);
     }
   };
+
+  const shortcutAddress = useMemo(() => {
+    if (account) {
+      const firstPart = account.substring(1, 10);
+      const endPart = account.substring(account.length - 10, account.length);
+      return `${firstPart}.......${endPart}`;
+    }
+    return ""
+  }, [account]);
 
   useEffect(() => {
     connect();
@@ -39,7 +58,7 @@ const ConnectButton = () => {
       )}
       {active ? (
         <span style={{ textAlign: "right" }}>
-          Connected with <b> {account}</b>
+          <AddressLabel> {shortcutAddress}</AddressLabel>
         </span>
       ) : (
         <span>Not connected</span>

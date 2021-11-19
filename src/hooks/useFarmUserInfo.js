@@ -38,7 +38,7 @@ const useFarmUserInfo = (farmAddress, type, pId) => {
     );
     const stakeInfo = JSON.parse(localStorage.getItem("stakeInfo")) || [];
     const farmInfo = find(stakeInfo, { farmAddress });
-    farmInfo ? setStartDate(farmInfo.startDate) : setStartDate("");
+    !new BigNumber(balanceAmount).isZero() && farmInfo ? setStartDate(farmInfo.startDate) : setStartDate("");
   };
 
   useEffect(() => {

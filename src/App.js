@@ -7,7 +7,8 @@ import "react-toastify/dist/ReactToastify.css";
 import "react-input-range/lib/css/index.css";
 import { ToastContainer, toast } from "react-toastify";
 import { useState } from "react";
-import Select from "react-select";
+import Select, {createFilter } from "react-select";
+import {uniqBy} from "lodash";
 
 const Table = styled.table`
   width: 80%;
@@ -63,19 +64,16 @@ const InputWrapper = styled.div`
 const options = [
   { value: "quickswap", label: "QuickSwap" },
   { value: "sushiswap", label: "SushiSwap" },
-  { value: "wbtc", label: "WBTC" },
-  { value: "weth", label: "WETH" },
-  { value: "usdc", label: "USDC" },
-  { value: "usdt", label: "USDT" },
-  { value: "link", label: "LINK" },
-  { value: "aave", label: "AAVE" },
-  { value: "quick", label: "QUICK" },
-  { value: "dai", label: "DAI" },
-  { value: "wmatic", label: "WMATIC" },
 ];
+
+const filterOption = (candidate, input) => {
+  return (candidate.data.__isNew__ || candidate.label.toLowerCase().includes(input.toLowerCase())) && input;
+};
 
 function App() {
   const [filterKey, setFilterKey] = useState([]);
+  const [optionsFilter, setOptionFilter] = useState([]);
+
   return (
     <Web3ReactProvider getLibrary={getLibrary}>
       <AppWrapper className="App">
@@ -85,10 +83,11 @@ function App() {
             defaultValue={filterKey}
             isMulti
             name="colors"
-            options={options}
+            options={uniqBy([...optionsFilter, ...options], "value")}
             className="basic-multi-select"
             classNamePrefix="select"
             openMenuOnClick={false}
+            filterOption={filterOption}
             onChange={(value) => setFilterKey(value)}
             selectProps={{ openMenuOnClick: false }}
             theme={(theme) => ({
@@ -114,7 +113,7 @@ function App() {
               </tr>
             </thead>
             <tbody>
-              <WrappedFarm filterKey={filterKey} />
+              <WrappedFarm setOptionFilter={setOptionFilter} filterKey={filterKey} />
             </tbody>
           </Table>
         </div>

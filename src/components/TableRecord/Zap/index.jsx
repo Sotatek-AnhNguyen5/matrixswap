@@ -36,10 +36,7 @@ const FakeInput = styled.div`
       width: 30px;
       height: 30px;
       border-radius: 50%;
-
-      &:first-child {
-        margin-right: 10px;
-      }
+      margin-right: 10px;
     }
   }
 `;
@@ -194,33 +191,41 @@ const ZapTab = ({
       <div style={{ marginTop: "10px" }}>
         <FakeInput>
           {estimateOutput}
-          <div>
+          <div
+            style={{
+              display: "flex",
+              justifyContent: "center",
+              alignItems: "center",
+            }}
+          >
             <img src={tokenIcon0} alt="" />
             <img src={tokenIcon1} alt="" />
+            LP {`${token0.symbol} - ${token1.symbol}`}
           </div>
         </FakeInput>
       </div>
-      <small style={{ color: "red" }}>
-        {!isZapAble && "Cannot zap this token."}
-      </small>
       <div
         style={{ display: "flex", justifyContent: "end", marginTop: "20px" }}
       >
-        {new BigNumber(allowance).isZero() ? (
-          <SubmitButton
-            label={"approve"}
-            loading={loadingApprove}
-            labelLoading={"approving"}
-            onClick={approve}
-          />
+        {isZapAble ? (
+          new BigNumber(allowance).isZero() ? (
+            <SubmitButton
+              label={"approve"}
+              loading={loadingApprove}
+              labelLoading={"approving"}
+              onClick={approve}
+            />
+          ) : (
+            <SubmitButton
+              label={"zap"}
+              loading={zapLoading}
+              labelLoading={"zapping"}
+              onClick={onZap}
+              disabled={!isZapAble}
+            />
+          )
         ) : (
-          <SubmitButton
-            label={isZapAble ? "zap" : "invalid token"}
-            loading={zapLoading}
-            labelLoading={"zapping"}
-            onClick={onZap}
-            disabled={!isZapAble}
-          />
+          <SubmitButton label={"invalid token"} disabled={true} />
         )}
       </div>
     </div>

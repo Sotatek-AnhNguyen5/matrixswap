@@ -1,12 +1,10 @@
 import styled from "styled-components";
-import { FaAngleDown, FaAngleLeft } from "react-icons/fa";
+import { FaAngleDown, FaAngleRight } from "react-icons/fa";
 import React, { useState, useMemo } from "react";
-import { useWeb3React } from "@web3-react/core";
 import useFarmUserInfo from "../../hooks/useFarmUserInfo";
 import { toast } from "react-toastify";
-import FarmABI from "../../abi/FarmABI.json";
 import BigNumber from "bignumber.js";
-import {find, isEmpty, startsWith} from "lodash";
+import { find, isEmpty } from "lodash";
 import { convertDate, moneyFormatter } from "../../utils";
 import useLpTokenInfo from "../../hooks/useLpTokenInfo";
 import useCalculateApr from "../../hooks/useCalculatedApr";
@@ -71,6 +69,21 @@ const TabLabel = styled.div`
   }
 `;
 
+const WrappedDataColumn = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
+const DataColumn = styled.div`
+  align-items: center;
+  justify-content: space-between;
+  padding: 10px;
+
+  div {
+    padding: 10px;
+  }
+`;
+
 const TableRecordSushi = ({ data, filterKey, type }) => {
   const [isSelected, setIsSelected] = useState(false);
   const [isZap, setIsZap] = useState(true);
@@ -106,9 +119,10 @@ const TableRecordSushi = ({ data, filterKey, type }) => {
       filterKey,
       (e) =>
         e.value === type ||
-        [lpToken.token0.symbol.toUpperCase(), lpToken.token1.symbol.toUpperCase()].indexOf(
-          e.value.toUpperCase()
-        ) !== -1
+        [
+          lpToken.token0.symbol.toUpperCase(),
+          lpToken.token1.symbol.toUpperCase(),
+        ].indexOf(e.value.toUpperCase()) !== -1
     );
     return isEmpty(filterKey) || isExists;
   }, [filterKey]);
@@ -127,35 +141,34 @@ const TableRecordSushi = ({ data, filterKey, type }) => {
         <Td>{apr} %</Td>
         <Td>{daily} %</Td>
         <Td>{moneyFormatter(tvl)} $</Td>
-        <Td>{!isSelected ? <FaAngleLeft /> : <FaAngleDown />}</Td>
+        <Td>{!isSelected ? <FaAngleRight /> : <FaAngleDown />}</Td>
       </Tr>
       {isSelected && (
         <Tr isShow={isShow} style={{ marginTop: "10px" }}>
-          <TdSecond colSpan={2}>
-            <DataRow>
-              <div>Start date</div>
-              <ValueSide> {convertDate(startStakeDate)} </ValueSide>
-            </DataRow>
-            <DataRow>
-              <div>Your Staked</div>
-              <ValueSide>{balance}</ValueSide>
-            </DataRow>
-            <DataRow>
-              <div>Reward</div>
-              <ValueSide>
-                {reward} ADDY
-                <SubmitButton
-                  disabled={new BigNumber(reward).isZero()}
-                  label={"Claim"}
-                  loading={loadingGetReward}
-                  labelLoading={"Claiming"}
-                  onClick={onGetReward}
-                  style={{ marginLeft: "20px" }}
-                />
-              </ValueSide>
-            </DataRow>
+          <TdSecond colSpan={3}>
+            <WrappedDataColumn>
+              <DataColumn style={{ textAlign: "left" }}>
+                <div>Start date</div>
+                <div>Your Staked</div>
+                <div>Reward</div>
+              </DataColumn>
+              <DataColumn>
+                <ValueSide> {convertDate(startStakeDate)} </ValueSide>
+                <ValueSide>{balance}</ValueSide>
+                <ValueSide>
+                  {reward} ADDY
+                  <SubmitButton
+                    disabled={new BigNumber(reward).isZero()}
+                    label={"Claim"}
+                    loading={loadingGetReward}
+                    labelLoading={"Claiming"}
+                    onClick={onGetReward}
+                    style={{ marginLeft: "20px" }}
+                  />
+                </ValueSide>
+              </DataColumn>
+            </WrappedDataColumn>
           </TdSecond>
-          <td />
           <TdSecond colSpan={2}>
             <div style={{ display: "flex", justifyContent: "flex-start" }}>
               <TabLabel isActive={isZap} onClick={() => setIsZap(true)}>

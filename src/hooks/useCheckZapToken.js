@@ -3,12 +3,10 @@ import { isEmpty } from "lodash";
 import { useEffect, useState } from "react";
 import QuickSwapFactoryABI from "../abi/quickswapFactoryABI.json";
 import ZAPABI from "../abi/zapABI.json";
-import { ADDRESS_ZAP } from "../const";
+import {ADDRESS_ZAP, PROTOCOL_FUNCTION, QUICKSWAP_FACTORY_ADDRESS, SUSHI_FACTORY_ADDRESS} from "../const";
 import { hashSha3Tokens, isValidAddress } from "../utils";
 
-const QUICKSWAP_FACTORY_ADDRESS = "0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32";
-
-const useCheckZapToken = (tokenCheck, token0, token1) => {
+const useCheckZapToken = (tokenCheck, token0, token1, type) => {
   const [zapAble, setZapAble] = useState(true);
   const { library } = useWeb3React();
 
@@ -24,7 +22,7 @@ const useCheckZapToken = (tokenCheck, token0, token1) => {
 
       const factoryContract = new library.eth.Contract(
         QuickSwapFactoryABI,
-        QUICKSWAP_FACTORY_ADDRESS
+        type === "sushi" ? SUSHI_FACTORY_ADDRESS : QUICKSWAP_FACTORY_ADDRESS
       );
       const [pairToken0, pairToken1] = await Promise.all([
         factoryContract.methods
@@ -41,18 +39,20 @@ const useCheckZapToken = (tokenCheck, token0, token1) => {
       }
 
       const zapContract = new library.eth.Contract(ZAPABI.abi, ADDRESS_ZAP);
-
+      const hashType = PROTOCOL_FUNCTION[type].fullnameHash;
       const hash0 = hashSha3Tokens(tokenCheck.address, token0.address);
       const hash1 = hashSha3Tokens(tokenCheck.address, token1.address);
-      const [interateToken0, internateToken1] = await Promise.all([
-        zapContract.methods.intermediateTokens(hash0).call(),
-        zapContract.methods.intermediateTokens(hash1).call(),
+      const [internateToken0, internateToken1] = await Promise.all([
+        zapContract.methods.protocols(hashType).call(),
+        zapContract.methods.protocols(hashType).call(),
       ]);
 
-      if (isValidAddress(interateToken0) || isValidAddress(internateToken1)) {
-        setZapAble(true);
-        return;
-      }
+      console.log(internateToken0, internateToken1)
+      //TODO fix this
+      // if (isValidAddress(internateToken0) || isValidAddress(internateToken1)) {
+      //   setZapAble(true);
+      //   return;
+      // }
 
       setZapAble(false);
     };

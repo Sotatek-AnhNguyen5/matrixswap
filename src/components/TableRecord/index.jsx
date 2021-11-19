@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import { FaAngleDown, FaAngleLeft } from "react-icons/fa";
-import React, { useState, useMemo } from "react";
+import { FaAngleDown, FaAngleLeft, FaAngleRight } from "react-icons/fa";
+import React, { useState, useMemo, useEffect } from "react";
 import ZapTab from "./Zap";
 import FarmingTab from "./Farming";
 import useGetPairToken from "../../hooks/useGetPairToken";
@@ -9,7 +9,7 @@ import useTVL from "../../hooks/useTVL";
 import useCalculateApr from "../../hooks/useCalculatedApr";
 import { toast } from "react-toastify";
 import BigNumber from "bignumber.js";
-import {find, isEmpty} from "lodash";
+import { find, isEmpty } from "lodash";
 import { convertDate, moneyFormatter } from "../../utils";
 import SubmitButton from "../SubmitButton";
 import useGetRewardCallback from "../../hooks/useGetRewardCallback";
@@ -28,6 +28,7 @@ const Td = styled.td`
     border-top-left-radius: 10px;
     border-bottom-left-radius: 10px;
   }
+
   a {
     color: white;
     text-decoration: none;
@@ -38,24 +39,29 @@ const TdSecond = styled(Td)`
   vertical-align: baseline;
 `;
 
+const WrappedDataColumn = styled.div`
+  display: flex;
+  justify-content: space-between;
+`;
+
 const Tr = styled.tr`
   background-color: #333333;
   border-radius: 10px;
   display: ${(props) => (props.isShow ? "table-row" : "none")};
 `;
 
-const DataRow = styled.div`
-  display: flex;
+const DataColumn = styled.div`
   align-items: center;
   justify-content: space-between;
-  width: 100%;
   padding: 10px;
+
+  div {
+    padding: 10px;
+  }
 `;
 
 const ValueSide = styled.div`
   text-align: left;
-  width: 30%;
-  white-space: nowrap;
 `;
 
 const TabLabel = styled.div`
@@ -69,7 +75,7 @@ const TabLabel = styled.div`
   }
 `;
 
-const TableRecord = ({ data, filterKey, type }) => {
+const TableRecord = ({ data, filterKey, type, setOptionFilter }) => {
   const [isSelected, setIsSelected] = useState(false);
   const [isZap, setIsZap] = useState(true);
   const farmAddress = data.stakingRewards;
@@ -113,10 +119,22 @@ const TableRecord = ({ data, filterKey, type }) => {
       filterKey,
       (e) =>
         e.value === type ||
-        [token0.symbol, token1.symbol].indexOf(e.value.toUpperCase()) !== -1
+        [token0.symbol.toUpperCase(), token1.symbol.toUpperCase()].indexOf(e.value.toUpperCase()) !== -1
     );
     return isEmpty(filterKey) || isExists;
   }, [filterKey]);
+
+  useEffect(() => {
+    if (token0.symbol && token1.symbol) {
+      setOptionFilter((e) => {
+        return [
+          ...e,
+          { value: token0.symbol, label: token0.symbol },
+          { value: token1.symbol, label: token1.symbol },
+        ];
+      });
+    }
+  }, [token0.symbol, token1.symbol]);
 
   return (
     <>
@@ -132,35 +150,34 @@ const TableRecord = ({ data, filterKey, type }) => {
         <Td>{apr} %</Td>
         <Td>{daily} %</Td>
         <Td>{moneyFormatter(usdtValue)} $</Td>
-        <Td>{isSelected ? <FaAngleLeft /> : <FaAngleDown />}</Td>
+        <Td>{!isSelected ? <FaAngleRight /> : <FaAngleDown />}</Td>
       </Tr>
       {isSelected && (
         <Tr isShow={isShow} style={{ marginTop: "10px" }}>
-          <TdSecond colSpan={2}>
-            <DataRow>
-              <div>Start date</div>
-              <ValueSide> {convertDate(startStakeDate)} </ValueSide>
-            </DataRow>
-            <DataRow>
-              <div>Your Staked</div>
-              <ValueSide>{balance}</ValueSide>
-            </DataRow>
-            <DataRow>
-              <div>Reward</div>
-              <ValueSide>
-                {reward} dQUICK
-                <SubmitButton
-                  disabled={new BigNumber(reward).isZero()}
-                  label={"Claim"}
-                  loading={loadingGetReward}
-                  labelLoading={"Claiming"}
-                  onClick={onGetReward}
-                  style={{ marginLeft: "20px" }}
-                />
-              </ValueSide>
-            </DataRow>
+          <TdSecond colSpan={3}>
+            <WrappedDataColumn>
+              <DataColumn style={{ textAlign: "left" }}>
+                <div>Start date</div>
+                <div>Your Staked</div>
+                <div>Reward</div>
+              </DataColumn>
+              <DataColumn>
+                <ValueSide> {convertDate(startStakeDate)} </ValueSide>
+                <ValueSide>{balance}</ValueSide>
+                <ValueSide>
+                  {reward} dQUICK
+                  <SubmitButton
+                    disabled={new BigNumber(reward).isZero()}
+                    label={"Claim"}
+                    loading={loadingGetReward}
+                    labelLoading={"Claiming"}
+                    onClick={onGetReward}
+                    style={{ marginLeft: "20px" }}
+                  />
+                </ValueSide>
+              </DataColumn>
+            </WrappedDataColumn>
           </TdSecond>
-          <td />
           <TdSecond colSpan={2}>
             <div style={{ display: "flex", justifyContent: "flex-start" }}>
               <TabLabel isActive={isZap} onClick={() => setIsZap(true)}>

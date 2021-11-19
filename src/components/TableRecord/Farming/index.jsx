@@ -36,17 +36,6 @@ const ButtonWrapper = styled.div`
   justify-content: center;
 `;
 
-const ButtonAction = styled.div`
-  width: 100px;
-  text-align: center;
-  background-color: #fff;
-  background-color: #3ee046;
-  border: 0;
-  padding: 5px 10px;
-  cursor: pointer;
-  border-radius: 6px;
-`;
-
 const FarmingTab = ({
   farmAddress,
   stakingToken,
@@ -139,13 +128,13 @@ const FarmingTab = ({
   const onChangeUnStake = (value) => {
     const percent = new BigNumber(value).div(stakedBalance).times(100);
     value &&
-      setUnStakeRange(percent.gt(100) ? 100 : parseInt(percent.toFixed(2)));
+      setUnStakeRange(percent.gt(100) ? 100 : percent.toFixed(0));
   };
 
   const onChangeStake = (value) => {
     const percent = new BigNumber(value).div(lpBalance).times(100);
     value &&
-      setStakeRange(percent.gt(100) ? 100 : parseInt(percent.toFixed(2)));
+      setStakeRange(percent.gt(100) ? 100 : percent.toFixed(0));
   };
 
   return (
@@ -159,7 +148,7 @@ const FarmingTab = ({
       <div style={{ display: "flex", marginTop: "20px" }}>
         <InputWrapper>
           <InputNumber
-            disabled={new BigNumber(allowance).isZero()}
+            disabled={new BigNumber(allowance).isZero() || new BigNumber(lpBalance).isZero()}
             inputRef={inputRef}
             onChange={onChangeStake}
           />
