@@ -149,6 +149,30 @@
     {
       "inputs": [
         {
+          "internalType": "bytes32",
+          "name": "_type",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "bytes32",
+          "name": "_pair",
+          "type": "bytes32"
+        }
+      ],
+      "name": "getIntermediateToken",
+      "outputs": [
+        {
+          "internalType": "address",
+          "name": "",
+          "type": "address"
+        }
+      ],
+      "stateMutability": "view",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
           "internalType": "address",
           "name": "_USDT",
           "type": "address"
@@ -333,7 +357,7 @@
       "inputs": [
         {
           "internalType": "address",
-          "name": "token",
+          "name": "_token",
           "type": "address"
         }
       ],
@@ -481,7 +505,7 @@
         },
         {
           "internalType": "uint256",
-          "name": "amount",
+          "name": "_amount",
           "type": "uint256"
         },
         {

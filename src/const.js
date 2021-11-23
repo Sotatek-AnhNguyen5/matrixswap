@@ -1,22 +1,52 @@
 import web3 from "web3";
+import QuickSwapFarmABI from "./abi/QuickSwapFarmABI.json";
+import SushiSwapFarmABI from "./abi/SushiFarmABI.json";
+import ApeSwapFarmABI from "./abi/ApeSwapFarmABI.json";
+
 export const ADDRESS_ZAP = "0x7e63f8FF1cB81164b62700627BE64E9b9C46aCA4";
 export const QUICKSWAP_FACTORY_ADDRESS = "0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32";
 export const SUSHI_FACTORY_ADDRESS = "0xc35dadb65012ec5796536bd9864ed8773abc74c4";
+export const APE_SWAP_FACTORY = "0xCf083Be4164828f00cAE704EC15a36D711491284";
+
+//Token
+export const USDT_ADDRESS = "0xc2132D05D31c914a87C6611C10748AEb04B58e8F";
+export const WETH_ADDRESS = "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619";
+
+
+
+export const FARM_TYPE = {
+  quickswap: 'quick',
+  sushiswap: 'sushi',
+  apeswap: 'apes'
+}
 
 export const PROTOCOL_FUNCTION = {
-  quick: {
+  [FARM_TYPE.quickswap]: {
     fullnameHash: web3.utils.soliditySha3("QUICKSWAP"),
     fullname: "QUICKSWAP",
     stake: "stake",
     unStake: "withdraw",
     getReward: "getReward",
+    factoryAddress: QUICKSWAP_FACTORY_ADDRESS,
+    abi: QuickSwapFarmABI,
   },
-  sushi: {
+  [FARM_TYPE.sushiswap]: {
     fullnameHash: web3.utils.soliditySha3("SUSHISWAP"),
     fullname: "SUSHISWAP",
     stake: "deposit",
     unStake: "withdrawAll",
-    getReward: "claim"
+    getReward: "claim",
+    factoryAddress: SUSHI_FACTORY_ADDRESS,
+    abi: SushiSwapFarmABI,
+  },
+  [FARM_TYPE.apeswap]: {
+    fullnameHash: web3.utils.soliditySha3("APESWAP"),
+    fullname: "APESWAP",
+    stake: "deposit",
+    getReward: "harvest",
+    unStake: "withdraw",
+    factoryAddress: APE_SWAP_FACTORY,
+    abi: ApeSwapFarmABI,
   }
 }
 export const DEFAULT_PAIR = [
@@ -396,8 +426,4 @@ export const DEFAULT_PAIR = [
     id: "0x8bab360e41468dff5326df636e2377a858ad0670",
     reserveUSD: "70954.7117334447658980",
   },
-];
-
-export const exampleSushiFarm = [
-  '0x3add3034fcf921f20c74c6149fb44921709595b1',
 ];

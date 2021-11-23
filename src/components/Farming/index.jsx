@@ -1,19 +1,16 @@
 import styled from "styled-components";
-import InputNumber from "../../InputNumber";
-import FarmABI from "../../../abi/FarmABI.json";
-import { useWeb3React } from "@web3-react/core";
+import InputNumber from "../InputNumber";
 import React, { useEffect, useRef, useState } from "react";
 import BigNumber from "bignumber.js";
 import { toast } from "react-toastify";
-import StakingTokenABI from "../../../abi/stakingRewardABi.json";
 import moment from "moment";
 import { isEmpty, find, findIndex } from "lodash";
 import InputRange from "react-input-range";
-import useStakeCallback from "../../../hooks/useStakeCallback";
-import useApproveCallBack from "../../../hooks/useApproveCallBack";
-import SubmitButton from "../../SubmitButton";
-import useUnStakeCallBack from "../../../hooks/useUnstakeCallBack";
-import {removeStakeInfoFromStorage} from "../../../utils";
+import useStakeCallback from "../../hooks/useStakeCallback";
+import useApproveCallBack from "../../hooks/useApproveCallBack";
+import SubmitButton from "../SubmitButton";
+import useUnStakeCallBack from "../../hooks/useUnstakeCallBack";
+import {removeStakeInfoFromStorage} from "../../utils";
 
 const BalanceRow = styled.div`
   display: flex;
@@ -47,6 +44,7 @@ const FarmingTab = ({
   type,
   lpBalance,
   getLpBalance,
+  pId,
 }) => {
   const [stakeRange, setStakeRange] = useState(0);
   const [unStakeRange, setUnStakeRange] = useState(0);
@@ -76,13 +74,15 @@ const FarmingTab = ({
     farmAddress,
     inputRef,
     onFinishStake,
-    type
+    type,
+    pId
   );
   const [unStakeCallBack, loadingUnstake] = useUnStakeCallBack(
     farmAddress,
     inputRefUnstake.current && inputRefUnstake.current.value,
     onFinishUnStake,
-    type
+    type,
+    pId
   );
 
   const saveToStorage = () => {
@@ -118,13 +118,13 @@ const FarmingTab = ({
   const onChangeUnStake = (value) => {
     const percent = new BigNumber(value).div(stakedBalance).times(100);
     value &&
-      setUnStakeRange(percent.gt(100) ? 100 : percent.toFixed(0));
+      setUnStakeRange(percent.gt(100) ? 100 : parseInt(percent.toFixed(0)));
   };
 
   const onChangeStake = (value) => {
     const percent = new BigNumber(value).div(lpBalance).times(100);
     value &&
-      setStakeRange(percent.gt(100) ? 100 : percent.toFixed(0));
+      setStakeRange(percent.gt(100) ? 100 : parseInt(percent.toFixed(0)));
   };
 
   return (

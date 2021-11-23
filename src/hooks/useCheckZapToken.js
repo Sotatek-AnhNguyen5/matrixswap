@@ -2,7 +2,7 @@ import { useWeb3React } from "@web3-react/core";
 import { isEmpty } from "lodash";
 import { useEffect, useState } from "react";
 import QuickSwapFactoryABI from "../abi/quickswapFactoryABI.json";
-import ZAPABI from "../abi/zapABI.json";
+import ZAPABI from "../abi/ZapABI.json";
 import {ADDRESS_ZAP, PROTOCOL_FUNCTION, QUICKSWAP_FACTORY_ADDRESS, SUSHI_FACTORY_ADDRESS} from "../const";
 import { hashSha3Tokens, isValidAddress } from "../utils";
 

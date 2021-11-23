@@ -64,6 +64,7 @@ const InputWrapper = styled.div`
 const options = [
   { value: "quickswap", label: "QuickSwap" },
   { value: "sushiswap", label: "SushiSwap" },
+  { value: "apeswap", label: "Apeswap" },
 ];
 
 const filterOption = (candidate, input) => {

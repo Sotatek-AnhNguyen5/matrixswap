@@ -1,13 +1,12 @@
 import { useState, useEffect } from "react";
 import { useWeb3React } from "@web3-react/core";
 import ERC20ABI from "../abi/IERC20ABI.json";
-import FarmABI from "../abi/FarmABI.json";
+import FarmABI from "../abi/QuickSwapFarmABI.json";
 import StakingRewardABI from "../abi/stakingRewardABi.json";
 
 const useGetPairToken = (FarmAddress) => {
   const [token0, setToken0] = useState({});
   const [token1, setToken1] = useState({});
-  const [totalSupply, setTotalSupply] = useState(0);
   const [totalSupplyStakingToken, setTotalSupplyStakingToken] = useState(0);
   const [reserves, setReserves] = useState(0);
   const [stakingToken, setStakingToken] = useState("");
@@ -16,12 +15,10 @@ const useGetPairToken = (FarmAddress) => {
   useEffect(() => {
     const getData = async () => {
       const farmContract = new library.eth.Contract(FarmABI, FarmAddress);
-      const [stakingTokenAddress, totalSupplyAmount] = await Promise.all([
+      const [stakingTokenAddress] = await Promise.all([
         farmContract.methods.stakingToken().call(),
-        farmContract.methods.totalSupply().call(),
       ]);
       setStakingToken(stakingTokenAddress);
-      setTotalSupply(totalSupplyAmount);
       const stakingTokenContract = new library.eth.Contract(
         StakingRewardABI,
         stakingTokenAddress
@@ -46,7 +43,7 @@ const useGetPairToken = (FarmAddress) => {
     getData();
   }, [FarmAddress]);
 
-  return [token0, token1, stakingToken, reserves, totalSupply, totalSupplyStakingToken];
+  return [token0, token1, stakingToken, reserves, totalSupplyStakingToken];
 };
 
 export const getTokenInfo = async (address, library) => {

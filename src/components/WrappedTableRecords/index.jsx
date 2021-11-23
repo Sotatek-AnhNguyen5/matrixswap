@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { FaAngleDown, FaAngleRight } from "react-icons/fa";
-import React, { useState, useMemo } from "react";
+import React, { useState, useMemo, useEffect } from "react";
 import useFarmUserInfo from "../../hooks/useFarmUserInfo";
 import { toast } from "react-toastify";
 import BigNumber from "bignumber.js";
@@ -8,11 +8,13 @@ import { find, isEmpty } from "lodash";
 import { convertDate, moneyFormatter } from "../../utils";
 import useLpTokenInfo from "../../hooks/useLpTokenInfo";
 import useCalculateApr from "../../hooks/useCalculatedApr";
-import ZapTab from "../TableRecord/Zap";
-import FarmingTab from "../TableRecord/Farming";
+import ZapTab from "../Zap";
+import FarmingTab from "../Farming";
 import useGetRewardCallback from "../../hooks/useGetRewardCallback";
 import SubmitButton from "../SubmitButton";
 import useTokenBalance from "../../hooks/useTokenBalance";
+import { FARM_TYPE } from "../../const";
+import useTVL from "../../hooks/useTVL";
 
 const Td = styled.td`
   text-align: center;
@@ -42,14 +44,6 @@ const Tr = styled.tr`
   background-color: #333333;
   border-radius: 10px;
   display: ${(props) => (props.isShow ? "table-row" : "none")};
-`;
-
-const DataRow = styled.div`
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  width: 100%;
-  padding: 10px;
 `;
 
 const ValueSide = styled.div`
@@ -84,40 +78,42 @@ const DataColumn = styled.div`
   }
 `;
 
-const TableRecordSushi = ({ data, filterKey, type }) => {
+const TableRecordSushi = ({ data, filterKey, type, setOptionFilter }) => {
   const [isSelected, setIsSelected] = useState(false);
   const [isZap, setIsZap] = useState(true);
-  const farmAddress = data.rewardAddress;
-  const tvl = data.valueLockedUSD;
-  const rewardTokens = data.rewardTokens;
-  const apr = useCalculateApr(farmAddress, tvl, "sushi", rewardTokens[0]);
-  const daily = useMemo(() => {
-    return new BigNumber(apr).div(365).toFixed(2);
-  }, [apr]);
-
+  const farmAddress = data.rewardAddress || data.stakingRewards;
+  const rewardTokens = data.rewardTokens || [{ symbol: "dQuick" }];
+  const poolId = data.poolIndex;
   const lpToken = useLpTokenInfo(data.tokenAddress);
   const [lpBalance, getLpBalance] = useTokenBalance(data.tokenAddress);
-  const [reward, balance, refreshFarmInfo, startStakeDate] = useFarmUserInfo(
+  const [reward, balance, totalSupply, refreshFarmInfo, startStakeDate] =
+    useFarmUserInfo(farmAddress, FARM_TYPE[type], poolId);
+
+  const tvl = useTVL(lpToken, totalSupply, data.valueLockedUSD);
+  const apr = useCalculateApr(
     farmAddress,
-    "sushi",
-    data.poolIndex
+    tvl,
+    FARM_TYPE[type],
+    rewardTokens[0]
   );
 
   const onFinishGetReward = async () => {
     await refreshFarmInfo();
-    toast("get reward successfully!");
+    toast("Get reward successfully!");
   };
 
   const [onGetReward, loadingGetReward] = useGetRewardCallback(
     farmAddress,
-    "sushi",
-    onFinishGetReward
+    FARM_TYPE[type],
+    onFinishGetReward,
+    poolId
   );
 
   const isShow = useMemo(() => {
     const isExists = find(
       filterKey,
       (e) =>
+        !lpToken.token0.symbol ||
         e.value === type ||
         [
           lpToken.token0.symbol.toUpperCase(),
@@ -126,6 +122,22 @@ const TableRecordSushi = ({ data, filterKey, type }) => {
     );
     return isEmpty(filterKey) || isExists;
   }, [filterKey]);
+
+  const daily = useMemo(() => {
+    return new BigNumber(apr).div(365).toFixed(2);
+  }, [apr]);
+
+  useEffect(() => {
+    if (lpToken.token0.symbol && lpToken.token1.symbol) {
+      setOptionFilter((e) => {
+        return [
+          ...e,
+          { value: lpToken.token0.symbol, label: lpToken.token0.symbol },
+          { value: lpToken.token1.symbol, label: lpToken.token1.symbol },
+        ];
+      });
+    }
+  }, [lpToken.token0.symbol]);
 
   return (
     <>
@@ -156,7 +168,7 @@ const TableRecordSushi = ({ data, filterKey, type }) => {
                 <ValueSide> {convertDate(startStakeDate)} </ValueSide>
                 <ValueSide>{balance}</ValueSide>
                 <ValueSide>
-                  {reward} ADDY
+                  {reward} {rewardTokens[0].symbol}
                   <SubmitButton
                     disabled={new BigNumber(reward).isZero()}
                     label={"Claim"}
@@ -188,7 +200,7 @@ const TableRecordSushi = ({ data, filterKey, type }) => {
                   token1={lpToken.token1}
                   changeTab={() => setIsZap(false)}
                   refreshStakeBalance={refreshFarmInfo}
-                  type={"sushi"}
+                  type={FARM_TYPE[type]}
                   lpBalance={lpBalance}
                   getLpBalance={getLpBalance}
                 />
@@ -200,9 +212,10 @@ const TableRecordSushi = ({ data, filterKey, type }) => {
                   token1={lpToken.token1}
                   stakedBalance={balance}
                   refreshStakedBalance={refreshFarmInfo}
-                  type={"sushi"}
+                  type={FARM_TYPE[type]}
                   lpBalance={lpBalance}
                   getLpBalance={getLpBalance}
+                  pId={poolId}
                 />
               )}
             </div>

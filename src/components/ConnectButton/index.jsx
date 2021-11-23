@@ -38,7 +38,7 @@ const ConnectButton = () => {
 
   const shortcutAddress = useMemo(() => {
     if (account) {
-      const firstPart = account.substring(1, 10);
+      const firstPart = account.substring(0, 10);
       const endPart = account.substring(account.length - 10, account.length);
       return `${firstPart}.......${endPart}`;
     }

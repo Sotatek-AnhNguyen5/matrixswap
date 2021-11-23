@@ -1,20 +1,20 @@
 import React, { useState, useEffect, useRef, useMemo } from "react";
 import styled from "styled-components";
-import InputNumber from "../../InputNumber";
-import IERC20ABI from "../../../abi/IERC20ABI.json";
+import InputNumber from "../InputNumber";
+import IERC20ABI from "../../abi/IERC20ABI.json";
 import { useWeb3React } from "@web3-react/core";
 import BigNumber from "bignumber.js";
 import { toast } from "react-toastify";
-import useEstimateOutput from "../../../hooks/useEstimateOutput";
+import useEstimateOutput from "../../hooks/useEstimateOutput";
 import InputRange from "react-input-range";
-import useCheckZapToken from "../../../hooks/useCheckZapToken";
-import { ADDRESS_ZAP, PROTOCOL_FUNCTION } from "../../../const";
-import useApproveCallBack from "../../../hooks/useApproveCallBack";
-import SubmitButton from "../../SubmitButton";
-import useZapCallback from "../../../hooks/useZapCallback";
+import useCheckZapToken from "../../hooks/useCheckZapToken";
+import { ADDRESS_ZAP, PROTOCOL_FUNCTION } from "../../const";
+import useApproveCallBack from "../../hooks/useApproveCallBack";
+import SubmitButton from "../SubmitButton";
+import useZapCallback from "../../hooks/useZapCallback";
 import { find } from "lodash";
-import DefaultToken from "../../../json/defaultTokens.json";
-import { unWrappedTokenSymbol } from "../../../utils";
+import DefaultToken from "../../json/defaultTokens.json";
+import { unWrappedTokenSymbol } from "../../utils";
 
 const FakeInput = styled.div`
   width: 100%;
@@ -118,7 +118,7 @@ const ZapTab = ({
     const from = selectedToken.address;
     const value = new BigNumber(amount)
       .times(new BigNumber(10).pow(selectedToken.decimals))
-      .toFixed();
+      .toFixed(0);
     return {
       protocolType,
       from,
@@ -131,7 +131,8 @@ const ZapTab = ({
   const onChangeAmountValue = (e) => {
     onChangeAmount(e);
     const percent = new BigNumber(e).div(tokenBalance).times(100);
-    e && setZapValuePercent(percent.gt(100) ? 100 : percent.toNumber());
+    e &&
+      setZapValuePercent(percent.gt(100) ? 100 : parseInt(percent.toFixed(0)));
   };
 
   const [onZap, zapLoading] = useZapCallback(params, onFinishZap);

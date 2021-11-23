@@ -10,13 +10,12 @@ import { useWeb3React } from "@web3-react/core";
   return [
     useCallback(() => {
       setLoading(true);
-      console.log(params);
       try {
         zapContract.methods
           .zapInToken(params)
           .send({ from: account })
           .on("confirmation", async function (number) {
-            if (number === 1) {
+            if (number === 5) {
               await onFinish();
               setLoading(false);
             }
