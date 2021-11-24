@@ -12,8 +12,6 @@ export const APE_SWAP_FACTORY = "0xCf083Be4164828f00cAE704EC15a36D711491284";
 export const USDT_ADDRESS = "0xc2132D05D31c914a87C6611C10748AEb04B58e8F";
 export const WETH_ADDRESS = "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619";
 
-
-
 export const FARM_TYPE = {
   quickswap: 'quick',
   sushiswap: 'sushi',

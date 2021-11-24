@@ -14,7 +14,10 @@ export const useZapContract = () => {
 export const useFactoryContract = (type) => {
   const {library} = useWeb3React();
   return useMemo(() => {
-    return new library.eth.Contract(QuickSwapFactoryABI, PROTOCOL_FUNCTION[type].factoryAddress);
+    if(library) {
+      return new library.eth.Contract(QuickSwapFactoryABI, PROTOCOL_FUNCTION[type].factoryAddress);
+    }
+    return undefined
   }, [library, type, QuickSwapFactoryABI]);
 }
 

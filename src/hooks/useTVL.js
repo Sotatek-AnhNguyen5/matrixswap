@@ -4,8 +4,11 @@ import QuickSwapPair from "../abi/QuickSwapPair.json";
 import { useWeb3React } from "@web3-react/core";
 import BigNumber from "bignumber.js";
 import { isValidAddress } from "../utils";
-import {QUICKSWAP_FACTORY_ADDRESS, USDT_ADDRESS, WETH_ADDRESS} from "../const";
-
+import {
+  QUICKSWAP_FACTORY_ADDRESS,
+  USDT_ADDRESS,
+  WETH_ADDRESS,
+} from "../const";
 
 const useTVL = (lpToken, totalSupply, defaultValue) => {
   const { library } = useWeb3React();
@@ -13,18 +16,18 @@ const useTVL = (lpToken, totalSupply, defaultValue) => {
 
   useEffect(() => {
     const getData = async () => {
-      if(defaultValue) {
-        setValue(defaultValue)
-        return;
-      }
       const factoryContract = new library.eth.Contract(
         QuickSwapFactoryABI,
         QUICKSWAP_FACTORY_ADDRESS
       );
 
       let [pairAddress1, pairAddress2] = await Promise.all([
-        factoryContract.methods.getPair(lpToken.token0.address, USDT_ADDRESS).call(),
-        factoryContract.methods.getPair(lpToken.token1.address, USDT_ADDRESS).call(),
+        factoryContract.methods
+          .getPair(lpToken.token0.address, USDT_ADDRESS)
+          .call(),
+        factoryContract.methods
+          .getPair(lpToken.token1.address, USDT_ADDRESS)
+          .call(),
       ]);
 
       if (isValidAddress(pairAddress2) || isValidAddress(pairAddress1)) {
@@ -42,7 +45,11 @@ const useTVL = (lpToken, totalSupply, defaultValue) => {
         );
         const tokenHold = new BigNumber(totalSupply)
           .div(lpToken.totalSupply)
-          .times(isUsedToken0 ? lpToken.reserves._reserve0 : lpToken.reserves._reserve1);
+          .times(
+            isUsedToken0
+              ? lpToken.reserves._reserve0
+              : lpToken.reserves._reserve1
+          );
         const totalSupplyUsdt = new BigNumber(tokenHold)
           .div(new BigNumber(10).pow(6))
           .times(tokenRate)
@@ -53,8 +60,12 @@ const useTVL = (lpToken, totalSupply, defaultValue) => {
       }
 
       let [pair0, pair1] = await Promise.all([
-        factoryContract.methods.getPair(lpToken.token0.address, WETH_ADDRESS).call(),
-        factoryContract.methods.getPair(lpToken.token1.address, WETH_ADDRESS).call(),
+        factoryContract.methods
+          .getPair(lpToken.token0.address, WETH_ADDRESS)
+          .call(),
+        factoryContract.methods
+          .getPair(lpToken.token1.address, WETH_ADDRESS)
+          .call(),
       ]);
 
       if (isValidAddress(pair0) || isValidAddress(pair1)) {
@@ -62,7 +73,11 @@ const useTVL = (lpToken, totalSupply, defaultValue) => {
         const usedToken = isUsedToken0 ? lpToken.token0 : lpToken.token1;
         const tokenHold = new BigNumber(totalSupply)
           .div(lpToken.totalSupply)
-          .times(isUsedToken0 ? lpToken.reserves._reserve0 : lpToken.reserves._reserve1);
+          .times(
+            isUsedToken0
+              ? lpToken.reserves._reserve0
+              : lpToken.reserves._reserve1
+          );
         const totalSupplyToETH = await tokenToWeth(
           tokenHold,
           library,
@@ -78,10 +93,16 @@ const useTVL = (lpToken, totalSupply, defaultValue) => {
         );
       }
     };
-    if (lpToken.token0.address && lpToken.token1.address) {
+    if (defaultValue) {
+      setValue(defaultValue);
+    } else if (
+      lpToken.token0.address &&
+      lpToken.token1.address &&
+      totalSupply
+    ) {
       getData();
     }
-  }, [lpToken.token0.address, defaultValue]);
+  }, [lpToken.token0.address, totalSupply, defaultValue]);
   return value;
 };
 

@@ -11,20 +11,15 @@ const WrappedFarm = ({ filterKey, setOptionFilter }) => {
   const { library, active } = useWeb3React();
   const [data, setData] = useState([]);
 
-  const getDataSushi = async () => {
+  const getDataApes = async () => {
     const req = await axios.get(
       "https://api.zapper.fi/v1/farms/masterchef?api_key=5d1237c2-3840-4733-8e92-c5a58fe81b88&network=polygon"
     );
-    const wrappedData = [
-      ...take(
-        req.data.filter((e) => ["sushiswap"].indexOf(e.appId) !== -1),
-        10
-      ),
-      ...take(
-        req.data.filter((e) => e.isActive && ["apeswap"].indexOf(e.appId) !== -1),
-        7
-      ),
-    ];
+    const wrappedData = take(
+      req.data.filter((e) => e.isActive && ["apeswap"].indexOf(e.appId) !== -1),
+      10
+    );
+
     setData((old) => [...old, ...wrappedData]);
   };
 
@@ -48,7 +43,7 @@ const WrappedFarm = ({ filterKey, setOptionFilter }) => {
 
     if (active) {
       getData();
-      getDataSushi();
+      getDataApes();
     }
   }, [active]);
 

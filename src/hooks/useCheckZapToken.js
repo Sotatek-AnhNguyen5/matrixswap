@@ -40,19 +40,17 @@ const useCheckZapToken = (tokenCheck, token0, token1, type) => {
 
       const zapContract = new library.eth.Contract(ZAPABI.abi, ADDRESS_ZAP);
       const hashType = PROTOCOL_FUNCTION[type].fullnameHash;
-      const hash0 = hashSha3Tokens(tokenCheck.address, token0.address);
-      const hash1 = hashSha3Tokens(tokenCheck.address, token1.address);
+      const hashPair0 = hashSha3Tokens(tokenCheck.address, token0.address);
+      const hashPair1 = hashSha3Tokens(tokenCheck.address, token1.address);
       const [internateToken0, internateToken1] = await Promise.all([
-        zapContract.methods.protocols(hashType).call(),
-        zapContract.methods.protocols(hashType).call(),
+        zapContract.methods.getIntermediateToken(hashType, hashPair0).call(),
+        zapContract.methods.getIntermediateToken(hashType, hashPair1).call(),
       ]);
 
-      console.log(internateToken0, internateToken1)
-      //TODO fix this
-      // if (isValidAddress(internateToken0) || isValidAddress(internateToken1)) {
-      //   setZapAble(true);
-      //   return;
-      // }
+      if (isValidAddress(internateToken0) || isValidAddress(internateToken1)) {
+        setZapAble(true);
+        return;
+      }
 
       setZapAble(false);
     };
