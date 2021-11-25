@@ -4,6 +4,7 @@ import QuickSwapFactoryABI from "../abi/quickswapFactoryABI.json";
 import QuickSwapPair from "../abi/QuickSwapPair.json";
 import BigNumber from "bignumber.js";
 import {QUICKSWAP_FACTORY_ADDRESS, SUSHI_FACTORY_ADDRESS} from "../const";
+import {useFactoryContract} from "./useContract";
 
 const WETH_ADDRESS = "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619";
 
@@ -19,13 +20,10 @@ const useEstimateOutput = (
   const { library } = useWeb3React();
 
   const [value, setValue] = useState(0);
+  const factoryContract = useFactoryContract(type)
 
   useEffect(() => {
     const estimateOutput = async () => {
-      const factoryContract = new library.eth.Contract(
-        QuickSwapFactoryABI,
-        type === "sushi" ? SUSHI_FACTORY_ADDRESS : QUICKSWAP_FACTORY_ADDRESS
-      );
 
       if (
         selectedToken.address.toLowerCase() === token0.address.toLowerCase() ||

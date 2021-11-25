@@ -17,10 +17,8 @@ const useUnStakeCallBack = (farmAddress, value, onFinish, type, pId) => {
         .toFixed();
       try {
         let params;
-        if (type === FARM_TYPE.apeswap) {
+        if (type === FARM_TYPE.apeswap || type === FARM_TYPE.sushiswap) {
           params = [pId, amount, account];
-        } else if (type === FARM_TYPE.sushiswap) {
-          params = [];
         } else {
           params = [amount];
         }

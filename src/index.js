@@ -6,12 +6,26 @@ import {
   ApolloClient,
   InMemoryCache,
   ApolloProvider,
+  HttpLink,
 } from "@apollo/client";
 import { Web3ReactProvider } from "@web3-react/core";
 import { getLibrary } from "./utils";
+import { ApolloLink } from "apollo-link";
+
+const zapData = new HttpLink({
+  uri: "https://api.thegraph.com/subgraphs/name/sotatek-cuongtran/bla-bla",
+});
+
+const sushiFarms = new HttpLink({
+  uri: "https://api.thegraph.com/subgraphs/name/sushiswap/matic-minichef",
+});
 
 const client = new ApolloClient({
-  uri: "https://api.thegraph.com/subgraphs/name/sotatek-cuongtran/bla-bla",
+  link: ApolloLink.split(
+    (operation) => operation.getContext().clientName === "zapData",
+    zapData, // <= apollo will send to this if clientName is "third-party"
+    sushiFarms // <= otherwise will send to this
+  ),
   cache: new InMemoryCache(),
 });
 

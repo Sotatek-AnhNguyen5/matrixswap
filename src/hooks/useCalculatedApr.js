@@ -2,12 +2,9 @@ import BigNumber from "bignumber.js";
 import { useState, useEffect } from "react";
 import QuickSwapPair from "../abi/QuickSwapPair.json";
 import { useWeb3React } from "@web3-react/core";
-import QuickSwapFactoryABI from "../abi/quickswapFactoryABI.json";
-import { FARM_TYPE } from "../const";
+import { FARM_TYPE, SUSHI_TOKEN } from "../const";
 import { useFactoryContract, useFarmContract } from "./useContract";
 
-const QUICKSWAP_FACTORY_ADDRESS = "0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32";
-const SUSHI_FACTORY_ADDRESS = "0xc35dadb65012ec5796536bd9864ed8773abc74c4";
 const USDT_ADDRESS = "0xc2132D05D31c914a87C6611C10748AEb04B58e8F";
 
 const useCalculateApr = (farmAddress, tvl, type, rewardToken) => {
@@ -31,17 +28,20 @@ const useCalculateApr = (farmAddress, tvl, type, rewardToken) => {
         setValue(rewardRatePerYear);
       } else if (type === FARM_TYPE.sushiswap) {
         const [rewardRate] = await Promise.all([
-          farmContract.methods.accRewardPerShare().call(),
+          farmContract.methods.sushiPerSecond().call(),
         ]);
         const rewardRatePerYear = new BigNumber(rewardRate)
-          .div(new BigNumber(10).pow(rewardToken.decimals))
+          .div(new BigNumber(10).pow(18))
           .times(86400)
           .times(365)
-          .times(rewardToken.price)
-          .div(tvl)
-          .times(100)
-          .toFixed(2);
-        setValue(rewardRatePerYear);
+        const rewardToUSD = await convertToUSD(
+          rewardRatePerYear,
+          18,
+          library,
+          SUSHI_TOKEN.address,
+          factoryContract
+        );
+        setValue(rewardToUSD.div(tvl).times(100).toFixed(2));
       } else {
         const [rewardsToken, rewardRate] = await Promise.all([
           farmContract.methods.rewardsToken().call(),
@@ -96,11 +96,10 @@ export const convertToUSD = async (
     return new BigNumber(amount)
       .times(tokenRate)
       .times(new BigNumber(10).pow(decimals - 6));
-  }catch(e) {
-    console.log(e)
-    console.log(address)
+  } catch (e) {
+    console.log(e);
+    console.log(address);
   }
-
 };
 
 export default useCalculateApr;

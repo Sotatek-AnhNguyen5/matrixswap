@@ -87,9 +87,14 @@ const TableRecordSushi = ({ data, filterKey, type, setOptionFilter }) => {
   const lpToken = useLpTokenInfo(data.tokenAddress);
   const [lpBalance, getLpBalance] = useTokenBalance(data.tokenAddress);
   const [reward, balance, totalSupply, refreshFarmInfo, startStakeDate] =
-    useFarmUserInfo(farmAddress, FARM_TYPE[type], poolId);
+    useFarmUserInfo(farmAddress, FARM_TYPE[type], poolId, data.tokenAddress);
 
-  const tvl = useTVL(lpToken, totalSupply, data.valueLockedUSD);
+  const tvl = useTVL(
+    lpToken,
+    totalSupply,
+    FARM_TYPE[type],
+    data.valueLockedUSD
+  );
   const apr = useCalculateApr(
     farmAddress,
     tvl,
@@ -168,9 +173,9 @@ const TableRecordSushi = ({ data, filterKey, type, setOptionFilter }) => {
                 <ValueSide> {convertDate(startStakeDate)} </ValueSide>
                 <ValueSide>{balance}</ValueSide>
                 <ValueSide>
-                  {reward} {rewardTokens[0].symbol}
+                  {reward[0]} {rewardTokens[0].symbol}
                   <SubmitButton
-                    disabled={new BigNumber(reward).isZero()}
+                    disabled={new BigNumber(reward[0]).isZero()}
                     label={"Claim"}
                     loading={loadingGetReward}
                     labelLoading={"Claiming"}
@@ -178,6 +183,11 @@ const TableRecordSushi = ({ data, filterKey, type, setOptionFilter }) => {
                     style={{ marginLeft: "20px" }}
                   />
                 </ValueSide>
+                {rewardTokens[1] && (
+                  <ValueSide>
+                    {reward[1]} {rewardTokens[1].symbol}
+                  </ValueSide>
+                )}
               </DataColumn>
             </WrappedDataColumn>
           </TdSecond>

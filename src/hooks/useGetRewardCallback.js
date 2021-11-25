@@ -13,7 +13,7 @@ const useGetRewardCallback = (farmAddress, type, onFinish, pId) => {
       setLoading(true);
       const methods = PROTOCOL_FUNCTION[type].getReward;
       let params = [];
-      if (FARM_TYPE.apeswap === type) {
+      if (FARM_TYPE.apeswap === type || type === FARM_TYPE.sushiswap) {
         params = [pId, account];
       }
       try {

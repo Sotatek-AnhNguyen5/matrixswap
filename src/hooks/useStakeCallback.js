@@ -16,7 +16,7 @@ const useStakeCallback = (farmAddress, inputRef, onFinish, type, pId) => {
         .times(new BigNumber(10).pow(18))
         .toFixed(0);
       let params;
-      if (type === FARM_TYPE.apeswap) {
+      if (type === FARM_TYPE.apeswap || type === FARM_TYPE.sushiswap) {
         params = [pId, amount, account];
       } else {
         params = [amount];

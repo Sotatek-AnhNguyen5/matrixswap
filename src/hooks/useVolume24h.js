@@ -7,7 +7,7 @@ import ERC20ABI from "../abi/IERC20ABI.json";
 import { useFactoryContract } from "./useContract";
 import { convertToUSD } from "./useCalculatedApr";
 import BigNumber from "bignumber.js";
-import {USDT_ADDRESS} from "../const";
+import { USDT_ADDRESS } from "../const";
 
 const useVolume24h = () => {
   const { library } = useWeb3React();
@@ -16,6 +16,7 @@ const useVolume24h = () => {
     variables: {
       createTime: moment().subtract(1, "days").unix(),
     },
+    context: { clientName: "zapData" },
   });
   const [volume, setVolume] = useState();
 
@@ -26,7 +27,7 @@ const useVolume24h = () => {
       jobData.push(amountToUSDT(library, e.amount, e.input, factoryContract));
     }
     const lstVolume = await Promise.all(jobData);
-    lstVolume.forEach(e => total = e.plus(total))
+    lstVolume.forEach((e) => (total = e.plus(total)));
     setVolume(total.toFixed(2));
   };
 
@@ -40,8 +41,8 @@ const useVolume24h = () => {
 };
 
 const amountToUSDT = async (library, amount, tokenAddress, factoryContract) => {
-  if(tokenAddress.toLowerCase() === USDT_ADDRESS.toLowerCase()) {
-    return new BigNumber(amount).div(new BigNumber(10).pow(6))
+  if (tokenAddress.toLowerCase() === USDT_ADDRESS.toLowerCase()) {
+    return new BigNumber(amount).div(new BigNumber(10).pow(6));
   }
   const tokenContract = new library.eth.Contract(ERC20ABI, tokenAddress);
   const decimals = await tokenContract.methods.decimals().call();

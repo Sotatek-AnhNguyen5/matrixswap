@@ -5,11 +5,14 @@ import { DEFAULT_PAIR } from "../../const";
 import { useState, useEffect } from "react";
 import axios from "axios";
 import TableRecordSushi from "../WrappedTableRecords";
-import { take } from "lodash";
+import {isEmpty, take} from "lodash";
+import moment from "moment";
+import useSushiFarms from "../../hooks/useSushiFarms";
 
 const WrappedFarm = ({ filterKey, setOptionFilter }) => {
   const { library, active } = useWeb3React();
   const [data, setData] = useState([]);
+  const sushiFarms = useSushiFarms();
 
   const getDataApes = async () => {
     const req = await axios.get(
@@ -46,6 +49,12 @@ const WrappedFarm = ({ filterKey, setOptionFilter }) => {
       getDataApes();
     }
   }, [active]);
+
+  useEffect(() => {
+    if(!isEmpty(sushiFarms)) {
+      setData((old) => [...old, ...sushiFarms]);
+    }
+  }, [sushiFarms])
 
   return (
     <>

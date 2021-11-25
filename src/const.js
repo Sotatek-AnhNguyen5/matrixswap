@@ -12,6 +12,20 @@ export const APE_SWAP_FACTORY = "0xCf083Be4164828f00cAE704EC15a36D711491284";
 export const USDT_ADDRESS = "0xc2132D05D31c914a87C6611C10748AEb04B58e8F";
 export const WETH_ADDRESS = "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619";
 
+export const SUSHI_TOKEN = {
+  address: '0x0b3f868e0be5597d5db7feb59e1cadbb0fdda50a',
+  symbol: 'SUSHI',
+  decimals: '18',
+  name: 'SushiToken (PoS)',
+}
+
+export const WMATIC_TOKEN = {
+  address: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
+  symbol: 'WMATIC',
+  decimals: '18',
+  name: 'Wrapped Matic'
+}
+
 export const FARM_TYPE = {
   quickswap: 'quick',
   sushiswap: 'sushi',
@@ -32,8 +46,8 @@ export const PROTOCOL_FUNCTION = {
     fullnameHash: web3.utils.soliditySha3("SUSHISWAP"),
     fullname: "SUSHISWAP",
     stake: "deposit",
-    unStake: "withdrawAll",
-    getReward: "claim",
+    unStake: "withdraw",
+    getReward: "harvest",
     factoryAddress: SUSHI_FACTORY_ADDRESS,
     abi: SushiSwapFarmABI,
   },

@@ -9,18 +9,15 @@ import {
   USDT_ADDRESS,
   WETH_ADDRESS,
 } from "../const";
+import { useFactoryContract } from "./useContract";
 
-const useTVL = (lpToken, totalSupply, defaultValue) => {
+const useTVL = (lpToken, totalSupply, type, defaultValue) => {
   const { library } = useWeb3React();
   const [value, setValue] = useState(0);
+  const factoryContract = useFactoryContract(type);
 
   useEffect(() => {
     const getData = async () => {
-      const factoryContract = new library.eth.Contract(
-        QuickSwapFactoryABI,
-        QUICKSWAP_FACTORY_ADDRESS
-      );
-
       let [pairAddress1, pairAddress2] = await Promise.all([
         factoryContract.methods
           .getPair(lpToken.token0.address, USDT_ADDRESS)
@@ -29,7 +26,6 @@ const useTVL = (lpToken, totalSupply, defaultValue) => {
           .getPair(lpToken.token1.address, USDT_ADDRESS)
           .call(),
       ]);
-
       if (isValidAddress(pairAddress2) || isValidAddress(pairAddress1)) {
         const isUsedToken0 = isValidAddress(pairAddress1);
         const pairContract = new library.eth.Contract(
