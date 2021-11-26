@@ -3,28 +3,16 @@ import ABI from "../../abi/factoryABI.json";
 import { FACTORY_ADDRESS } from "../../utils";
 import { DEFAULT_PAIR } from "../../const";
 import { useState, useEffect } from "react";
-import axios from "axios";
 import TableRecordSushi from "../WrappedTableRecords";
 import {isEmpty, take} from "lodash";
-import moment from "moment";
 import useSushiFarms from "../../hooks/useSushiFarms";
+import useApeSwapFarms from "../../hooks/useApeswapFarms";
 
 const WrappedFarm = ({ filterKey, setOptionFilter }) => {
   const { library, active } = useWeb3React();
   const [data, setData] = useState([]);
   const sushiFarms = useSushiFarms();
-
-  const getDataApes = async () => {
-    const req = await axios.get(
-      "https://api.zapper.fi/v1/farms/masterchef?api_key=5d1237c2-3840-4733-8e92-c5a58fe81b88&network=polygon"
-    );
-    const wrappedData = take(
-      req.data.filter((e) => e.isActive && ["apeswap"].indexOf(e.appId) !== -1),
-      10
-    );
-
-    setData((old) => [...old, ...wrappedData]);
-  };
+  const apeSwapFarms = useApeSwapFarms();
 
   useEffect(() => {
     const getData = async () => {
@@ -46,15 +34,20 @@ const WrappedFarm = ({ filterKey, setOptionFilter }) => {
 
     if (active) {
       getData();
-      getDataApes();
     }
   }, [active]);
 
   useEffect(() => {
-    if(!isEmpty(sushiFarms)) {
+    if (!isEmpty(sushiFarms)) {
       setData((old) => [...old, ...sushiFarms]);
     }
-  }, [sushiFarms])
+  }, [sushiFarms]);
+
+  useEffect(() => {
+    if (!isEmpty(apeSwapFarms)) {
+      setData((old) => [...old, ...apeSwapFarms]);
+    }
+  }, [apeSwapFarms]);
 
   return (
     <>

@@ -20,11 +20,19 @@ const sushiFarms = new HttpLink({
   uri: "https://api.thegraph.com/subgraphs/name/sushiswap/matic-minichef",
 });
 
+const apesFarms = new HttpLink({
+  uri: "https://api.thegraph.com/subgraphs/name/ape-swap/minichef-polygon",
+});
+
 const client = new ApolloClient({
   link: ApolloLink.split(
     (operation) => operation.getContext().clientName === "zapData",
-    zapData, // <= apollo will send to this if clientName is "third-party"
-    sushiFarms // <= otherwise will send to this
+    zapData,
+    ApolloLink.split(
+      (operation) => operation.getContext().clientName === "apesFarm",
+      apesFarms,
+      sushiFarms,
+    )
   ),
   cache: new InMemoryCache(),
 });

@@ -25,6 +25,13 @@ export const WMATIC_TOKEN = {
   decimals: '18',
   name: 'Wrapped Matic'
 }
+//from apeswap
+export const BANANA_TOKEN = {
+  address: '0x5d47baba0d66083c52009271faf3f50dcc01023c',
+  symbol: 'BANANA',
+  decimals: '18',
+  name: 'ApeSwapFinance Banana'
+}
 
 export const FARM_TYPE = {
   quickswap: 'quick',
@@ -38,6 +45,7 @@ export const PROTOCOL_FUNCTION = {
     fullname: "QUICKSWAP",
     stake: "stake",
     unStake: "withdraw",
+    rewardFunction: "sushiPerSecond",
     getReward: "getReward",
     factoryAddress: QUICKSWAP_FACTORY_ADDRESS,
     abi: QuickSwapFarmABI,
@@ -47,6 +55,7 @@ export const PROTOCOL_FUNCTION = {
     fullname: "SUSHISWAP",
     stake: "deposit",
     unStake: "withdraw",
+    rewardFunction: "bananaPerSecond",
     getReward: "harvest",
     factoryAddress: SUSHI_FACTORY_ADDRESS,
     abi: SushiSwapFarmABI,

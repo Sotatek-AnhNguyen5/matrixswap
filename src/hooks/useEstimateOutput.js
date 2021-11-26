@@ -1,10 +1,9 @@
 import { useState, useEffect } from "react";
 import { useWeb3React } from "@web3-react/core";
-import QuickSwapFactoryABI from "../abi/quickswapFactoryABI.json";
 import QuickSwapPair from "../abi/QuickSwapPair.json";
 import BigNumber from "bignumber.js";
-import {QUICKSWAP_FACTORY_ADDRESS, SUSHI_FACTORY_ADDRESS} from "../const";
-import {useFactoryContract} from "./useContract";
+import { useFactoryContract } from "./useContract";
+import { isValidAddress } from "../utils";
 
 const WETH_ADDRESS = "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619";
 
@@ -20,10 +19,18 @@ const useEstimateOutput = (
   const { library } = useWeb3React();
 
   const [value, setValue] = useState(0);
-  const factoryContract = useFactoryContract(type)
+  const factoryContract = useFactoryContract(type);
 
   useEffect(() => {
     const estimateOutput = async () => {
+      const [pairToken0, pairToken1] = await Promise.all([
+        factoryContract.methods
+          .getPair(selectedToken.address, token0.address)
+          .call(),
+        factoryContract.methods
+          .getPair(selectedToken.address, token1.address)
+          .call(),
+      ]);
 
       if (
         selectedToken.address.toLowerCase() === token0.address.toLowerCase() ||
@@ -38,6 +45,52 @@ const useEstimateOutput = (
         const convertedValue = new BigNumber(totalSupplyStakingToken)
           .times(amountToHex)
           .div(isToken0 ? reservers._reserve0 : reservers._reserve1)
+          .div(new BigNumber(10).pow(18))
+          .toFixed();
+        setValue(convertedValue);
+      } else if (isValidAddress(pairToken0) || isValidAddress(pairToken1)) {
+        const tokenConvert = isValidAddress(pairToken0) ? token0 : token1;
+        const tokenPair = isValidAddress(pairToken0) ? pairToken0 : pairToken1;
+
+        const pairContract = new library.eth.Contract(QuickSwapPair, tokenPair);
+
+        const [token0Pair, reserversPair] = await Promise.all([
+          pairContract.methods.token0().call(),
+          pairContract.methods.getReserves().call(),
+        ]);
+
+        const tokenRate =
+          token0Pair.toLowerCase() === selectedToken.address.toLowerCase()
+            ? new BigNumber(
+                new BigNumber(reserversPair._reserve1).div(
+                  new BigNumber(10).pow(tokenConvert.decimals)
+                )
+              ).div(
+                new BigNumber(reserversPair._reserve0).div(
+                  new BigNumber(10).pow(selectedToken.decimals)
+                )
+              )
+            : new BigNumber(
+                new BigNumber(reserversPair._reserve0).div(
+                  new BigNumber(10).pow(tokenConvert.decimals)
+                )
+              ).div(
+                new BigNumber(reserversPair._reserve1).div(
+                  new BigNumber(10).pow(selectedToken.decimals)
+                )
+              );
+
+        const amountToHex = new BigNumber(amount)
+          .times(tokenRate)
+          .times(new BigNumber(10).pow(tokenConvert.decimals))
+          .div(2);
+        const convertedValue = new BigNumber(totalSupplyStakingToken)
+          .times(amountToHex)
+          .div(
+            isValidAddress(pairToken0)
+              ? reservers._reserve0
+              : reservers._reserve1
+          )
           .div(new BigNumber(10).pow(18))
           .toFixed();
         setValue(convertedValue);
@@ -85,11 +138,11 @@ const useEstimateOutput = (
             )
           : new BigNumber(
               new BigNumber(selectTokenReverse._reserve1).div(
-                new BigNumber(10).pow(selectedToken.decimals)
+                new BigNumber(10).pow(18)
               )
             ).div(
               new BigNumber(selectTokenReverse._reserve0).div(
-                new BigNumber(10).pow(18)
+                new BigNumber(10).pow(selectedToken.decimals)
               )
             );
         const amountETH = new BigNumber(amount)

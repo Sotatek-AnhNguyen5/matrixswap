@@ -33,3 +33,26 @@ export const GET_SUSHI_FARMS = gql`
     }
   }
 `;
+
+export const GET_APESWAP_FARMS = gql`
+  query GetApesFarms {
+    miniChefs {
+      id
+      banana
+      bananaPerSecond
+      totalAllocPoint
+    }
+    pools {
+      id
+      miniChef {
+        id
+      }
+      pair
+      rewarder {
+        id
+        rewardToken
+      }
+    }
+  }
+`;
+

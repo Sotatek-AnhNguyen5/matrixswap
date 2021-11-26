@@ -99,7 +99,6 @@ const TableRecordSushi = ({ data, filterKey, type, setOptionFilter }) => {
     farmAddress,
     tvl,
     FARM_TYPE[type],
-    rewardTokens[0]
   );
 
   const onFinishGetReward = async () => {

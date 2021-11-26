@@ -20,12 +20,19 @@ const useFarmUserInfo = (farmAddress, type, pId, lpTokenAddress) => {
       balanceAmount,
       secondRewardAmount = 0;
     if (type === FARM_TYPE.apeswap) {
-      const [pendingBanana, resBalance] = await Promise.all([
+      const REWARDER_ADDRESS = "0x1F234B1b83e21Cb5e2b99b4E498fe70Ef2d6e3bf";
+      const rewarderContract = new library.eth.Contract(RewarderABI, REWARDER_ADDRESS);
+      const lpTokenContract = new library.eth.Contract(PairABI, lpTokenAddress);
+      const [pendingBanana, resBalance, rewardMatic, totalLpHold] = await Promise.all([
         farmContract.methods.pendingBanana(pId, account).call(),
         farmContract.methods.userInfo(pId, account).call(),
+        rewarderContract.methods.pendingToken(pId, account).call(),
+        lpTokenContract.methods.balanceOf(farmAddress).call(),
       ]);
       rewardAmount = pendingBanana;
       balanceAmount = resBalance.amount;
+      secondRewardAmount = rewardMatic;
+      setTotalSupply(totalLpHold);
     } else if (type === FARM_TYPE.sushiswap) {
       const REWARDER_ADDRESS = "0xa3378ca78633b3b9b2255eaa26748770211163ae";
       const rewarderContract = new library.eth.Contract(RewarderABI, REWARDER_ADDRESS);
