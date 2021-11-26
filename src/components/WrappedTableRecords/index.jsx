@@ -78,7 +78,7 @@ const DataColumn = styled.div`
   }
 `;
 
-const TableRecordSushi = ({ data, filterKey, type, setOptionFilter }) => {
+const TableRecord = ({ data, filterKey, type, setOptionFilter }) => {
   const [isSelected, setIsSelected] = useState(false);
   const [isZap, setIsZap] = useState(true);
   const farmAddress = data.rewardAddress || data.stakingRewards;
@@ -95,11 +95,7 @@ const TableRecordSushi = ({ data, filterKey, type, setOptionFilter }) => {
     FARM_TYPE[type],
     data.valueLockedUSD
   );
-  const apr = useCalculateApr(
-    farmAddress,
-    tvl,
-    FARM_TYPE[type],
-  );
+  const apr = useCalculateApr(farmAddress, tvl, FARM_TYPE[type]);
 
   const onFinishGetReward = async () => {
     await refreshFarmInfo();
@@ -143,6 +139,13 @@ const TableRecordSushi = ({ data, filterKey, type, setOptionFilter }) => {
     }
   }, [lpToken.token0.symbol]);
 
+  const formatFarmName = useMemo(() => {
+    if (FARM_TYPE.apeswap === FARM_TYPE[type] && lpToken.token0.symbol === "WMATIC") {
+      return `${lpToken.token1.symbol} - ${lpToken.token0.symbol}`;
+    }
+    return `${lpToken.token0.symbol} - ${lpToken.token1.symbol}`;
+  }, [lpToken.token0, lpToken.token1]);
+
   return (
     <>
       <Tr isShow={isShow} onClick={() => setIsSelected((value) => !value)}>
@@ -151,7 +154,7 @@ const TableRecordSushi = ({ data, filterKey, type, setOptionFilter }) => {
             target="_blank"
             href={`https://polygonscan.com/address/${farmAddress}`}
           >
-            {lpToken.token0.symbol} - {lpToken.token1.symbol}
+            {formatFarmName}
           </a>
         </Td>
         <Td>{apr} %</Td>
@@ -235,4 +238,4 @@ const TableRecordSushi = ({ data, filterKey, type, setOptionFilter }) => {
   );
 };
 
-export default TableRecordSushi;
+export default TableRecord;

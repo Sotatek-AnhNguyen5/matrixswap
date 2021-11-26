@@ -7,6 +7,7 @@ import TableRecordSushi from "../WrappedTableRecords";
 import {isEmpty, take} from "lodash";
 import useSushiFarms from "../../hooks/useSushiFarms";
 import useApeSwapFarms from "../../hooks/useApeswapFarms";
+import TableRecord from "../WrappedTableRecords";
 
 const WrappedFarm = ({ filterKey, setOptionFilter }) => {
   const { library, active } = useWeb3React();
@@ -53,7 +54,7 @@ const WrappedFarm = ({ filterKey, setOptionFilter }) => {
     <>
       {data.map((e, index) => {
         return (
-          <TableRecordSushi
+          <TableRecord
             setOptionFilter={setOptionFilter}
             key={index}
             filterKey={filterKey}

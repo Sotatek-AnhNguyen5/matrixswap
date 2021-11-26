@@ -62,7 +62,7 @@ const FarmingTab = ({
     toast("Stake successfully!");
   };
   const onFinishUnStake = async () => {
-    if(type === 'sushi' || new BigNumber(stakeRange).eq(100) || new BigNumber(stakedBalance).isZero()) {
+    if(new BigNumber(stakeRange).eq(100) || new BigNumber(stakedBalance).isZero()) {
       removeStakeInfoFromStorage();
     }
     await Promise.all([getLpBalance(), refreshStakedBalance()]);
