@@ -2,6 +2,7 @@ import web3 from "web3";
 import moment from "moment";
 import { Keccak } from "sha3";
 import {findIndex} from "lodash";
+import ERC20ABI from "../abi/IERC20ABI.json";
 
 export const FACTORY_ADDRESS = "0x8aaa5e259f74c8114e0a471d9f2adfc66bfe09ed";
 const zero_address = "0x0000000000000000000000000000000000000000";
@@ -65,4 +66,20 @@ export const removeStakeInfoFromStorage = (farmAddress) => {
       JSON.stringify(stakeInfo)
     );
   }
+};
+
+export const getTokenInfo = async (address, library) => {
+  const token0Contract = new library.eth.Contract(ERC20ABI, address);
+  const [name, symbol, decimals] = await Promise.all([
+    token0Contract.methods.name().call(),
+    token0Contract.methods.symbol().call(),
+    token0Contract.methods.decimals().call(),
+  ]);
+
+  return {
+    name,
+    symbol,
+    decimals,
+    address,
+  };
 };

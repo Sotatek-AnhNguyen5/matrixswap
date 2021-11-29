@@ -1,4 +1,3 @@
-import { useRef } from "react";
 import styled from "styled-components";
 import SelectTokenButton from "../SelecTokenButton";
 import {isNotValidASCIINumber, isPreventASCIICharacters} from "../../utils/input";

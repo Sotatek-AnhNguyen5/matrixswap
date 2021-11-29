@@ -1,16 +1,16 @@
 import styled from "styled-components";
 import InputNumber from "../InputNumber";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useRef, useState } from "react";
 import BigNumber from "bignumber.js";
 import { toast } from "react-toastify";
 import moment from "moment";
-import { isEmpty, find, findIndex } from "lodash";
+import { isEmpty, find } from "lodash";
 import InputRange from "react-input-range";
 import useStakeCallback from "../../hooks/useStakeCallback";
 import useApproveCallBack from "../../hooks/useApproveCallBack";
 import SubmitButton from "../SubmitButton";
 import useUnStakeCallBack from "../../hooks/useUnstakeCallBack";
-import {removeStakeInfoFromStorage} from "../../utils";
+import { removeStakeInfoFromStorage } from "../../utils";
 
 const BalanceRow = styled.div`
   display: flex;
@@ -62,7 +62,10 @@ const FarmingTab = ({
     toast("Stake successfully!");
   };
   const onFinishUnStake = async () => {
-    if(new BigNumber(stakeRange).eq(100) || new BigNumber(stakedBalance).isZero()) {
+    if (
+      new BigNumber(stakeRange).eq(100) ||
+      new BigNumber(stakedBalance).isZero()
+    ) {
       removeStakeInfoFromStorage();
     }
     await Promise.all([getLpBalance(), refreshStakedBalance()]);
@@ -97,7 +100,6 @@ const FarmingTab = ({
       localStorage.setItem("stakeInfo", JSON.stringify(stakeInfo));
     }
   };
-
 
   const onChangeRangeStake = (percent) => {
     setStakeRange(percent);
@@ -138,7 +140,10 @@ const FarmingTab = ({
       <div style={{ display: "flex", marginTop: "20px" }}>
         <InputWrapper>
           <InputNumber
-            disabled={new BigNumber(allowance).isZero() || new BigNumber(lpBalance).isZero()}
+            disabled={
+              new BigNumber(allowance).isZero() ||
+              new BigNumber(lpBalance).isZero()
+            }
             inputRef={inputRef}
             onChange={onChangeStake}
           />

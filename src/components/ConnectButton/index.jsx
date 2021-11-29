@@ -1,5 +1,5 @@
 import { useWeb3React } from "@web3-react/core";
-import { useEffect, useMemo } from "react";
+import { useCallback, useEffect, useMemo } from "react";
 import styled from "styled-components";
 import { injected } from "../../utils/connectors";
 
@@ -28,13 +28,13 @@ const Wrapper = styled.div`
 const ConnectButton = () => {
   const { active, account, activate } = useWeb3React();
 
-  const connect = async () => {
+  const connect = useCallback(() => {
     try {
       activate(injected);
     } catch (ex) {
       console.log(ex);
     }
-  };
+  }, [activate]);
 
   const shortcutAddress = useMemo(() => {
     if (account) {
@@ -42,12 +42,12 @@ const ConnectButton = () => {
       const endPart = account.substring(account.length - 10, account.length);
       return `${firstPart}.......${endPart}`;
     }
-    return ""
+    return "";
   }, [account]);
 
   useEffect(() => {
     connect();
-  }, []);
+  }, [connect]);
 
   return (
     <Wrapper>

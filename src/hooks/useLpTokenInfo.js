@@ -1,7 +1,7 @@
 import { useWeb3React } from "@web3-react/core";
 import { useState, useEffect } from "react";
 import PairABI from "../abi/QuickSwapPair.json";
-import { getTokenInfo } from "./useGetPairToken";
+import { getTokenInfo } from "../utils";
 
 const useLpTokenInfo = (lpAddress) => {
   const { library } = useWeb3React();

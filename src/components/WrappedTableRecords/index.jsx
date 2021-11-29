@@ -87,7 +87,13 @@ const TableRecord = ({ data, filterKey, type, setOptionFilter }) => {
   const lpToken = useLpTokenInfo(data.tokenAddress);
   const [lpBalance, getLpBalance] = useTokenBalance(data.tokenAddress);
   const [reward, balance, totalSupply, refreshFarmInfo, startStakeDate] =
-    useFarmUserInfo(farmAddress, FARM_TYPE[type], poolId, data.tokenAddress);
+    useFarmUserInfo(
+      farmAddress,
+      FARM_TYPE[type],
+      poolId,
+      data.tokenAddress,
+      data.rewarderAddress
+    );
 
   const tvl = useTVL(
     lpToken,
@@ -140,7 +146,10 @@ const TableRecord = ({ data, filterKey, type, setOptionFilter }) => {
   }, [lpToken.token0.symbol]);
 
   const formatFarmName = useMemo(() => {
-    if (FARM_TYPE.apeswap === FARM_TYPE[type] && lpToken.token0.symbol === "WMATIC") {
+    if (
+      FARM_TYPE.apeswap === FARM_TYPE[type] &&
+      ["WMATIC", "USDC"].indexOf(lpToken.token0.symbol) !== -1
+    ) {
       return `${lpToken.token1.symbol} - ${lpToken.token0.symbol}`;
     }
     return `${lpToken.token0.symbol} - ${lpToken.token1.symbol}`;
@@ -151,8 +160,10 @@ const TableRecord = ({ data, filterKey, type, setOptionFilter }) => {
       <Tr isShow={isShow} onClick={() => setIsSelected((value) => !value)}>
         <Td style={{ textAlign: "left", paddingLeft: "20px" }}>
           <a
+            rel="noreferrer"
             target="_blank"
             href={`https://polygonscan.com/address/${farmAddress}`}
+            title={poolId}
           >
             {formatFarmName}
           </a>

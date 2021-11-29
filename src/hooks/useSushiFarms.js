@@ -1,5 +1,5 @@
 import { useQuery } from "@apollo/client";
-import { GET_SUSHI_FARMS, GET_ZAPS } from "../graphql";
+import { GET_SUSHI_FARMS } from "../graphql";
 import { useEffect, useState } from "react";
 import { isEmpty } from "lodash";
 import { SUSHI_TOKEN, WMATIC_TOKEN } from "../const";
@@ -16,6 +16,7 @@ const useSushiFarms = () => {
           rewardAddress: item.miniChef.id,
           poolIndex: item.id,
           rewardTokenAddress: item.rewarder.rewardToken,
+          rewarderAddress: item.rewarder.id,
           tokenAddress: item.pair,
           appId: "sushiswap",
           rewardTokens: [SUSHI_TOKEN, WMATIC_TOKEN],

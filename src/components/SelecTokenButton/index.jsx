@@ -128,7 +128,7 @@ const SelectTokenButton = ({ onSetSelectedToken }) => {
 
   const listToken = useMemo(() => {
     return DefaultToken.tokens.filter((e) => e.chainId === 137);
-  }, [DefaultToken.tokens]);
+  }, []);
 
   const listTokenWithBalance = useListTokenWithBalance(listToken);
 

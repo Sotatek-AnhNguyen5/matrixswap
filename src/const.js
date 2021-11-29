@@ -4,8 +4,10 @@ import SushiSwapFarmABI from "./abi/SushiFarmABI.json";
 import ApeSwapFarmABI from "./abi/ApeSwapFarmABI.json";
 
 export const ADDRESS_ZAP = "0x7e63f8FF1cB81164b62700627BE64E9b9C46aCA4";
-export const QUICKSWAP_FACTORY_ADDRESS = "0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32";
-export const SUSHI_FACTORY_ADDRESS = "0xc35dadb65012ec5796536bd9864ed8773abc74c4";
+export const QUICKSWAP_FACTORY_ADDRESS =
+  "0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32";
+export const SUSHI_FACTORY_ADDRESS =
+  "0xc35dadb65012ec5796536bd9864ed8773abc74c4";
 export const APE_SWAP_FACTORY = "0xCf083Be4164828f00cAE704EC15a36D711491284";
 
 //Token
@@ -13,31 +15,45 @@ export const USDT_ADDRESS = "0xc2132D05D31c914a87C6611C10748AEb04B58e8F";
 export const WETH_ADDRESS = "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619";
 
 export const SUSHI_TOKEN = {
-  address: '0x0b3f868e0be5597d5db7feb59e1cadbb0fdda50a',
-  symbol: 'SUSHI',
-  decimals: '18',
-  name: 'SushiToken (PoS)',
-}
+  address: "0x0b3f868e0be5597d5db7feb59e1cadbb0fdda50a",
+  symbol: "SUSHI",
+  decimals: "18",
+  name: "SushiToken (PoS)",
+};
 
 export const WMATIC_TOKEN = {
-  address: '0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270',
-  symbol: 'WMATIC',
-  decimals: '18',
-  name: 'Wrapped Matic'
-}
+  address: "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270",
+  symbol: "WMATIC",
+  decimals: "18",
+  name: "Wrapped Matic",
+};
 //from apeswap
 export const BANANA_TOKEN = {
-  address: '0x5d47baba0d66083c52009271faf3f50dcc01023c',
-  symbol: 'BANANA',
-  decimals: '18',
-  name: 'ApeSwapFinance Banana'
-}
+  address: "0x5d47baba0d66083c52009271faf3f50dcc01023c",
+  symbol: "BANANA",
+  decimals: "18",
+  name: "ApeSwapFinance Banana",
+};
+
+export const WATCH_TOKEN = {
+  address: "0x09211dc67f9fe98fb7bbb91be0ef05f4a12fa2b2",
+  symbol: "WATCH",
+  decimals: "18",
+  name: "yieldwatch",
+};
+
+export const ABR_TOKEN = {
+  address: "0x04429fbb948bbd09327763214b45e505a5293346",
+  symbol: "ABR",
+  decimals: "18",
+  name: "Allbridge",
+};
 
 export const FARM_TYPE = {
-  quickswap: 'quick',
-  sushiswap: 'sushi',
-  apeswap: 'apes'
-}
+  quickswap: "quick",
+  sushiswap: "sushi",
+  apeswap: "apes",
+};
 
 export const PROTOCOL_FUNCTION = {
   [FARM_TYPE.quickswap]: {
@@ -68,8 +84,8 @@ export const PROTOCOL_FUNCTION = {
     unStake: "withdraw",
     factoryAddress: APE_SWAP_FACTORY,
     abi: ApeSwapFarmABI,
-  }
-}
+  },
+};
 export const DEFAULT_PAIR = [
   {
     id: "0xdc9232e2df177d7a12fdff6ecbab114e2231198d",
