@@ -4,7 +4,6 @@ import { Keccak } from "sha3";
 import {findIndex} from "lodash";
 import ERC20ABI from "../abi/IERC20ABI.json";
 
-export const FACTORY_ADDRESS = "0x8aaa5e259f74c8114e0a471d9f2adfc66bfe09ed";
 const zero_address = "0x0000000000000000000000000000000000000000";
 
 export function getLibrary(provider, connector) {

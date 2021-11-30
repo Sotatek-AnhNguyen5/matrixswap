@@ -5,13 +5,11 @@ import { find } from "lodash";
 import { FARM_TYPE } from "../const";
 import { useFarmContract } from "./useContract";
 import RewarderABI from "../abi/RewarderABI.json";
-import PairABI from "../abi/QuickSwapPair.json";
 
 const useFarmUserInfo = (farmAddress, type, pId, lpTokenAddress, rewarderAddress) => {
   const { library, account } = useWeb3React();
   const [reward, setReward] = useState([0, 0]);
   const [balance, setBalance] = useState(0);
-  const [totalSupply, setTotalSupply] = useState(0);
   const [startDate, setStartDate] = useState("");
   const farmContract = useFarmContract(farmAddress, type);
 
@@ -24,44 +22,36 @@ const useFarmUserInfo = (farmAddress, type, pId, lpTokenAddress, rewarderAddress
         RewarderABI,
         rewarderAddress
       );
-      const lpTokenContract = new library.eth.Contract(PairABI, lpTokenAddress);
-      const [pendingBanana, resBalance, rewardMatic, totalLpHold] =
+      const [pendingBanana, resBalance, rewardMatic] =
         await Promise.all([
           farmContract.methods.pendingBanana(pId, account).call(),
           farmContract.methods.userInfo(pId, account).call(),
           rewarderContract.methods.pendingToken(pId, account).call(),
-          lpTokenContract.methods.balanceOf(farmAddress).call(),
         ]);
       rewardAmount = pendingBanana;
       balanceAmount = resBalance.amount;
       secondRewardAmount = rewardMatic;
-      setTotalSupply(totalLpHold);
     } else if (type === FARM_TYPE.sushiswap) {
       const rewarderContract = new library.eth.Contract(
         RewarderABI,
         rewarderAddress
       );
-      const lpTokenContract = new library.eth.Contract(PairABI, lpTokenAddress);
-      const [pendingSushi, resBalance, rewardMatic, totalLpHold] =
+      const [pendingSushi, resBalance, rewardMatic] =
         await Promise.all([
           farmContract.methods.pendingSushi(pId, account).call(),
           farmContract.methods.userInfo(pId, account).call(),
           rewarderContract.methods.pendingTokens(pId, account, 0).call(),
-          lpTokenContract.methods.balanceOf(farmAddress).call(),
         ]);
       rewardAmount = pendingSushi;
       balanceAmount = resBalance.amount;
       secondRewardAmount = rewardMatic.rewardAmounts;
-      setTotalSupply(totalLpHold);
     } else {
-      const [resReward, resBalance, resTotalSupply] = await Promise.all([
+      const [resReward, resBalance] = await Promise.all([
         farmContract.methods.earned(account).call(),
         farmContract.methods.balanceOf(account).call(),
-        farmContract.methods.totalSupply().call(),
       ]);
       rewardAmount = resReward;
       balanceAmount = resBalance;
-      setTotalSupply(resTotalSupply);
     }
     setReward([
       new BigNumber(rewardAmount).div(new BigNumber(10).pow(18)).toFixed(),
@@ -85,7 +75,7 @@ const useFarmUserInfo = (farmAddress, type, pId, lpTokenAddress, rewarderAddress
     }
   }, [library, farmAddress]);
 
-  return [reward, balance, totalSupply, getData, startDate];
+  return [reward, balance, getData, startDate];
 };
 
 export default useFarmUserInfo;

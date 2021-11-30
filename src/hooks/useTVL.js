@@ -10,6 +10,7 @@ import {
   WETH_ADDRESS,
 } from "../const";
 import { useFactoryContract } from "./useContract";
+import {tokenToWeth, WETHtoUSDT} from "../utils/tvl";
 
 const useTVL = (lpToken, totalSupply, type, defaultValue) => {
   const { library } = useWeb3React();
@@ -102,46 +103,4 @@ const useTVL = (lpToken, totalSupply, type, defaultValue) => {
   return value;
 };
 
-const tokenToWeth = async (amount, library, token) => {
-  const factoryContract = new library.eth.Contract(
-    QuickSwapFactoryABI,
-    QUICKSWAP_FACTORY_ADDRESS
-  );
-
-  const pairWETH = await factoryContract.methods
-    .getPair(WETH_ADDRESS, token.address)
-    .call();
-
-  const pairContract = new library.eth.Contract(QuickSwapPair, pairWETH);
-
-  const [token0, reserves] = await Promise.all([
-    pairContract.methods.token0().call(),
-    pairContract.methods.getReserves().call(),
-  ]);
-
-  const tokenRate =
-    token0.toLowerCase() === WETH_ADDRESS.toLowerCase()
-      ? new BigNumber(reserves._reserve0).div(reserves._reserve1)
-      : new BigNumber(reserves._reserve1).div(reserves._reserve0);
-  return new BigNumber(amount).times(tokenRate);
-};
-
-const WETHtoUSDT = async (amount, library) => {
-  const factoryContract = new library.eth.Contract(
-    QuickSwapFactoryABI,
-    QUICKSWAP_FACTORY_ADDRESS
-  );
-
-  const pairWETH = await factoryContract.methods
-    .getPair(WETH_ADDRESS, USDT_ADDRESS)
-    .call();
-
-  const pairContract = new library.eth.Contract(QuickSwapPair, pairWETH);
-
-  const [reserves] = await Promise.all([
-    pairContract.methods.getReserves().call(),
-  ]);
-  const tokenRate = new BigNumber(reserves._reserve1).div(reserves._reserve0);
-  return new BigNumber(amount).times(tokenRate);
-};
 export default useTVL;

@@ -1,16 +1,9 @@
 import BigNumber from "bignumber.js";
-import { useState, useEffect, useCallback } from "react";
-import QuickSwapPair from "../abi/QuickSwapPair.json";
+import { useState, useEffect } from "react";
 import { useWeb3React } from "@web3-react/core";
-import {
-  BANANA_TOKEN,
-  FARM_TYPE,
-  PROTOCOL_FUNCTION,
-  SUSHI_TOKEN,
-} from "../const";
+import { BANANA_TOKEN, FARM_TYPE, SUSHI_TOKEN } from "../const";
 import { useFactoryContract, useFarmContract } from "./useContract";
-
-const USDT_ADDRESS = "0xc2132D05D31c914a87C6611C10748AEb04B58e8F";
+import { convertToUSD } from "../utils/apr";
 
 const useCalculateApr = (farmAddress, tvl, type) => {
   const [value, setValue] = useState("NaN");
@@ -67,38 +60,4 @@ const useCalculateApr = (farmAddress, tvl, type) => {
   }, [farmAddress, tvl, type]);
   return value;
 };
-
-export const convertToUSD = async (
-  amount,
-  decimals,
-  library,
-  address,
-  factoryContract
-) => {
-  try {
-    const pairUSDT = await factoryContract.methods
-      .getPair(USDT_ADDRESS, address)
-      .call();
-
-    const pairUsdtContract = new library.eth.Contract(QuickSwapPair, pairUSDT);
-
-    const [token0, reserves] = await Promise.all([
-      pairUsdtContract.methods.token0().call(),
-      pairUsdtContract.methods.getReserves().call(),
-    ]);
-
-    const isToken0Usdt = token0.toLowerCase() === USDT_ADDRESS.toLowerCase();
-    const tokenRate = isToken0Usdt
-      ? new BigNumber(reserves._reserve0).div(reserves._reserve1)
-      : new BigNumber(reserves._reserve1).div(reserves._reserve0);
-
-    return new BigNumber(amount)
-      .times(tokenRate)
-      .times(new BigNumber(10).pow(decimals - 6));
-  } catch (e) {
-    console.log(e);
-    console.log(address);
-  }
-};
-
 export default useCalculateApr;

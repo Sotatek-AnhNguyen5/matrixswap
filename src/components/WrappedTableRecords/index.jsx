@@ -78,30 +78,21 @@ const DataColumn = styled.div`
   }
 `;
 
-const TableRecord = ({ data, filterKey, type, setOptionFilter }) => {
+const TableRecord = ({ data, filterKey, type }) => {
   const [isSelected, setIsSelected] = useState(false);
   const [isZap, setIsZap] = useState(true);
   const farmAddress = data.rewardAddress || data.stakingRewards;
-  const rewardTokens = data.rewardTokens || [{ symbol: "dQuick" }];
-  const poolId = data.poolIndex;
+  const { rewardTokens, poolIndex, apr, tvl } = data;
   const lpToken = useLpTokenInfo(data.tokenAddress);
   const [lpBalance, getLpBalance] = useTokenBalance(data.tokenAddress);
-  const [reward, balance, totalSupply, refreshFarmInfo, startStakeDate] =
+  const [reward, balance, , refreshFarmInfo, startStakeDate] =
     useFarmUserInfo(
       farmAddress,
       FARM_TYPE[type],
-      poolId,
+      poolIndex,
       data.tokenAddress,
       data.rewarderAddress
     );
-
-  const tvl = useTVL(
-    lpToken,
-    totalSupply,
-    FARM_TYPE[type],
-    data.valueLockedUSD
-  );
-  const apr = useCalculateApr(farmAddress, tvl, FARM_TYPE[type]);
 
   const onFinishGetReward = async () => {
     await refreshFarmInfo();
@@ -112,7 +103,7 @@ const TableRecord = ({ data, filterKey, type, setOptionFilter }) => {
     farmAddress,
     FARM_TYPE[type],
     onFinishGetReward,
-    poolId
+    poolIndex
   );
 
   const isShow = useMemo(() => {
@@ -133,18 +124,6 @@ const TableRecord = ({ data, filterKey, type, setOptionFilter }) => {
     return new BigNumber(apr).div(365).toFixed(2);
   }, [apr]);
 
-  useEffect(() => {
-    if (lpToken.token0.symbol && lpToken.token1.symbol) {
-      setOptionFilter((e) => {
-        return [
-          ...e,
-          { value: lpToken.token0.symbol, label: lpToken.token0.symbol },
-          { value: lpToken.token1.symbol, label: lpToken.token1.symbol },
-        ];
-      });
-    }
-  }, [lpToken.token0.symbol]);
-
   const formatFarmName = useMemo(() => {
     if (
       FARM_TYPE.apeswap === FARM_TYPE[type] &&
@@ -163,7 +142,7 @@ const TableRecord = ({ data, filterKey, type, setOptionFilter }) => {
             rel="noreferrer"
             target="_blank"
             href={`https://polygonscan.com/address/${farmAddress}`}
-            title={poolId}
+            title={poolIndex}
           >
             {formatFarmName}
           </a>
@@ -238,7 +217,7 @@ const TableRecord = ({ data, filterKey, type, setOptionFilter }) => {
                   type={FARM_TYPE[type]}
                   lpBalance={lpBalance}
                   getLpBalance={getLpBalance}
-                  pId={poolId}
+                  pId={poolIndex}
                 />
               )}
             </div>

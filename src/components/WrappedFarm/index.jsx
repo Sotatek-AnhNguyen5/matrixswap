@@ -1,41 +1,24 @@
 import { useWeb3React } from "@web3-react/core";
-import ABI from "../../abi/factoryABI.json";
-import { FACTORY_ADDRESS } from "../../utils";
-import { DEFAULT_PAIR } from "../../const";
+import ABI from "../../abi/QuickSwapStakingInfoABI.json";
+import { DEFAULT_PAIR, QUICKSWAP_STAKINGINFO_ADDRESS } from "../../const";
 import { useState, useEffect } from "react";
 import { isEmpty, take, takeWhile } from "lodash";
 import useSushiFarms from "../../hooks/useSushiFarms";
 import useApeSwapFarms from "../../hooks/useApeswapFarms";
 import TableRecord from "../WrappedTableRecords";
+import useQuickSwapFarms from "../../hooks/useQuickSwapFarms";
 
-const WrappedFarm = ({ filterKey, setOptionFilter }) => {
-  const { library, active } = useWeb3React();
+const WrappedFarm = ({ filterKey }) => {
   const [data, setData] = useState([]);
   const sushiFarms = useSushiFarms();
   const apeSwapFarms = useApeSwapFarms();
+  const quickSwapFarms = useQuickSwapFarms();
 
   useEffect(() => {
-    const getData = async () => {
-      const factoryContract = new library.eth.Contract(ABI, FACTORY_ADDRESS);
-      const allData = [];
-      for (let pair of DEFAULT_PAIR) {
-        allData.push(
-          factoryContract.methods
-            .stakingRewardsInfoByStakingToken(pair.id)
-            .call()
-        );
-      }
-      const res = await Promise.all(allData);
-      for (let i = 0; i < res.length; i++) {
-        res[i].tokenAddress = DEFAULT_PAIR[i].id;
-      }
-      setData((old) => [...old, ...res]);
-    };
-
-    if (active) {
-      getData();
+    if (!isEmpty(quickSwapFarms)) {
+      setData((old) => [...old, ...quickSwapFarms]);
     }
-  }, [active]);
+  }, [quickSwapFarms]);
 
   useEffect(() => {
     if (!isEmpty(sushiFarms)) {
@@ -54,11 +37,10 @@ const WrappedFarm = ({ filterKey, setOptionFilter }) => {
       {data.map((e, index) => {
         return (
           <TableRecord
-            setOptionFilter={setOptionFilter}
             key={index}
             filterKey={filterKey}
             data={e}
-            type={e.appId || "quickswap"}
+            type={e.appId}
           />
         );
       })}

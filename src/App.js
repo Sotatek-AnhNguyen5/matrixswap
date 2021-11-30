@@ -8,6 +8,7 @@ import { useState } from "react";
 import Select from "react-select";
 import { uniqBy } from "lodash";
 import useVolume24h from "./hooks/useVolume24h";
+import FilterOptions from "./json/FilterOptions.json";
 
 const Table = styled.table`
   width: 80%;
@@ -59,12 +60,6 @@ const InputWrapper = styled.div`
   }
 `;
 
-const options = [
-  { value: "quickswap", label: "QuickSwap" },
-  { value: "sushiswap", label: "SushiSwap" },
-  { value: "apeswap", label: "Apeswap" },
-];
-
 const filterOption = (candidate, input) => {
   return (
     (candidate.data.__isNew__ ||
@@ -75,7 +70,6 @@ const filterOption = (candidate, input) => {
 
 function App() {
   const [filterKey, setFilterKey] = useState([]);
-  const [optionsFilter, setOptionFilter] = useState([]);
   const volume = useVolume24h();
 
   return (
@@ -86,7 +80,7 @@ function App() {
           defaultValue={filterKey}
           isMulti
           name="colors"
-          options={uniqBy([...optionsFilter, ...options], "value")}
+          options={uniqBy(FilterOptions, "value")}
           className="basic-multi-select"
           classNamePrefix="select"
           openMenuOnClick={false}
@@ -123,7 +117,6 @@ function App() {
           </thead>
           <tbody>
             <WrappedFarm
-              setOptionFilter={setOptionFilter}
               filterKey={filterKey}
             />
           </tbody>

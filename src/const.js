@@ -4,6 +4,8 @@ import SushiSwapFarmABI from "./abi/SushiFarmABI.json";
 import ApeSwapFarmABI from "./abi/ApeSwapFarmABI.json";
 
 export const ADDRESS_ZAP = "0x7e63f8FF1cB81164b62700627BE64E9b9C46aCA4";
+export const QUICKSWAP_STAKINGINFO_ADDRESS = "0x8aaa5e259f74c8114e0a471d9f2adfc66bfe09ed";
+
 export const QUICKSWAP_FACTORY_ADDRESS =
   "0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32";
 export const SUSHI_FACTORY_ADDRESS =
@@ -34,6 +36,13 @@ export const BANANA_TOKEN = {
   decimals: "18",
   name: "ApeSwapFinance Banana",
 };
+
+export const DRAGON_QUICK_TOKEN = {
+  address: "0xf28164a485b0b2c90639e47b0f377b4a438a16b1",
+  symbol: "dQUICK",
+  decimals: "18",
+  name: "Dragon QUICK",
+}
 
 export const WATCH_TOKEN = {
   address: "0x09211dc67f9fe98fb7bbb91be0ef05f4a12fa2b2",

@@ -5,9 +5,9 @@ import moment from "moment";
 import { useWeb3React } from "@web3-react/core";
 import ERC20ABI from "../abi/IERC20ABI.json";
 import { useFactoryContract } from "./useContract";
-import { convertToUSD } from "./useCalculatedApr";
 import BigNumber from "bignumber.js";
 import { USDT_ADDRESS } from "../const";
+import {convertToUSD} from "../utils/apr";
 
 const useVolume24h = () => {
   const { library } = useWeb3React();
