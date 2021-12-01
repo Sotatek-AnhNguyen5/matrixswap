@@ -6,7 +6,13 @@ import { FARM_TYPE } from "../const";
 import { useFarmContract } from "./useContract";
 import RewarderABI from "../abi/RewarderABI.json";
 
-const useFarmUserInfo = (farmAddress, type, pId, lpTokenAddress, rewarderAddress) => {
+const useFarmUserInfo = (
+  farmAddress,
+  type,
+  pId,
+  lpTokenAddress,
+  rewarderAddress
+) => {
   const { library, account } = useWeb3React();
   const [reward, setReward] = useState([0, 0]);
   const [balance, setBalance] = useState(0);
@@ -22,12 +28,11 @@ const useFarmUserInfo = (farmAddress, type, pId, lpTokenAddress, rewarderAddress
         RewarderABI,
         rewarderAddress
       );
-      const [pendingBanana, resBalance, rewardMatic] =
-        await Promise.all([
-          farmContract.methods.pendingBanana(pId, account).call(),
-          farmContract.methods.userInfo(pId, account).call(),
-          rewarderContract.methods.pendingToken(pId, account).call(),
-        ]);
+      const [pendingBanana, resBalance, rewardMatic] = await Promise.all([
+        farmContract.methods.pendingBanana(pId, account).call(),
+        farmContract.methods.userInfo(pId, account).call(),
+        rewarderContract.methods.pendingToken(pId, account).call(),
+      ]);
       rewardAmount = pendingBanana;
       balanceAmount = resBalance.amount;
       secondRewardAmount = rewardMatic;
@@ -36,12 +41,11 @@ const useFarmUserInfo = (farmAddress, type, pId, lpTokenAddress, rewarderAddress
         RewarderABI,
         rewarderAddress
       );
-      const [pendingSushi, resBalance, rewardMatic] =
-        await Promise.all([
-          farmContract.methods.pendingSushi(pId, account).call(),
-          farmContract.methods.userInfo(pId, account).call(),
-          rewarderContract.methods.pendingTokens(pId, account, 0).call(),
-        ]);
+      const [pendingSushi, resBalance, rewardMatic] = await Promise.all([
+        farmContract.methods.pendingSushi(pId, account).call(),
+        farmContract.methods.userInfo(pId, account).call(),
+        rewarderContract.methods.pendingTokens(pId, account, 0).call(),
+      ]);
       rewardAmount = pendingSushi;
       balanceAmount = resBalance.amount;
       secondRewardAmount = rewardMatic.rewardAmounts;
@@ -63,7 +67,11 @@ const useFarmUserInfo = (farmAddress, type, pId, lpTokenAddress, rewarderAddress
       new BigNumber(balanceAmount).div(new BigNumber(10).pow(18)).toFixed()
     );
     const stakeInfo = JSON.parse(localStorage.getItem("stakeInfo")) || [];
-    const farmInfo = find(stakeInfo, { farmAddress });
+    const farmInfo = find(
+      stakeInfo,
+      (e) => e.farmAddress.toLowerCase() === farmAddress.toLowerCase()
+    );
+
     if (farmInfo) {
       setStartDate(farmInfo.startDate);
     }

@@ -1,20 +1,17 @@
 import styled from "styled-components";
 import { FaAngleDown, FaAngleRight } from "react-icons/fa";
-import React, { useState, useMemo, useEffect } from "react";
+import React, { useState, useMemo } from "react";
 import useFarmUserInfo from "../../hooks/useFarmUserInfo";
 import { toast } from "react-toastify";
 import BigNumber from "bignumber.js";
 import { find, isEmpty } from "lodash";
 import { convertDate, moneyFormatter } from "../../utils";
-import useLpTokenInfo from "../../hooks/useLpTokenInfo";
-import useCalculateApr from "../../hooks/useCalculatedApr";
 import ZapTab from "../Zap";
 import FarmingTab from "../Farming";
 import useGetRewardCallback from "../../hooks/useGetRewardCallback";
 import SubmitButton from "../SubmitButton";
 import useTokenBalance from "../../hooks/useTokenBalance";
 import { FARM_TYPE } from "../../const";
-import useTVL from "../../hooks/useTVL";
 
 const Td = styled.td`
   text-align: center;
@@ -82,17 +79,15 @@ const TableRecord = ({ data, filterKey, type }) => {
   const [isSelected, setIsSelected] = useState(false);
   const [isZap, setIsZap] = useState(true);
   const farmAddress = data.rewardAddress || data.stakingRewards;
-  const { rewardTokens, poolIndex, apr, tvl } = data;
-  const lpToken = useLpTokenInfo(data.tokenAddress);
+  const { rewardTokens, poolIndex, apr, tvl, lpToken } = data;
   const [lpBalance, getLpBalance] = useTokenBalance(data.tokenAddress);
-  const [reward, balance, , refreshFarmInfo, startStakeDate] =
-    useFarmUserInfo(
-      farmAddress,
-      FARM_TYPE[type],
-      poolIndex,
-      data.tokenAddress,
-      data.rewarderAddress
-    );
+  const [reward, balance, refreshFarmInfo, startStakeDate] = useFarmUserInfo(
+    farmAddress,
+    FARM_TYPE[type],
+    poolIndex,
+    data.tokenAddress,
+    data.rewarderAddress
+  );
 
   const onFinishGetReward = async () => {
     await refreshFarmInfo();
@@ -121,6 +116,9 @@ const TableRecord = ({ data, filterKey, type }) => {
   }, [filterKey]);
 
   const daily = useMemo(() => {
+    if (new BigNumber(apr).isZero()) {
+      return 0;
+    }
     return new BigNumber(apr).div(365).toFixed(2);
   }, [apr]);
 

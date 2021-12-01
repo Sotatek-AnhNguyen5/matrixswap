@@ -28,7 +28,6 @@ const useSushiFarms = () => {
         )
       )
     );
-    console.log(listTVL)
     const listAPR = await Promise.all(
       data.pools.map((item, index) =>
         calculateAPR(

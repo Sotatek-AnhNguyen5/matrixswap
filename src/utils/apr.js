@@ -46,44 +46,58 @@ export const convertToUSD = async (
   }
 };
 
-export const calculateAPR = async (farmAddress, type, tvl, factoryContract, library) => {
-  const farmContract = new library.eth.Contract(
-    PROTOCOL_FUNCTION[type].abi,
-    farmAddress
-  );
-  if (type === FARM_TYPE.sushiswap || type === FARM_TYPE.apeswap) {
-    const rewardToken =
-      FARM_TYPE.sushiswap === type ? SUSHI_TOKEN : BANANA_TOKEN;
-    const method = rewardFunctionMap[type];
-    const rewardRate = await farmContract.methods[method]().call();
-    const rewardRatePerYear = new BigNumber(rewardRate)
-      .div(new BigNumber(10).pow(18))
-      .times(86400)
-      .times(365);
-    const rewardToUSD = await convertToUSD(
-      rewardRatePerYear,
-      18,
-      library,
-      rewardToken.address,
-      factoryContract
+export const calculateAPR = async (
+  farmAddress,
+  type,
+  tvl,
+  factoryContract,
+  library
+) => {
+  try {
+    if (new BigNumber(tvl).isZero()) {
+      return 0;
+    }
+
+    const farmContract = new library.eth.Contract(
+      PROTOCOL_FUNCTION[type].abi,
+      farmAddress
     );
-    return rewardToUSD.div(tvl).times(100).toFixed(2);
-  } else {
-    const [rewardsToken, rewardRate] = await Promise.all([
-      farmContract.methods.rewardsToken().call(),
-      farmContract.methods.rewardRate().call(),
-    ]);
-    const rewardRatePerYear = new BigNumber(rewardRate)
-      .div(new BigNumber(10).pow(18))
-      .times(86400)
-      .times(365);
-    const rewardToUSD = await convertToUSD(
-      rewardRatePerYear,
-      18,
-      library,
-      rewardsToken,
-      factoryContract
-    );
-    return rewardToUSD.div(tvl).times(100).toFixed(2);
+    if (type === FARM_TYPE.sushiswap || type === FARM_TYPE.apeswap) {
+      const rewardToken =
+        FARM_TYPE.sushiswap === type ? SUSHI_TOKEN : BANANA_TOKEN;
+      const method = rewardFunctionMap[type];
+      const rewardRate = await farmContract.methods[method]().call();
+      const rewardRatePerYear = new BigNumber(rewardRate)
+        .div(new BigNumber(10).pow(18))
+        .times(86400)
+        .times(365);
+      const rewardToUSD = await convertToUSD(
+        rewardRatePerYear,
+        18,
+        library,
+        rewardToken.address,
+        factoryContract
+      );
+      return rewardToUSD.div(tvl).times(100).toFixed(2);
+    } else {
+      const [rewardsToken, rewardRate] = await Promise.all([
+        farmContract.methods.rewardsToken().call(),
+        farmContract.methods.rewardRate().call(),
+      ]);
+      const rewardRatePerYear = new BigNumber(rewardRate)
+        .div(new BigNumber(10).pow(18))
+        .times(86400)
+        .times(365);
+      const rewardToUSD = await convertToUSD(
+        rewardRatePerYear,
+        18,
+        library,
+        rewardsToken,
+        factoryContract
+      );
+      return rewardToUSD.div(tvl).times(100).toFixed(2);
+    }
+  } catch (e) {
+    return 0;
   }
 };

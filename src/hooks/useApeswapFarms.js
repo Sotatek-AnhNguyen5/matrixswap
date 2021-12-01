@@ -28,6 +28,7 @@ const useApeSwapFarms = () => {
     const listLpToken = await Promise.all(
       data.pools.map((item) => getDataToken(item.pair, library))
     );
+    console.log(listLpToken)
     const listTVL = await Promise.all(
       data.pools.map((item, index) =>
         calculateTVL(

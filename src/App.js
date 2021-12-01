@@ -9,6 +9,7 @@ import Select from "react-select";
 import { uniqBy } from "lodash";
 import useVolume24h from "./hooks/useVolume24h";
 import FilterOptions from "./json/FilterOptions.json";
+import { FaArrowDown, FaArrowUp } from "react-icons/fa";
 
 const Table = styled.table`
   width: 80%;
@@ -18,6 +19,17 @@ const Table = styled.table`
 
   th {
     color: #656565;
+
+    span {
+      cursor: pointer;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+
+      svg {
+        margin-left: 10px;
+      }
+    }
   }
 
   thead {
@@ -70,7 +82,30 @@ const filterOption = (candidate, input) => {
 
 function App() {
   const [filterKey, setFilterKey] = useState([]);
+  const [sortKey, setSortKey] = useState();
+  const [sortType, setSortType] = useState();
   const volume = useVolume24h();
+
+  const onChangeSort = (type) => {
+    if (type !== sortKey) {
+      setSortType("asc");
+      setSortKey(type);
+    } else if (sortType === "desc") {
+      setSortKey("");
+    } else {
+      setSortType((old) => "desc");
+    }
+  };
+
+  const renderLabelWithSort = (type, label) => {
+    return (
+      <span onClick={() => onChangeSort(type)}>
+        {label}
+        {sortKey === type &&
+          (sortType === "desc" ? <FaArrowDown /> : <FaArrowUp />)}
+      </span>
+    );
+  };
 
   return (
     <AppWrapper className="App">
@@ -109,16 +144,20 @@ function App() {
           <thead>
             <tr>
               <th style={{ width: "20%" }} />
-              <th style={{ width: "25%" }}>APR</th>
-              <th style={{ width: "10%" }}>Daily</th>
-              <th style={{ width: "25%" }}>TVL</th>
+              <th style={{ width: "25%" }}>
+                {renderLabelWithSort("apr", "APR")}
+              </th>
+              <th style={{ width: "10%" }}>
+                {renderLabelWithSort("daily", "Daily")}
+              </th>
+              <th style={{ width: "25%" }}>
+                {renderLabelWithSort("tvl", "TVL")}
+              </th>
               <th style={{ width: "20%" }} />
             </tr>
           </thead>
           <tbody>
-            <WrappedFarm
-              filterKey={filterKey}
-            />
+            <WrappedFarm filterKey={filterKey} />
           </tbody>
         </Table>
       </div>

@@ -1,6 +1,3 @@
-import { useWeb3React } from "@web3-react/core";
-import ABI from "../../abi/QuickSwapStakingInfoABI.json";
-import { DEFAULT_PAIR, QUICKSWAP_STAKINGINFO_ADDRESS } from "../../const";
 import { useState, useEffect } from "react";
 import { isEmpty, take, takeWhile } from "lodash";
 import useSushiFarms from "../../hooks/useSushiFarms";
@@ -10,8 +7,8 @@ import useQuickSwapFarms from "../../hooks/useQuickSwapFarms";
 
 const WrappedFarm = ({ filterKey }) => {
   const [data, setData] = useState([]);
-  const sushiFarms = useSushiFarms();
   const apeSwapFarms = useApeSwapFarms();
+  const sushiFarms = useSushiFarms();
   const quickSwapFarms = useQuickSwapFarms();
 
   useEffect(() => {
