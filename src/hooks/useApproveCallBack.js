@@ -8,7 +8,6 @@ const useApproveCallBack = (token, toAddress) => {
   const [loading, setLoading] = useState(false);
   const [alowance, setAllowance] = useState(0);
 
-
   const getAlowance = async () => {
     const stakingTokenContract = new library.eth.Contract(
       StakingTokenABI,

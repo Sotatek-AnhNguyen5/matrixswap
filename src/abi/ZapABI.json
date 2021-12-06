@@ -154,9 +154,14 @@
           "type": "bytes32"
         },
         {
-          "internalType": "bytes32",
-          "name": "_pair",
-          "type": "bytes32"
+          "internalType": "address",
+          "name": "_token0",
+          "type": "address"
+        },
+        {
+          "internalType": "address",
+          "name": "_token1",
+          "type": "address"
         }
       ],
       "name": "getIntermediateToken",
@@ -279,30 +284,6 @@
         },
         {
           "internalType": "address",
-          "name": "_address",
-          "type": "address"
-        }
-      ],
-      "name": "routePair",
-      "outputs": [
-        {
-          "internalType": "address",
-          "name": "",
-          "type": "address"
-        }
-      ],
-      "stateMutability": "view",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes32",
-          "name": "_type",
-          "type": "bytes32"
-        },
-        {
-          "internalType": "address",
           "name": "_factory",
           "type": "address"
         },
@@ -313,29 +294,6 @@
         }
       ],
       "name": "setFactoryAndRouter",
-      "outputs": [],
-      "stateMutability": "nonpayable",
-      "type": "function"
-    },
-    {
-      "inputs": [
-        {
-          "internalType": "bytes32",
-          "name": "_type",
-          "type": "bytes32"
-        },
-        {
-          "internalType": "address",
-          "name": "_asset",
-          "type": "address"
-        },
-        {
-          "internalType": "address",
-          "name": "_route",
-          "type": "address"
-        }
-      ],
-      "name": "setRoutePairAddress",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"
@@ -399,6 +357,52 @@
               "type": "bytes32"
             },
             {
+              "internalType": "address[]",
+              "name": "from",
+              "type": "address[]"
+            },
+            {
+              "internalType": "uint256[]",
+              "name": "amount",
+              "type": "uint256[]"
+            },
+            {
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "internalType": "address",
+              "name": "receiver",
+              "type": "address"
+            }
+          ],
+          "internalType": "struct ZapMiniV2.ZapInMultiTokenForm",
+          "name": "_params",
+          "type": "tuple"
+        }
+      ],
+      "name": "zapInMultiToken",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "liquidity",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "bytes32",
+              "name": "protocolType",
+              "type": "bytes32"
+            },
+            {
               "internalType": "address",
               "name": "from",
               "type": "address"
@@ -425,6 +429,67 @@
         }
       ],
       "name": "zapInToken",
+      "outputs": [
+        {
+          "internalType": "uint256",
+          "name": "liquidity",
+          "type": "uint256"
+        }
+      ],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "components": [
+            {
+              "internalType": "address",
+              "name": "from",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "amount",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "curvePool",
+              "type": "address"
+            },
+            {
+              "internalType": "uint256",
+              "name": "poolLength",
+              "type": "uint256"
+            },
+            {
+              "internalType": "address",
+              "name": "depositToken",
+              "type": "address"
+            },
+            {
+              "internalType": "uint8",
+              "name": "depositTokenIndex",
+              "type": "uint8"
+            },
+            {
+              "internalType": "address",
+              "name": "to",
+              "type": "address"
+            },
+            {
+              "internalType": "bool",
+              "name": "use_underlying",
+              "type": "bool"
+            }
+          ],
+          "internalType": "struct ZapMiniV2.ZapInCurveForm",
+          "name": "_params",
+          "type": "tuple"
+        }
+      ],
+      "name": "zapInTokenCurve",
       "outputs": [
         {
           "internalType": "uint256",
@@ -471,12 +536,12 @@
         },
         {
           "internalType": "address[]",
-          "name": "_path1",
+          "name": "_path0",
           "type": "address[]"
         },
         {
           "internalType": "address[]",
-          "name": "_path2",
+          "name": "_path1",
           "type": "address[]"
         }
       ],
@@ -494,9 +559,9 @@
     {
       "inputs": [
         {
-          "internalType": "address",
-          "name": "_router",
-          "type": "address"
+          "internalType": "bytes32",
+          "name": "_type",
+          "type": "bytes32"
         },
         {
           "internalType": "address",
@@ -515,6 +580,44 @@
         }
       ],
       "name": "zapOut",
+      "outputs": [],
+      "stateMutability": "nonpayable",
+      "type": "function"
+    },
+    {
+      "inputs": [
+        {
+          "internalType": "bytes32",
+          "name": "_type",
+          "type": "bytes32"
+        },
+        {
+          "internalType": "address",
+          "name": "_from",
+          "type": "address"
+        },
+        {
+          "internalType": "uint256",
+          "name": "_amount",
+          "type": "uint256"
+        },
+        {
+          "internalType": "address[]",
+          "name": "_toTokens",
+          "type": "address[]"
+        },
+        {
+          "internalType": "uint8[]",
+          "name": "_toRatios",
+          "type": "uint8[]"
+        },
+        {
+          "internalType": "address",
+          "name": "_receiver",
+          "type": "address"
+        }
+      ],
+      "name": "zapOutMultipleToken",
       "outputs": [],
       "stateMutability": "nonpayable",
       "type": "function"

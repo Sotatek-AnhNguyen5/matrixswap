@@ -1,34 +1,50 @@
 import { useQuery } from "@apollo/client";
 import { GET_ZAPS } from "../graphql";
 import { useEffect, useState } from "react";
-import moment from "moment";
-import { useWeb3React } from "@web3-react/core";
 import ERC20ABI from "../abi/IERC20ABI.json";
-import { useFactoryContract } from "./useContract";
+import { useFactoryContract, useLibrary } from "./useContract";
 import BigNumber from "bignumber.js";
 import { USDT_ADDRESS } from "../const";
-import {convertToUSD} from "../utils/apr";
+import { convertToUSD } from "../utils/apr";
+import moment from "moment";
 
 const useVolume24h = () => {
-  const { library } = useWeb3React();
+  const library = useLibrary();
   const factoryContract = useFactoryContract("quick");
-  const { loading, error, data } = useQuery(GET_ZAPS, {
-    variables: {
-      createTime: moment().subtract(1, "days").unix(),
-    },
+  const { data } = useQuery(GET_ZAPS, {
     context: { clientName: "zapData" },
   });
-  const [volume, setVolume] = useState();
+  const [volume, setVolume] = useState({
+    total: 0,
+    total24h: 0,
+  });
 
   const calculateVolume24h = async () => {
+    const yesterday = moment().subtract(1, "days").unix();
     let total = 0;
-    const jobData = [];
-    for (let e of data.zaps) {
-      jobData.push(amountToUSDT(library, e.amount, e.input, factoryContract));
-    }
-    const lstVolume = await Promise.all(jobData);
-    lstVolume.forEach((e) => (total = e.plus(total)));
-    setVolume(total.toFixed(2));
+    let total24h = 0;
+    const totalVolume = await Promise.all(
+      data.zaps.map(async (e) => {
+        const toUSDT = await amountToUSDT(
+          library,
+          e.amount,
+          e.input,
+          factoryContract
+        );
+        return {
+          createTime: e.createTime,
+          amount: toUSDT,
+        };
+      })
+    );
+    totalVolume.forEach((e) => (total = e.amount.plus(total)));
+    totalVolume
+      .filter((e) => e.createTime >= yesterday)
+      .forEach((e) => (total24h = e.amount.plus(total24h)));
+    setVolume({
+      total : total.toFixed(2),
+      total24h: total24h.toFixed(2),
+    });
   };
 
   useEffect(() => {

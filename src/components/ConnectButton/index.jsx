@@ -1,32 +1,38 @@
 import { useWeb3React } from "@web3-react/core";
 import { useCallback, useEffect, useMemo } from "react";
-import styled from "styled-components";
-import { injected } from "../../utils/connectors";
-
-const MetamaskConnectButton = styled.button`
-  margin-left: auto;
-`;
+import styled, { useTheme } from "styled-components";
+import { injected, supportedChainIds } from "../../utils/connectors";
 
 const AddressLabel = styled.div`
-  font-weight: 500;
-  color: white;
-  background-color: #3ee046;
-  padding: 10px 20px;
-  border-radius: 10px;
-  min-width: 250px;
-  text-align: center;
+  font-weight: 400;
+  font-size: 16px;
+  margin-top: 10px;
+  color: #ffffff;
   letter-spacing: 1px;
 `;
 
 const Wrapper = styled.div`
   display: flex;
-  padding: 20px;
-  flex-direction: column;
-  align-items: flex-end;
+  justify-content: center;
+  align-items: center;
+  min-width: 240px;
+  font-size: 16px;
+  line-height: 19px;
+  min-height: 80px;
+  background: ${(props) =>
+    props.isWrongNetWork
+      ? 'linear-gradient(0deg, rgba(254, 5, 5, 0.5), rgba(254, 5, 5, 0.5)),url("./images/bg-connect-button-danger.png")'
+      : 'linear-gradient(0deg, rgba(0, 0, 0, 0.55), rgba(0, 0, 0, 0.55)), url("./images/bg-connect-button.png")'};
+  background-size: cover;
+  border: 1px solid #30b438;
+  box-sizing: border-box;
+  border-radius: 51px;
+  cursor: pointer;
 `;
 
 const ConnectButton = () => {
-  const { active, account, activate } = useWeb3React();
+  const { active, account, activate, error } = useWeb3React();
+  const theme = useTheme();
 
   const connect = useCallback(() => {
     try {
@@ -38,8 +44,8 @@ const ConnectButton = () => {
 
   const shortcutAddress = useMemo(() => {
     if (account) {
-      const firstPart = account.substring(0, 10);
-      const endPart = account.substring(account.length - 10, account.length);
+      const firstPart = account.substring(0, 6);
+      const endPart = account.substring(account.length - 3, account.length);
       return `${firstPart}.......${endPart}`;
     }
     return "";
@@ -49,19 +55,21 @@ const ConnectButton = () => {
     connect();
   }, [connect]);
 
+  const isWrongNetWork = useMemo(() => {
+    return error && error.name === "UnsupportedChainIdError";
+  }, [error]);
+
   return (
-    <Wrapper>
-      {!active && (
-        <MetamaskConnectButton onClick={connect}>
-          Connect to Metamask
-        </MetamaskConnectButton>
-      )}
+    <Wrapper onClick={connect} isWrongNetWork={isWrongNetWork}>
       {active ? (
-        <span style={{ textAlign: "right" }}>
+        <span style={{ textAlign: "left", color: theme.colorMainGreen }}>
+          Polygon wallet
           <AddressLabel> {shortcutAddress}</AddressLabel>
         </span>
+      ) : isWrongNetWork ? (
+        "Wrong Network"
       ) : (
-        <span>Not connected</span>
+        "Connect to a wallet"
       )}
     </Wrapper>
   );

@@ -11,6 +11,8 @@ import {
 import { Web3ReactProvider } from "@web3-react/core";
 import { getLibrary } from "./utils";
 import { ApolloLink } from "apollo-link";
+import theme from "./theme";
+import { ThemeProvider } from "styled-components";
 
 const zapData = new HttpLink({
   uri: "https://api.thegraph.com/subgraphs/name/sotatek-cuongtran/bla-bla",
@@ -31,7 +33,7 @@ const client = new ApolloClient({
     ApolloLink.split(
       (operation) => operation.getContext().clientName === "apesFarm",
       apesFarms,
-      sushiFarms,
+      sushiFarms
     )
   ),
   cache: new InMemoryCache(),
@@ -40,7 +42,9 @@ const client = new ApolloClient({
 ReactDOM.render(
   <Web3ReactProvider getLibrary={getLibrary}>
     <ApolloProvider client={client}>
-      <App />
+      <ThemeProvider theme={theme}>
+        <App />
+      </ThemeProvider>
     </ApolloProvider>
   </Web3ReactProvider>,
   document.getElementById("root")

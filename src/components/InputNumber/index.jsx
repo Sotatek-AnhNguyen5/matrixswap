@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import SelectTokenButton from "../SelecTokenButton";
+import SelectTokenButton from "../SelectTokenModal";
 import {isNotValidASCIINumber, isPreventASCIICharacters} from "../../utils/input";
 
 const InputWrapper = styled.div`
@@ -29,11 +29,10 @@ const InputWrapper = styled.div`
 
 const InputNumber = ({
   color,
-  withSelectToken = false,
   inputRef,
-  onSetSelectedToken,
   onChange,
-  disabled
+  disabled,
+  onBlur
 }) => {
   return (
     <InputWrapper disabled={disabled} color={color} className={'input-wrapper'}>
@@ -41,13 +40,11 @@ const InputNumber = ({
         onKeyDown={e => isNotValidASCIINumber(e.keyCode, true) && e.preventDefault()}
         onKeyPress={e => isPreventASCIICharacters(e.key) && e.preventDefault()}
         onChange={(e) => onChange && onChange(e.target.value)}
+        onBlur={(e) => onBlur && onBlur(e.target.value)}
         ref={inputRef}
         type="number"
         disabled={disabled}
       />
-      {withSelectToken && (
-        <SelectTokenButton onSetSelectedToken={onSetSelectedToken} />
-      )}
     </InputWrapper>
   );
 };

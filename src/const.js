@@ -3,8 +3,9 @@ import QuickSwapFarmABI from "./abi/QuickSwapFarmABI.json";
 import SushiSwapFarmABI from "./abi/SushiFarmABI.json";
 import ApeSwapFarmABI from "./abi/ApeSwapFarmABI.json";
 
-export const ADDRESS_ZAP = "0x7e63f8FF1cB81164b62700627BE64E9b9C46aCA4";
-export const QUICKSWAP_STAKINGINFO_ADDRESS = "0x8aaa5e259f74c8114e0a471d9f2adfc66bfe09ed";
+export const ADDRESS_ZAP = "0xb39F269235A78e1F0745516f159D4154014b0e5e";
+export const QUICKSWAP_STAKINGINFO_ADDRESS =
+  "0x8aaa5e259f74c8114e0a471d9f2adfc66bfe09ed";
 
 export const QUICKSWAP_FACTORY_ADDRESS =
   "0x5757371414417b8C6CAad45bAeF941aBc7d3Ab32";
@@ -15,6 +16,45 @@ export const APE_SWAP_FACTORY = "0xCf083Be4164828f00cAE704EC15a36D711491284";
 //Token
 export const USDT_ADDRESS = "0xc2132D05D31c914a87C6611C10748AEb04B58e8F";
 export const WETH_ADDRESS = "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619";
+
+export const PBNB_TOKEN = {
+  "name": "Orbit Bridge Polygon Binance Coin",
+  "address": "0x7e9928aFe96FefB820b85B4CE6597B8F660Fe4F4",
+  "symbol": "PBNB",
+  "decimals": 18,
+  "chainId": 137,
+  "logoURI": "https://assets.coingecko.com/coins/images/825/small/binance-coin-logo.png?1547034615"
+}
+
+export const DAI_TOKEN = {
+  name: "Dai Stablecoin",
+  address: "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
+  symbol: "DAI",
+  decimals: 18,
+  chainId: 137,
+  logoURI:
+    "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x6B175474E89094C44Da98b954EedeAC495271d0F/logo.png",
+};
+
+export const WETH_TOKEN = {
+  name: "Ether",
+  address: "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619",
+  symbol: "ETH",
+  decimals: 18,
+  chainId: 137,
+  logoURI:
+    "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xC02aaA39b223FE8D0A0e5C4F27eAD9083C756Cc2/logo.png",
+};
+
+export const USDT_TOKEN = {
+  name: "Tether USD",
+  address: "0xc2132D05D31c914a87C6611C10748AEb04B58e8F",
+  symbol: "USDT",
+  decimals: 6,
+  chainId: 137,
+  logoURI:
+    "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xdAC17F958D2ee523a2206206994597C13D831ec7/logo.png",
+};
 
 export const SUSHI_TOKEN = {
   address: "0x0b3f868e0be5597d5db7feb59e1cadbb0fdda50a",
@@ -28,6 +68,8 @@ export const WMATIC_TOKEN = {
   symbol: "WMATIC",
   decimals: "18",
   name: "Wrapped Matic",
+  logoURI:
+    "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0x7D1AfA7B718fb893dB30A3aBc0Cfc608AaCfeBB0/logo.png",
 };
 //from apeswap
 export const BANANA_TOKEN = {
@@ -42,7 +84,7 @@ export const DRAGON_QUICK_TOKEN = {
   symbol: "dQUICK",
   decimals: "18",
   name: "Dragon QUICK",
-}
+};
 
 export const WATCH_TOKEN = {
   address: "0x09211dc67f9fe98fb7bbb91be0ef05f4a12fa2b2",
