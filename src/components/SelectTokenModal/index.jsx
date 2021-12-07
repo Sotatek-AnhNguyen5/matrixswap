@@ -202,7 +202,7 @@ const SelectTokenModal = ({
           templateColumns="auto auto auto"
         >
           {CommonBaseList.map((e) => (
-            <CommonBaseItem key={e.address}>
+            <CommonBaseItem onClick={() => onSelectToken(e)} key={e.address}>
               <TokenLogo symbol={e.symbol} />
               {e.symbol}
             </CommonBaseItem>

@@ -30,7 +30,7 @@ const HeaderItem = styled.div`
   text-align: center;
 `;
 
-const DataTable = ({ data }) => {
+const DataTable = ({ data, setData }) => {
   const [sortKey, setSortKey] = useState();
   const [sortType, setSortType] = useState();
   const [cloneData, setCloneData] = useState([]);
@@ -96,7 +96,7 @@ const DataTable = ({ data }) => {
             // filterKey={filterKey}
             data={e}
             type={e.appId}
-            setParentData={setCloneData}
+            setParentData={setData}
           />
         );
       })}

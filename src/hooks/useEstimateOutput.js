@@ -1,28 +1,22 @@
-import { useState, useEffect } from "react";
+import { useState, useEffect, useCallback } from "react";
 import { useWeb3React } from "@web3-react/core";
 import QuickSwapPair from "../abi/QuickSwapPair.json";
 import BigNumber from "bignumber.js";
 import { useFactoryContract } from "./useContract";
 import { isValidAddress } from "../utils";
+import { debounce } from "lodash";
 
 const WETH_ADDRESS = "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619";
 
-const useEstimateOutput = (
-  amount,
-  token0,
-  selectedToken,
-  reservers,
-  totalSupplyStakingToken,
-  token1,
-  type
-) => {
+const useEstimateOutput = (amountToken, token, lpToken, type) => {
   const { library } = useWeb3React();
 
   const [value, setValue] = useState(0);
   const factoryContract = useFactoryContract(type);
 
-  useEffect(() => {
-    const estimateOutput = async () => {
+  const estimateOutput = useCallback(
+    debounce(async (stakingToken, amount, selectedToken) => {
+      const { token0, token1, totalSupply, reserves } = stakingToken;
       const [pairToken0, pairToken1] = await Promise.all([
         factoryContract.methods
           .getPair(selectedToken.address, token0.address)
@@ -42,9 +36,9 @@ const useEstimateOutput = (
           .times(new BigNumber(10).pow(selectedToken.decimals))
           .div(2);
 
-        const convertedValue = new BigNumber(totalSupplyStakingToken)
+        const convertedValue = new BigNumber(totalSupply)
           .times(amountToHex)
-          .div(isToken0 ? reservers._reserve0 : reservers._reserve1)
+          .div(isToken0 ? reserves._reserve0 : reserves._reserve1)
           .div(new BigNumber(10).pow(18))
           .toFixed();
         setValue(convertedValue);
@@ -84,12 +78,10 @@ const useEstimateOutput = (
           .times(tokenRate)
           .times(new BigNumber(10).pow(tokenConvert.decimals))
           .div(2);
-        const convertedValue = new BigNumber(totalSupplyStakingToken)
+        const convertedValue = new BigNumber(totalSupply)
           .times(amountToHex)
           .div(
-            isValidAddress(pairToken0)
-              ? reservers._reserve0
-              : reservers._reserve1
+            isValidAddress(pairToken0) ? reserves._reserve0 : reserves._reserve1
           )
           .div(new BigNumber(10).pow(18))
           .toFixed();
@@ -156,19 +148,22 @@ const useEstimateOutput = (
           : new BigNumber(token0Reserve._reserve0).div(token0Reserve._reserve1);
 
         const amountToken0 = new BigNumber(amountETH).times(token0Rate).div(2);
-        const convertedValue = new BigNumber(totalSupplyStakingToken)
+        const convertedValue = new BigNumber(totalSupply)
           .times(amountToken0)
-          .div(reservers._reserve0)
+          .div(reserves._reserve0)
           .div(new BigNumber(10).pow(18))
           .toFixed();
         setValue(convertedValue);
       }
-    };
+    }, 500),
+    []
+  );
 
-    if (amount && selectedToken.address) {
-      estimateOutput();
+  useEffect(() => {
+    if (amountToken && token.address) {
+      estimateOutput(lpToken, amountToken, token);
     }
-  }, [amount, selectedToken.address]);
+  }, [lpToken, amountToken, token]);
 
   return value;
 };

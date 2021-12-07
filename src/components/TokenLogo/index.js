@@ -8,7 +8,7 @@ const StyledToken = styled.img`
   border-radius: 50%;
 `;
 
-const TokenLogo = ({ symbol, style }) => {
+const TokenLogo = ({ symbol, style, classname }) => {
   const tokenURI = useMemo(() => {
     const token = find(
       DefaultToken.tokens,
@@ -23,6 +23,7 @@ const TokenLogo = ({ symbol, style }) => {
     <StyledToken
       style={style}
       src={tokenURI}
+      className={classname}
       alt=""
       onError={(e) => {
         e.target.onerror = null;

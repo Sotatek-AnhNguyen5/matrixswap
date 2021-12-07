@@ -9,6 +9,7 @@ import useTokenBalance from "../../../hooks/useTokenBalance";
 import useConvertToUSDT from "../../../hooks/useConvertToUSDT";
 import useApproveCallBack from "../../../hooks/useApproveCallBack";
 import { ADDRESS_ZAP } from "../../../const";
+import useEstimateOutput from "../../../hooks/useEstimateOutput";
 
 const TokenCard = styled.div`
   display: flex;
@@ -154,9 +155,11 @@ const FromTokenCard = ({
   openSelectToken,
   setSelectedTokens,
   index,
+  lpToken,
+  farmType,
 }) => {
   const inputRef = useRef();
-  const [percent, setPercent] = useState(0);
+  const [percent, setPercent] = useState("0");
   const [amount, setAmount] = useState(0);
   const usdtValue = useConvertToUSDT(amount, token);
   const [balance] = useTokenBalance(token.address, token.decimals);
@@ -164,6 +167,7 @@ const FromTokenCard = ({
     token.address,
     ADDRESS_ZAP
   );
+  const estimateOutput = useEstimateOutput(amount, token, lpToken, farmType);
 
   const onChangeRangePercent = (percentAmount) => {
     setPercent(percentAmount);
@@ -181,7 +185,7 @@ const FromTokenCard = ({
     setAmount(e);
     if (e) {
       const amountToPercent = new BigNumber(e).div(balance).times(100);
-      setPercent(amountToPercent.gt(100) ? 100 : amountToPercent.toFixed(0));
+      setPercent(amountToPercent.toFixed(0));
     }
   };
 
@@ -192,9 +196,11 @@ const FromTokenCard = ({
       newData[index].allowance = allowance;
       newData[index].approve = approve;
       newData[index].loading = loading;
+      newData[index].usdtAmount = usdtValue;
+      newData[index].estimateOutput = estimateOutput;
       return [...newData];
     });
-  }, [amount, allowance, loading]);
+  }, [amount, allowance, loading, usdtValue, estimateOutput]);
 
   return (
     <TokenCard>

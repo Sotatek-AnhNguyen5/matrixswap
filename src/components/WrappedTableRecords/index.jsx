@@ -21,6 +21,9 @@ const FlexRowData = styled.div`
   flex-wrap: wrap;
   border-radius: 12px;
 
+  box-shadow: ${(props) =>
+    !props.hover ? "0px 0px 30px rgba(62, 224, 70, 0.15)" : ""};
+
   &:hover {
     background-color: ${(props) => (props.hover ? "#193034" : "")};
   }
@@ -85,12 +88,6 @@ const ClaimButton = styled(SubmitButton)`
   margin-left: auto;
   letter-spacing: 2px;
   width: 150px;
-`;
-
-const ValueSide = styled.div`
-  text-align: left;
-  width: 30%;
-  white-space: nowrap;
 `;
 
 const TabLabel = styled.div`
@@ -186,7 +183,7 @@ const TableRecord = ({ data, filterKey, type, setParentData }) => {
 
   return (
     <>
-      <FlexRowData hover={true} isShow={isShow}>
+      <FlexRowData hover={!isSelected} isShow={isShow}>
         <div className="data-wrapper">
           <DataItem style={{ width: "25%" }}>
             <div className="wrapped-token-logo">
@@ -263,9 +260,8 @@ const TableRecord = ({ data, filterKey, type, setParentData }) => {
               </FlexRow>
               {isZap ? (
                 <ZapTab
-                  stakingToken={lpToken.address}
-                  totalSupplyStakingToken={lpToken.totalSupply}
-                  reserves={lpToken.reserves}
+                  lpToken={lpToken}
+                  lpAddress={lpToken.address}
                   token0={lpToken.token0}
                   token1={lpToken.token1}
                   changeTab={() => setIsZap(false)}

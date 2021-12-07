@@ -132,7 +132,7 @@ const ToLpCard = ({ token0, token1, lpBalance, estimateOutput }) => {
         </div>
       </SelectTokenWrapper>
       <SliderWrapper>
-        <OutputWrapper>0.00000</OutputWrapper>
+        <OutputWrapper>{estimateOutput}</OutputWrapper>
       </SliderWrapper>
     </TokenCard>
   );

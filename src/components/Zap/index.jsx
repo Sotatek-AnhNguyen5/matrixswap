@@ -1,4 +1,4 @@
-import React, { useMemo, useState } from "react";
+import React, { useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import { ADDRESS_ZAP, PROTOCOL_FUNCTION, WMATIC_TOKEN } from "../../const";
 import SubmitButton from "../SubmitButton";
@@ -7,9 +7,11 @@ import FromTokenCard from "./FromTokenCard";
 import { FlexRow, StyledButton } from "../../theme/components";
 import SelectTokenModal from "../SelectTokenModal";
 import ToLpCard from "./ToLpCard";
-import { find } from "lodash";
+import { find, sumBy } from "lodash";
 import { useWeb3React } from "@web3-react/core";
 import BigNumber from "bignumber.js";
+import ConfirmZap from "../ConfirmZap";
+import TransactionStatusModal from "../TransactionStatusModal";
 
 const FromToken = styled.div`
   color: rgba(30, 174, 37, 0.5);
@@ -31,15 +33,55 @@ const AddTokenButton = styled(StyledButton)`
 `;
 
 const ExchangeWrapper = styled.div`
-  border-bottom: 3px solid #010304;
-  display: flex;
-  justify-content: center;
-  margin-top: 20px;
+  background-color: #010304;
+  margin-top: 40px;
+  position: relative;
+  cursor: pointer;
+  height: 0.175rem;
+  width: 100%;
+  z-index: 0;
+
+  .black-circle {
+    background-color: #010304;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    position: absolute;
+    z-index: 1;
+    left: 50%;
+    border-radius: 50%;
+    transform: translateX(-1.125rem);
+    transition: all 0.14s ease 0.36s;
+    width: 2.25rem;
+    height: 2.25rem;
+    top: -16px;
+  }
 
   img {
-    width: 40px;
-    height: 40px;
-    margin-bottom: -20px;
+    width: 1.5rem;
+    height: 1.25rem;
+  }
+
+  .green-line {
+    position: absolute;
+    left: 50%;
+    height: 0.175rem;
+    width: 0;
+    background-color: #1eae25;
+    transform: translateX(-50%);
+    transition: all 0.4s ease-in 0s;
+  }
+
+  &:hover {
+    .green-line {
+      width: 100%;
+      transition: all 0.4s ease-in 0s;
+    }
+
+    .black-circle {
+      background-color: #1eae25;
+      transition: all 0.2s ease 0s;
+    }
   }
 `;
 
@@ -71,34 +113,28 @@ const ZapButton = styled(SubmitButton)`
 `;
 
 const ZapTab = ({
-  stakingToken,
+  lpAddress,
   token0,
   token1,
   refreshStakeBalance,
   type,
   getLpBalance,
   lpBalance,
+  lpToken,
 }) => {
   const { account } = useWeb3React();
   const [openSelectToken, setOpenSelectToken] = useState(false);
+  const [openConfirmZap, setOpenConfirmZap] = useState(false);
+  const [isOpenTxStatusModal, setIsOpenTxStatusModal] = useState(false);
   const [selectedIndexTokenModal, setSelectedTokenModal] = useState();
   const [selectedTokens, setSelectedTokens] = useState([WMATIC_TOKEN]);
+  const [isZapIn, setIsZapIn] = useState(true);
   // const isZapAble = useCheckZapToken(selectedToken, token0, token1, type);
 
   const tokenHaveToApprove = find(
     selectedTokens,
     (e) => e.allowance && new BigNumber(e.allowance).isZero()
   );
-
-  // const estimateOutput = useEstimateOutput(
-  //   amount,sd
-  //   token0,
-  //   selectedToken,
-  //   reserves,
-  //   totalSupplyStakingToken,
-  //   token1,
-  //   type
-  // );
 
   const onFinishZap = async () => {
     getLpBalance();
@@ -107,38 +143,47 @@ const ZapTab = ({
 
   const params = useMemo(() => {
     const protocolType = PROTOCOL_FUNCTION[type].fullnameHash;
-    const fromList = selectedTokens.map((e) => e.address);
-    const amountList = selectedTokens.map((e) =>
-      new BigNumber(e.amount)
-        .times(new BigNumber(10).pow(e.decimals))
-        .toFixed(0)
-    );
+    const fromList = selectedTokens
+      .filter((e) => e.address)
+      .map((e) => e.address);
+    const amountList = selectedTokens
+      .filter((e) => e.address)
+      .map((e) =>
+        new BigNumber(e.amount)
+          .times(new BigNumber(10).pow(e.decimals))
+          .toFixed(0)
+      );
     return {
       protocolType,
       from: fromList,
       amount: amountList,
-      to: stakingToken,
+      to: lpAddress,
       receiver: account,
     };
   }, [type, selectedTokens]);
 
-  const [onZap, zapLoading] = useZapCallback(params, onFinishZap);
+  const [onZap, zapLoading, zapStatus, txHash] = useZapCallback(
+    params,
+    onFinishZap
+  );
   const onAddTokens = () => {
     setSelectedTokens((old) => [...old, {}]);
   };
 
   const onSelectedToken = (token) => {
     setSelectedTokens((old) => {
-      old.splice(selectedIndexTokenModal, 1, token);
-      return old;
+      const newData = [...old];
+      newData.splice(selectedIndexTokenModal, 1, token);
+      return [...newData];
     });
   };
 
   const removeFromList = (index) => {
     index !== 0 &&
       setSelectedTokens((old) => {
-        old.splice(index, 1);
-        return [...old];
+        const newData = [...old];
+        newData.splice(index, 1);
+        return [...newData];
       });
   };
 
@@ -146,6 +191,18 @@ const ZapTab = ({
     setSelectedTokenModal(index);
     setOpenSelectToken(true);
   };
+
+  const totalEstimateOutput = useMemo(() => {
+    let total = new BigNumber(0);
+    selectedTokens
+      .filter((e) => e.estimateOutput)
+      .forEach((e) => (total = total.plus(e.estimateOutput)));
+    return total.toFixed();
+  }, [selectedTokens]);
+
+  useEffect(() => {
+    zapLoading && setIsOpenTxStatusModal(true);
+  }, [zapLoading]);
 
   return (
     <div>
@@ -159,15 +216,25 @@ const ZapTab = ({
             removeSelf={() => removeFromList(i)}
             openSelectToken={() => onOpenSelectToken(i)}
             setSelectedTokens={setSelectedTokens}
+            lpToken={lpToken}
+            farmType={type}
           />
         );
       })}
       <AddTokenButton onClick={onAddTokens}>+ Add token</AddTokenButton>
       <ExchangeWrapper>
-        <img src="./images/icons/exchange-circle.png" alt="" />
+        <div className="black-circle" onClick={() => setIsZapIn((old) => !old)}>
+          <img src="./images/icons/up-down.png" alt="" />
+        </div>
+        <div className="green-line" />
       </ExchangeWrapper>
       <ToLpText>To LP</ToLpText>
-      <ToLpCard token0={token0} token1={token1} lpBalance={lpBalance} />
+      <ToLpCard
+        estimateOutput={totalEstimateOutput}
+        token0={token0}
+        token1={token1}
+        lpBalance={lpBalance}
+      />
       <FlexRow marginTop="20px" justify="flex-start">
         {tokenHaveToApprove && (
           <ActiveButton
@@ -178,8 +245,7 @@ const ZapTab = ({
           />
         )}
         <ZapButton
-          onClick={onZap}
-          loading={zapLoading}
+          onClick={() => setOpenConfirmZap(true)}
           isApproveFirst={!!tokenHaveToApprove}
           label={"Zap"}
           labelLoading={"Zapping"}
@@ -189,6 +255,25 @@ const ZapTab = ({
         isModalOpen={openSelectToken}
         setIsModalOpen={setOpenSelectToken}
         onSetSelectedToken={onSelectedToken}
+      />
+      <ConfirmZap
+        isModalOpen={openConfirmZap}
+        setIsModalOpen={setOpenConfirmZap}
+        fromTokenList={selectedTokens}
+        token0={token0}
+        token1={token1}
+        onZap={onZap}
+        estimateOutput={totalEstimateOutput}
+      />
+      <TransactionStatusModal
+        isModalOpen={isOpenTxStatusModal}
+        setIsModalOpen={setIsOpenTxStatusModal}
+        status={zapStatus}
+        txHash={txHash}
+        token0={token0}
+        token1={token1}
+        lpAddress={lpAddress}
+        estimateOutput={totalEstimateOutput}
       />
     </div>
   );
