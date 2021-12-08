@@ -14,7 +14,7 @@ import useEstimateOutput from "../../../hooks/useEstimateOutput";
 const TokenCard = styled.div`
   display: flex;
   align-items: center;
-  background: linear-gradient(270deg, #3ee046 8.98%, #27bc2e 92.35%);
+  background: linear-gradient(90.04deg, #0a1c1f 0.96%, #0f2a2e 91.92%);
   border-radius: 26px;
   width: 100%;
   margin-top: 20px;
@@ -69,34 +69,25 @@ const SliderInputWrapper = styled.div`
   min-height: 65px;
 
   .input-wrapper {
-    width: 90%;
+    width: 100%;
   }
 
   input {
     text-align: right;
     font-weight: 400;
     font-size: 24px;
-    color: rgba(255, 255, 255, 0.6);
+    color: #fff;
     background: transparent;
     border: 0;
     outline: 0;
     padding: 10px 20px;
   }
 
-  .rc-slider {
-    margin-bottom: -5px;
+  span {
+    margin-left: auto;
+    margin-bottom: 10px;
+    margin-right: 20px;
   }
-`;
-
-const InputSlideRow = styled.div`
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  color: rgba(18, 70, 46, 0.6);
-  font-size: 16px;
-  padding-left: 10px;
-  white-space: nowrap;
 `;
 
 const SelectTokenButton = styled.button`
@@ -137,7 +128,7 @@ const WrappedStyledImage = styled.div`
 `;
 
 const BalanceLine = styled.div`
-  color: rgba(18, 70, 46, 0.6);
+  color: #fff;
   font-size: 16px;
 `;
 
@@ -149,66 +140,59 @@ const BorderColor = styled.div`
   margin-left: auto;
 `;
 
-const FromTokenCard = ({
+const ToTokenCard = ({
   token,
   removeSelf,
   openSelectToken,
   setSelectedTokens,
   index,
-  lpToken,
+  fromSelectedToken,
+  setFromSelectedToken,
+  toTokensZapOut,
   farmType,
-  isZapIn,
-  refreshRatio,
+  lpToken,
 }) => {
   const inputRef = useRef();
-  const [percent, setPercent] = useState("0");
-  const [amount, setAmount] = useState(0);
-  const usdtValue = useConvertToUSDT(amount, token, farmType);
+  const usdtValue = useConvertToUSDT(token.amount, token, farmType);
   const [balance] = useTokenBalance(token.address, token.decimals);
-  const [approve, loading, allowance] = useApproveCallBack(
-    token.address,
-    ADDRESS_ZAP
-  );
-  const estimateOutput = useEstimateOutput(amount, token, lpToken, farmType);
+  const estimateOutput = useEstimateOutput(1, token, lpToken, farmType);
 
-  const onChangeRangePercent = (percentAmount) => {
-    setPercent(percentAmount);
-    if (balance) {
-      const toValue = new BigNumber(balance)
-        .times(percentAmount)
-        .div(100)
-        .toFixed();
-      inputRef.current.value = toValue;
-      setAmount(toValue);
-      !isZapIn && refreshRatio(toValue);
-    }
-  };
-
-  const onChangeAmountValue = (e) => {
-    setAmount(e);
-    !isZapIn && refreshRatio(e);
-    if (e) {
-      const amountToPercent = new BigNumber(e).div(balance).times(100);
-      setPercent(amountToPercent.toFixed(0));
-    }
+  const onChangeAmountValue = async (e) => {
+    await setSelectedTokens((old) => {
+      const newData = [...old];
+      newData[index].amount = e;
+      return [...newData];
+    });
+    let total = new BigNumber(0);
+    toTokensZapOut.forEach((ele) => (total = total.plus(ele.amount || 0)));
+    setFromSelectedToken((old) => {
+      const newData = [...old];
+      old[0].amount = total.toFixed();
+      return newData;
+    });
+    // let totalRatio = new BigNumber(0);
+    setSelectedTokens((old) => {
+      const newData = old.map((e) => {
+        e.ratio = new BigNumber(e.amount).div(total).times(100).toFixed();
+        // totalRatio = totalRatio.plus(new BigNumber(e.amount).div(total).times(100).toFixed());
+        return e;
+      });
+      return [...newData];
+    });
   };
 
   useEffect(() => {
     setSelectedTokens((old) => {
       const newData = [...old];
-      newData[index].amount = amount;
-      newData[index].allowance = allowance;
-      newData[index].approve = approve;
-      newData[index].loading = loading;
       newData[index].usdtAmount = usdtValue;
       newData[index].estimateOutput = estimateOutput;
       return [...newData];
     });
-  }, [amount, allowance, loading, usdtValue, estimateOutput]);
+  }, [usdtValue, estimateOutput]);
 
   useEffect(() => {
     inputRef.current.value = token.amount;
-  }, [token.amount])
+  }, [token.amount]);
 
   return (
     <TokenCard>
@@ -229,9 +213,7 @@ const FromTokenCard = ({
         </FlexRow>
         <div style={{ width: "100%" }}>
           <FlexRow justify="flex-start" marginTop="10px">
-            <BalanceLine>
-              Balance - <span>MAX</span>
-            </BalanceLine>
+            <BalanceLine>Balance</BalanceLine>
           </FlexRow>
           <FlexRow justify="flex-start" marginTop="10px">
             <BalanceLine>
@@ -242,29 +224,18 @@ const FromTokenCard = ({
       </SelectTokenWrapper>
       <SliderWrapper>
         <SliderInputWrapper>
-          <InputSlideRow>
-            <span style={{ width: "20%" }}>{percent} %</span>
-            <InputNumber
-              onChange={(e) => onChangeAmountValue(e)}
-              inputRef={inputRef}
-            />
-          </InputSlideRow>
-          <Slider
-            min={0}
-            onChange={(e) => onChangeRangePercent(e)}
-            defaultValue={percent}
-            marks={{ 0: "", 25: "", 50: "", 75: "", 100: "" }}
-            step={1}
+          <InputNumber
+            onChange={(e) => onChangeAmountValue(e)}
+            inputRef={inputRef}
           />
+          <span>{fromSelectedToken[0].symbol}</span>
         </SliderInputWrapper>
         <FlexRow height="64px" justify="flex-end">
-          <BalanceLine>
-            = <span>$ {usdtValue}</span>
-          </BalanceLine>
+          <BalanceLine>= </BalanceLine>
         </FlexRow>
       </SliderWrapper>
     </TokenCard>
   );
 };
 
-export default FromTokenCard;
+export default ToTokenCard;

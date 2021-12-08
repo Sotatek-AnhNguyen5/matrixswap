@@ -4,10 +4,10 @@ import { convertToUSD } from "../utils/apr";
 import { useFactoryContract, useLibrary } from "./useContract";
 import { FARM_TYPE, USDT_TOKEN } from "../const";
 
-const useConvertToUSDT = (amount, token) => {
+const useConvertToUSDT = (amount, token, farmType) => {
   const library = useLibrary();
   const [uSDTValue, setUSDTValue] = useState(0);
-  const factoryContract = useFactoryContract(FARM_TYPE.quickswap);
+  const factoryContract = useFactoryContract(farmType);
 
   const getUSDTValue = useCallback(
     debounce(async (amountToken, tokenFrom) => {
@@ -18,7 +18,7 @@ const useConvertToUSDT = (amount, token) => {
         tokenFrom.address,
         factoryContract
       );
-      setUSDTValue(value.toFixed(8));
+      value && setUSDTValue(value.toFixed(8));
     }, 500),
     []
   );

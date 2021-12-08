@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import InputNumber from "../InputNumber";
-import React, { useRef, useState } from "react";
+import React, { useMemo, useRef, useState } from "react";
 import BigNumber from "bignumber.js";
 import { toast } from "react-toastify";
 import moment from "moment";
@@ -11,6 +11,9 @@ import useApproveCallBack from "../../hooks/useApproveCallBack";
 import SubmitButton from "../SubmitButton";
 import useUnStakeCallBack from "../../hooks/useUnstakeCallBack";
 import { removeStakeInfoFromStorage } from "../../utils";
+import StakeCard from "./StakeCard";
+import { ActiveButton } from "../../theme/components";
+import UnstakeCard from "./UnstakeCard";
 
 const BalanceRow = styled.div`
   display: flex;
@@ -28,17 +31,21 @@ const InputWrapper = styled.div`
 `;
 
 const ButtonWrapper = styled.div`
-  display: flex;
-  flex-flow: column;
-  align-items: center;
-  justify-content: center;
+  margin-top: 20px;
+`;
+
+const BlackLine = styled.div`
+  margin-left: auto;
+  margin-right: auto;
+  border: 2px solid #010304;
+  width: 90%;
+  margin-top: 40px;
+  border-radius: 2px;
 `;
 
 const FarmingTab = ({
   farmAddress,
-  stakingToken,
-  token0,
-  token1,
+  lpToken,
   stakedBalance,
   refreshStakedBalance,
   type,
@@ -46,12 +53,10 @@ const FarmingTab = ({
   getLpBalance,
   pId,
 }) => {
-  const [stakeRange, setStakeRange] = useState(0);
-  const [unStakeRange, setUnStakeRange] = useState(0);
   const inputRef = useRef();
   const inputRefUnstake = useRef();
   const [approve, loadingApprove, allowance] = useApproveCallBack(
-    stakingToken,
+    lpToken.address,
     farmAddress
   );
 
@@ -62,10 +67,7 @@ const FarmingTab = ({
     toast("Stake successfully!");
   };
   const onFinishUnStake = async () => {
-    if (
-      new BigNumber(stakeRange).eq(100) ||
-      new BigNumber(stakedBalance).isZero()
-    ) {
+    if (new BigNumber(stakedBalance).isZero()) {
       removeStakeInfoFromStorage();
     }
     await Promise.all([getLpBalance(), refreshStakedBalance()]);
@@ -101,107 +103,60 @@ const FarmingTab = ({
     }
   };
 
-  const onChangeRangeStake = (percent) => {
-    setStakeRange(percent);
-    inputRef.current.value = new BigNumber(lpBalance)
-      .times(percent)
-      .div(100)
-      .toFixed();
-  };
+  const lpLabel = useMemo(() => {
+    return `${lpToken.token0.symbol}-${lpToken.token1.symbol}`;
+  }, [lpToken]);
 
-  const onChangeRangeWithDraw = (percent) => {
-    setUnStakeRange(percent);
-    inputRefUnstake.current.value = new BigNumber(stakedBalance)
-      .times(percent)
-      .div(100)
-      .toFixed();
-  };
+  const isActiveStake = useMemo(() => {
+    return !new BigNumber(lpBalance).isZero();
+  }, [lpBalance]);
 
-  const onChangeUnStake = (value) => {
-    const percent = new BigNumber(value).div(stakedBalance).times(100);
-    value &&
-      setUnStakeRange(percent.gt(100) ? 100 : parseInt(percent.toFixed(0)));
-  };
-
-  const onChangeStake = (value) => {
-    const percent = new BigNumber(value).div(lpBalance).times(100);
-    value &&
-      setStakeRange(percent.gt(100) ? 100 : parseInt(percent.toFixed(0)));
-  };
+  const isActiveUnstake = useMemo(() => {
+    return !new BigNumber(lpBalance).isZero();
+  }, [stakedBalance]);
 
   return (
     <div>
-      <BalanceRow>
-        <span>
-          LP {token0.symbol}-{token1.symbol} balance:
-        </span>
-        <span>{lpBalance}</span>
-      </BalanceRow>
-      <div style={{ display: "flex", marginTop: "20px" }}>
-        <InputWrapper>
-          <InputNumber
-            disabled={
-              new BigNumber(allowance).isZero() ||
-              new BigNumber(lpBalance).isZero()
-            }
-            inputRef={inputRef}
-            onChange={onChangeStake}
+      <StakeCard
+        isActive={isActiveStake}
+        inputRef={inputRef}
+        lpBalance={lpBalance}
+        lpLabel={lpLabel}
+      />
+      <ButtonWrapper>
+        {new BigNumber(allowance).isZero() ? (
+          <ActiveButton
+            label={"approve"}
+            loading={loadingApprove}
+            labelLoading={"approving"}
+            onClick={approve}
+            disabled={!isActiveStake}
           />
-          <InputRange
-            onChange={(e) => onChangeRangeStake(e)}
-            maxValue={100}
-            minValue={0}
-            value={stakeRange}
-            formatLabel={(value) => `${value}%`}
+        ) : (
+          <ActiveButton
+            label={"stake"}
+            loading={loadingStake}
+            labelLoading={"staking"}
+            onClick={stake}
+            disabled={!isActiveStake}
           />
-        </InputWrapper>
-        <ButtonWrapper>
-          {new BigNumber(allowance).isZero() ? (
-            <SubmitButton
-              label={"approve"}
-              loading={loadingApprove}
-              labelLoading={"approving"}
-              onClick={approve}
-            />
-          ) : (
-            <SubmitButton
-              label={"stake"}
-              loading={loadingStake}
-              labelLoading={"staking"}
-              onClick={stake}
-            />
-          )}
-        </ButtonWrapper>
-      </div>
-      <BalanceRow style={{ marginTop: 30 }}>
-        <span>Your Staked</span>
-        <span>{stakedBalance}</span>
-      </BalanceRow>
-      <div style={{ display: "flex", marginTop: "20px" }}>
-        <InputWrapper>
-          <InputNumber
-            inputRef={inputRefUnstake}
-            onChange={onChangeUnStake}
-            disabled={new BigNumber(stakedBalance).isZero()}
-          />
-          <InputRange
-            onChange={(e) => onChangeRangeWithDraw(e)}
-            maxValue={100}
-            minValue={0}
-            value={unStakeRange}
-            formatLabel={(value) => `${value}%`}
-          />
-        </InputWrapper>
-        <ButtonWrapper>
-          <SubmitButton
-            label={"Unstake"}
-            loading={loadingUnstake}
-            labelLoading={"Unstaking"}
-            onClick={unStakeCallBack}
-            disabled={new BigNumber(stakedBalance).isZero()}
-          />
-        </ButtonWrapper>
-      </div>
+        )}
+      </ButtonWrapper>
+      <BlackLine />
+      <UnstakeCard
+        isActive={isActiveUnstake}
+        inputRef={inputRefUnstake}
+        stakedBalance={stakedBalance}
+      />
+      <ButtonWrapper>
+        <ActiveButton
+          label={"Unstake"}
+          loading={loadingUnstake}
+          labelLoading={"Unstaking"}
+          onClick={unStakeCallBack}
+          disabled={!isActiveUnstake}
+        />
+      </ButtonWrapper>
     </div>
   );
 };

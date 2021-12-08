@@ -14,7 +14,7 @@ const useUnStakeCallBack = (farmAddress, value, onFinish, type, pId) => {
       setLoading(true);
       const amount = new BigNumber(value)
         .times(new BigNumber(10).pow(18))
-        .toFixed();
+        .toFixed(0);
       try {
         let params;
         if (type === FARM_TYPE.apeswap || type === FARM_TYPE.sushiswap) {

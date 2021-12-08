@@ -7,11 +7,12 @@ import FromTokenCard from "./FromTokenCard";
 import { FlexRow, StyledButton } from "../../theme/components";
 import SelectTokenModal from "../SelectTokenModal";
 import ToLpCard from "./ToLpCard";
-import { find, sumBy } from "lodash";
+import { find } from "lodash";
 import { useWeb3React } from "@web3-react/core";
 import BigNumber from "bignumber.js";
 import ConfirmZap from "../ConfirmZap";
 import TransactionStatusModal from "../TransactionStatusModal";
+import ToTokenCard from "./ToTokenCard";
 
 const FromToken = styled.div`
   color: rgba(30, 174, 37, 0.5);
@@ -129,6 +130,7 @@ const ZapTab = ({
   const [selectedIndexTokenModal, setSelectedTokenModal] = useState();
   const [selectedTokens, setSelectedTokens] = useState([WMATIC_TOKEN]);
   const [isZapIn, setIsZapIn] = useState(true);
+  const [toTokensZapOut, setToTokensZapOut] = useState([]);
   // const isZapAble = useCheckZapToken(selectedToken, token0, token1, type);
 
   const tokenHaveToApprove = find(
@@ -143,6 +145,19 @@ const ZapTab = ({
 
   const params = useMemo(() => {
     const protocolType = PROTOCOL_FUNCTION[type].fullnameHash;
+
+    if (!isZapIn) {
+      const ratio = toTokensZapOut
+        .filter((e) => e.address)
+        .map((e) => parseInt(e.ratio));
+      const amountBig = new BigNumber(selectedTokens[0].amount)
+        .times(new BigNumber(10).pow(18))
+        .toFixed(0);
+      const toList = toTokensZapOut
+        .filter((e) => e.address)
+        .map((e) => e.address);
+      return [protocolType, lpToken.address, amountBig, toList, ratio, account];
+    }
     const fromList = selectedTokens
       .filter((e) => e.address)
       .map((e) => e.address);
@@ -160,22 +175,33 @@ const ZapTab = ({
       to: lpAddress,
       receiver: account,
     };
-  }, [type, selectedTokens]);
+  }, [type, selectedTokens, toTokensZapOut, isZapIn]);
 
   const [onZap, zapLoading, zapStatus, txHash] = useZapCallback(
     params,
-    onFinishZap
+    onFinishZap,
+    isZapIn
   );
+
   const onAddTokens = () => {
-    setSelectedTokens((old) => [...old, {}]);
+    if (isZapIn) {
+      setSelectedTokens((old) => [...old, {}]);
+    } else {
+      setToTokensZapOut((old) => [...old, {}]);
+    }
   };
 
   const onSelectedToken = (token) => {
-    setSelectedTokens((old) => {
+    const data = (old) => {
       const newData = [...old];
       newData.splice(selectedIndexTokenModal, 1, token);
       return [...newData];
-    });
+    };
+    if (isZapIn) {
+      setSelectedTokens(data);
+    } else {
+      setToTokensZapOut(data);
+    }
   };
 
   const removeFromList = (index) => {
@@ -187,9 +213,35 @@ const ZapTab = ({
       });
   };
 
+  const removeFromListToTokens = (index) => {
+    index !== 0 &&
+      setToTokensZapOut((old) => {
+        const newData = [...old];
+        newData.splice(index, 1);
+        return [...newData];
+      });
+  };
+
   const onOpenSelectToken = (index) => {
     setSelectedTokenModal(index);
     setOpenSelectToken(true);
+  };
+
+  const onChangeTypeZap = () => {
+    setIsZapIn((old) => !old);
+    if (isZapIn) {
+      setToTokensZapOut([...selectedTokens]);
+      setSelectedTokens([
+        {
+          symbol: `LP ${token0.symbol} - ${token1.symbol}`,
+          decimals: 18,
+          address: lpAddress,
+        },
+      ]);
+    } else {
+      setSelectedTokens([...toTokensZapOut]);
+      setToTokensZapOut([]);
+    }
   };
 
   const totalEstimateOutput = useMemo(() => {
@@ -204,6 +256,19 @@ const ZapTab = ({
     zapLoading && setIsOpenTxStatusModal(true);
   }, [zapLoading]);
 
+  const averageRatio = (amount) => {
+    setToTokensZapOut((old) => {
+      const ratio = new BigNumber(100).div(old.length).toFixed(0);
+      const newData = old.map((e) => {
+        const newAmount = new BigNumber(amount).times(ratio).div(100).toFixed();
+        e.ratio = ratio;
+        e.amount = newAmount;
+        return e;
+      });
+      return [...newData];
+    });
+  };
+
   return (
     <div>
       <FromToken>From Token</FromToken>
@@ -216,25 +281,55 @@ const ZapTab = ({
             removeSelf={() => removeFromList(i)}
             openSelectToken={() => onOpenSelectToken(i)}
             setSelectedTokens={setSelectedTokens}
+            refreshRatio={averageRatio}
             lpToken={lpToken}
             farmType={type}
+            isZapIn={isZapIn}
           />
         );
       })}
-      <AddTokenButton onClick={onAddTokens}>+ Add token</AddTokenButton>
+      {isZapIn && (
+        <AddTokenButton onClick={onAddTokens}>+ Add token</AddTokenButton>
+      )}
       <ExchangeWrapper>
-        <div className="black-circle" onClick={() => setIsZapIn((old) => !old)}>
+        <div className="black-circle" onClick={onChangeTypeZap}>
           <img src="./images/icons/up-down.png" alt="" />
         </div>
         <div className="green-line" />
       </ExchangeWrapper>
       <ToLpText>To LP</ToLpText>
-      <ToLpCard
-        estimateOutput={totalEstimateOutput}
-        token0={token0}
-        token1={token1}
-        lpBalance={lpBalance}
-      />
+      {isZapIn ? (
+        <ToLpCard
+          estimateOutput={totalEstimateOutput}
+          token0={token0}
+          token1={token1}
+          lpBalance={lpBalance}
+        />
+      ) : (
+        <>
+          {toTokensZapOut.map((e, index) => (
+            <ToTokenCard
+              key={e.address}
+              token={e}
+              fromSelectedToken={selectedTokens}
+              setFromSelectedToken={setSelectedTokens}
+              removeSelf={() => removeFromListToTokens(index)}
+              setSelectedTokens={setToTokensZapOut}
+              toTokensZapOut={toTokensZapOut}
+              index={index}
+              openSelectToken={() => onOpenSelectToken(index)}
+              farmType={type}
+              lpToken={lpToken}
+            />
+          ))}
+        </>
+      )}
+
+      <FlexRow justify="center" marginTop="20px">
+        {!isZapIn && (
+          <AddTokenButton onClick={onAddTokens}>+ Add token</AddTokenButton>
+        )}
+      </FlexRow>
       <FlexRow marginTop="20px" justify="flex-start">
         {tokenHaveToApprove && (
           <ActiveButton
@@ -264,6 +359,8 @@ const ZapTab = ({
         token1={token1}
         onZap={onZap}
         estimateOutput={totalEstimateOutput}
+        isZapIn={isZapIn}
+        toTokensZapOut={toTokensZapOut}
       />
       <TransactionStatusModal
         isModalOpen={isOpenTxStatusModal}

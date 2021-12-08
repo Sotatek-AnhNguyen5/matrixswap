@@ -20,13 +20,13 @@ export const ProtocolBadger = styled.div`
 
 export const FlexRow = styled.div`
   display: flex;
-  align-items: center;
   justify-content: ${(props) => props.justify ?? "space-between"};
   margin-top: ${(props) => props.marginTop ?? "0"};
+  align-items: ${(props) => props.alignItems ?? "center"};
   height: ${(props) => props.height ?? "auto"};
   flex-flow: ${(props) => props.flexFlow ?? "row"};
   padding: ${(props) => props.padding ?? "0"};
-
+  width: ${(props) => props.width ?? "100%"};
 `;
 
 export const GridContainer = styled.div`
@@ -63,18 +63,19 @@ export const StyledButton = styled.button`
 `;
 
 export const ActiveButton = styled(SubmitButton)`
-  background: ${(props) => props.theme.colorMainGreen};
+  background: ${(props) =>
+    props.disabled ? "#0F2A2E" : props.theme.colorMainGreen};
   border-radius: 26px;
   padding: 20px;
   width: ${(props) => props.width ?? "100%"};
   margin-top: ${(props) => props.marginTop ?? "0"};
-  color: #fff;
+  color: ${(props) => (props.disabled ? props.theme.colorMainGreen : "#fff")};
 
   &:hover {
-    background-color: #2ba132;
+    background: ${(props) => (props.disabled ? "#0F2A2E" : "#2ba132")};
   }
 
   &:active {
-    background-color: #0e4513;
+    background: ${(props) => (props.disabled ? "#0F2A2E" : "#0e4513")};
   }
 `;

@@ -4,6 +4,7 @@ const theme = {
   colorMainGreen: "#3EE046",
   colorSecondGreen: "#1EAE25",
   colorDarkerGray: "#182F32",
+  colorDanger: "#B03619",
 };
 
 export default theme;

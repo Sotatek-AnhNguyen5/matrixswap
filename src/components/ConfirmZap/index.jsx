@@ -128,6 +128,8 @@ const ConfirmZap = ({
   estimateOutput,
   onZap,
   zapLoading,
+  isZapIn,
+  toTokensZapOut,
 }) => {
   const closeModal = () => setIsModalOpen(false);
   const [isRevert, setIsRevert] = useState(false);
@@ -176,33 +178,66 @@ const ConfirmZap = ({
         <img onClick={closeModal} src="./images/icons/close.png" alt="" />
       </ModalHeader>
       <ModalContent>
-        {fromTokenList.map((e, index) => (
-          <TokenCard key={index}>
-            <LeftTokenWrapper>
-              <TokenLogo symbol={e.symbol} />
-              <SmallWhiteText>{e.symbol}</SmallWhiteText>
-            </LeftTokenWrapper>
-            <RightTokenWrapper>
-              <SmallWhiteText>{e.amount}</SmallWhiteText>
-              <SmallerGrayText>{e.usdtAmount} $</SmallerGrayText>
-            </RightTokenWrapper>
-          </TokenCard>
-        ))}
+        {isZapIn ? (
+          <>
+            {fromTokenList.map((e, index) => (
+              <TokenCard key={index}>
+                <LeftTokenWrapper>
+                  <TokenLogo symbol={e.symbol} />
+                  <SmallWhiteText>{e.symbol}</SmallWhiteText>
+                </LeftTokenWrapper>
+                <RightTokenWrapper>
+                  <SmallWhiteText>{e.amount}</SmallWhiteText>
+                  <SmallerGrayText>{e.usdtAmount} $</SmallerGrayText>
+                </RightTokenWrapper>
+              </TokenCard>
+            ))}
+            <FlexRow justify="center" marginTop="40px">
+              <img src="./images/icons/down.png" alt="" />
+            </FlexRow>
+            <TokenCard marginTop="40px">
+              <LeftTokenWrapper>
+                <DoubleLogoWrapper>
+                  <TokenLogo symbol={token0.symbol} />
+                  <TokenLogo symbol={token1.symbol} />
+                </DoubleLogoWrapper>
+              </LeftTokenWrapper>
+              <RightTokenWrapper>
+                <SmallWhiteText>{estimateOutput}</SmallWhiteText>
+              </RightTokenWrapper>
+            </TokenCard>
+          </>
+        ) : (
+          <>
+            <TokenCard>
+              <LeftTokenWrapper>
+                <DoubleLogoWrapper>
+                  <TokenLogo symbol={token0.symbol} />
+                  <TokenLogo symbol={token1.symbol} />
+                </DoubleLogoWrapper>
+              </LeftTokenWrapper>
+              <RightTokenWrapper>
+                <SmallWhiteText>{fromTokenList[0].amount}</SmallWhiteText>
+              </RightTokenWrapper>
+            </TokenCard>
+            <FlexRow justify="center" marginTop="40px">
+              <img src="./images/icons/down.png" alt="" />
+            </FlexRow>
+            {toTokensZapOut.map((e, index) => (
+              <TokenCard key={index}>
+                <LeftTokenWrapper>
+                  <TokenLogo symbol={e.symbol} />
+                  <SmallWhiteText>{e.symbol}</SmallWhiteText>
+                </LeftTokenWrapper>
+                <RightTokenWrapper>
+                  <SmallWhiteText>{e.amount}</SmallWhiteText>
+                  <SmallerGrayText>{e.usdtAmount} $</SmallerGrayText>
+                </RightTokenWrapper>
+              </TokenCard>
+            ))}
+          </>
+        )}
 
-        <FlexRow justify="center" marginTop="40px">
-          <img src="./images/icons/down.png" alt="" />
-        </FlexRow>
-        <TokenCard marginTop="40px">
-          <LeftTokenWrapper>
-            <DoubleLogoWrapper>
-              <TokenLogo symbol={token0.symbol} />
-              <TokenLogo symbol={token1.symbol} />
-            </DoubleLogoWrapper>
-          </LeftTokenWrapper>
-          <RightTokenWrapper>
-            <SmallWhiteText>{estimateOutput}</SmallWhiteText>
-          </RightTokenWrapper>
-        </TokenCard>
         <FlexRow flexFlow="column" marginTop="40px">
           <GrayText>Conversion Rate</GrayText>
           <GrayRightText marginTop="20px">
@@ -211,9 +246,12 @@ const ConfirmZap = ({
               src="./images/icons/gray-vertical-exchange.png"
               alt=""
             />
-            <FlexRow flexFlow="column">
+            {isZapIn ? <FlexRow flexFlow="column">
               {fromTokenList.map((e) => conversionRateRow(e))}
-            </FlexRow>
+            </FlexRow> : <FlexRow flexFlow="column">
+              {toTokensZapOut.map((e) => conversionRateRow(e))}
+            </FlexRow>}
+
           </GrayRightText>
         </FlexRow>
         <FlexRow marginTop="20px">

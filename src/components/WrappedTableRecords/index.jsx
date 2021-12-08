@@ -13,7 +13,12 @@ import SubmitButton from "../SubmitButton";
 import useTokenBalance from "../../hooks/useTokenBalance";
 import { FARM_TYPE } from "../../const";
 import TokenLogo from "../TokenLogo";
-import { FlexRow, GrayLabelText, WhiteLabelText } from "../../theme/components";
+import {
+  ActiveButton,
+  FlexRow,
+  GrayLabelText,
+  WhiteLabelText,
+} from "../../theme/components";
 
 const FlexRowData = styled.div`
   margin-top: 15px;
@@ -79,11 +84,8 @@ const ZapFarmWrapper = styled.div`
   width: 60%;
 `;
 
-const ClaimButton = styled(SubmitButton)`
-  background: linear-gradient(90.04deg, #0a1c1f 0.96%, #0f2a2e 91.92%);
-  border-radius: 26px;
+const ClaimButton = styled(ActiveButton)`
   padding: 10px 0;
-  color: ${(props) => props.theme.colorSecondGreen};
   font-size: 16px;
   margin-left: auto;
   letter-spacing: 2px;
@@ -272,16 +274,14 @@ const TableRecord = ({ data, filterKey, type, setParentData }) => {
                 />
               ) : (
                 <FarmingTab
-                  stakingToken={lpToken.address}
                   farmAddress={farmAddress}
-                  token0={lpToken.token0}
-                  token1={lpToken.token1}
                   stakedBalance={stakedBalance}
                   refreshStakedBalance={refreshFarmInfo}
                   type={FARM_TYPE[type]}
                   lpBalance={lpBalance}
                   getLpBalance={getLpBalance}
                   pId={poolIndex}
+                  lpToken={lpToken}
                 />
               )}
             </ZapFarmWrapper>
