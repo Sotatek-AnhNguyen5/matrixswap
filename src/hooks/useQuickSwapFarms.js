@@ -8,12 +8,15 @@ import { useEffect, useState } from "react";
 import { getDataToken } from "../utils/token";
 import { calculateTVL } from "../utils/tvl";
 import { calculateAPR } from "../utils/apr";
+import { getDepositedQuickSwap } from "../utils/deposited";
+import { useWeb3React } from "@web3-react/core";
 
 const useQuickSwapFarms = () => {
   const library = useLibrary();
   const [quickSwapFarms, setQuickSwapFarms] = useState([]);
   const stakingInfoContract = useQuickSwapStakingInfoContract();
   const factoryContract = useFactoryContract(FARM_TYPE.quickswap);
+  const { account } = useWeb3React();
 
   const getData = async () => {
     const res = await Promise.all(
@@ -54,12 +57,22 @@ const useQuickSwapFarms = () => {
       )
     );
 
+    let listDeposited = [];
+    if (account) {
+      listDeposited = await Promise.all(
+        resWithTokenAddress.map((item) =>
+          getDepositedQuickSwap(library, item.stakingRewards, account)
+        )
+      );
+    }
+
     const convertedData = resWithTokenAddress.map((item, index) => {
       return {
         ...item,
         lpToken: listLpToken[index],
         tvl: listTVL[index],
         apr: listAPR[index],
+        deposited: listDeposited[index],
         rewardAddress: item.stakingRewards,
         tokenAddress: item.id,
         appId: "quickswap",
@@ -71,7 +84,7 @@ const useQuickSwapFarms = () => {
 
   useEffect(() => {
     getData();
-  }, []);
+  }, [account]);
 
   return quickSwapFarms;
 };

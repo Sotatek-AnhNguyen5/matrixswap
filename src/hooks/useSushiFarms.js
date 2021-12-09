@@ -6,13 +6,16 @@ import { FARM_TYPE, SUSHI_TOKEN, WMATIC_TOKEN } from "../const";
 import { getDataToken } from "../utils/token";
 import { calculateTVL } from "../utils/tvl";
 import { calculateAPR } from "../utils/apr";
-import {useFactoryContract, useLibrary} from "./useContract";
+import { useFactoryContract, useLibrary } from "./useContract";
+import { getDeposited } from "../utils/deposited";
+import { useWeb3React } from "@web3-react/core";
 
 const useSushiFarms = () => {
   const library = useLibrary();
   const factoryContract = useFactoryContract(FARM_TYPE.sushiswap);
   const { loading, error, data } = useQuery(GET_SUSHI_FARMS);
   const [sushiFarm, setSushiFarm] = useState([]);
+  const { account } = useWeb3React();
 
   const getFarmData = async () => {
     const listLpToken = await Promise.all(
@@ -40,12 +43,22 @@ const useSushiFarms = () => {
       )
     );
 
+    let listDeposited = [];
+    if (account) {
+      listDeposited = await Promise.all(
+        data.pools.map((item, index) =>
+          getDeposited(library, item.rewarder.id, item.id, account)
+        )
+      );
+    }
+
     const convertedData = data.pools.map((item, index) => {
       return {
         ...item,
         lpToken: listLpToken[index],
         tvl: listTVL[index],
         apr: listAPR[index],
+        deposited: listDeposited[index],
         rewardAddress: item.miniChef.id,
         poolIndex: item.id,
         rewardTokenAddress: item.rewarder.rewardToken,
@@ -62,7 +75,7 @@ const useSushiFarms = () => {
     if (data && !isEmpty(data.pools)) {
       getFarmData();
     }
-  }, [data]);
+  }, [data, account]);
 
   return sushiFarm;
 };

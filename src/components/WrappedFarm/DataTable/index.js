@@ -1,9 +1,10 @@
 import styled from "styled-components";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import TableRecord from "../../WrappedTableRecords";
 import { FlexRow } from "../../../theme/components";
-import { sortBy } from "lodash";
+import BigNumber from "bignumber.js";
+import LazyLoad from "react-lazyload";
 
 const Table = styled.div`
   width: 95%;
@@ -33,7 +34,6 @@ const HeaderItem = styled.div`
 const DataTable = ({ data, setData, filterKey }) => {
   const [sortKey, setSortKey] = useState();
   const [sortType, setSortType] = useState();
-  const [cloneData, setCloneData] = useState([]);
 
   const onChangeSort = (type) => {
     if (type !== sortKey) {
@@ -47,6 +47,19 @@ const DataTable = ({ data, setData, filterKey }) => {
     }
   };
 
+  const compareFunction = (a, b) => {
+    const key = (sortKey === "daily" ? "apr" : sortKey) || "deposited";
+    const bigA = new BigNumber(a[key]);
+    const bigB = new BigNumber(b[key]);
+    if (bigA.lt(bigB)) {
+      return 1;
+    }
+    if (bigA.gt(bigB)) {
+      return -1;
+    }
+
+    return 0;
+  };
   const renderLabelWithSort = (type, label) => {
     return (
       <span onClick={() => onChangeSort(type)}>
@@ -57,18 +70,12 @@ const DataTable = ({ data, setData, filterKey }) => {
     );
   };
 
-  useEffect(() => {
-    setCloneData(data);
-  }, [data]);
-
   let sortedData;
-  const key = sortKey === "daily" ? "apr" : sortKey;
+
   if (!sortType || sortType === "asc") {
-    sortedData = sortBy(cloneData, [(o) => parseInt(o[key || "deposited"])]);
+    sortedData = data.sort(compareFunction);
   } else if (sortType === "desc") {
-    sortedData = sortBy(cloneData, [
-      (o) => parseInt(o[key || "deposited"]),
-    ]).reverse();
+    sortedData = data.sort(compareFunction).reverse();
   }
 
   return (
@@ -91,13 +98,18 @@ const DataTable = ({ data, setData, filterKey }) => {
       </FlexRowHeader>
       {sortedData.map((e, index) => {
         return (
-          <TableRecord
+          <LazyLoad
             key={`${e.rewardAddress}-${e.poolIndex}-${index}`}
-            filterKey={filterKey}
-            data={e}
-            type={e.appId}
-            setParentData={setData}
-          />
+            height={300}
+            offset={1300}
+          >
+            <TableRecord
+              filterKey={filterKey}
+              data={e}
+              type={e.appId}
+              setParentData={setData}
+            />
+          </LazyLoad>
         );
       })}
     </Table>

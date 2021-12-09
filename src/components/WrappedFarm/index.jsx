@@ -16,11 +16,9 @@ const WrapperFarm = styled.div`
   );
   box-shadow: 0px 20px 21px rgba(0, 0, 0, 0.25);
   border-radius: 47px;
-  min-height: 200px;
+  min-height: 600px;
   margin-top: 50px;
   padding: 20px 40px;
-  overflow: auto;
-  height: 600px;
 `;
 
 const LeftFilter = styled.div`
@@ -56,22 +54,14 @@ const WrappedFarm = ({}) => {
   const quickSwapFarms = useQuickSwapFarms();
 
   useEffect(() => {
-    if (!isEmpty(quickSwapFarms)) {
-      setData((old) => [...old, ...quickSwapFarms]);
+    if (
+      !isEmpty(apeSwapFarms) &&
+      !isEmpty(sushiFarms) &&
+      !isEmpty(quickSwapFarms)
+    ) {
+      setData((old) => [...apeSwapFarms, ...sushiFarms, ...quickSwapFarms]);
     }
-  }, [quickSwapFarms]);
-
-  useEffect(() => {
-    if (!isEmpty(sushiFarms)) {
-      setData((old) => [...old, ...sushiFarms]);
-    }
-  }, [sushiFarms]);
-
-  useEffect(() => {
-    if (!isEmpty(apeSwapFarms)) {
-      setData((old) => [...old, ...apeSwapFarms]);
-    }
-  }, [apeSwapFarms]);
+  }, [apeSwapFarms, sushiFarms, quickSwapFarms]);
 
   return (
     <WrapperFarm>

@@ -9,7 +9,6 @@ import { convertDate, moneyFormatter } from "../../utils";
 import ZapTab from "../Zap";
 import FarmingTab from "../Farming";
 import useGetRewardCallback from "../../hooks/useGetRewardCallback";
-import SubmitButton from "../SubmitButton";
 import useTokenBalance from "../../hooks/useTokenBalance";
 import { FARM_TYPE } from "../../const";
 import TokenLogo from "../TokenLogo";
@@ -173,19 +172,6 @@ const TableRecord = ({ data, filterKey, type, setParentData }) => {
   const wrappedSymbol = useMemo(() => {
     return `LP ${symbol0}-${symbol1}`
   }, [symbol0, symbol1])
-
-  useEffect(() => {
-    if (!new BigNumber(stakedBalance).isZero()) {
-      setParentData((old) => {
-        const farmList = [...old];
-        const indexFarm = findIndex(farmList, (e) => {
-          return e.rewardAddress === farmAddress;
-        });
-        farmList[indexFarm].deposited = stakedBalance;
-        return farmList;
-      });
-    }
-  }, [stakedBalance]);
 
   return (
     <>
