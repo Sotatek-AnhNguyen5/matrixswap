@@ -100,8 +100,9 @@ const DataTable = ({ data, setData, filterKey, refetchVolume }) => {
         return (
           <LazyLoad
             key={`${e.rewardAddress}-${e.poolIndex}-${index}`}
-            height={300}
+            height={250}
             offset={1300}
+            once
           >
             <TableRecord
               filterKey={filterKey}

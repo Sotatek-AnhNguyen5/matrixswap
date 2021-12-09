@@ -5,10 +5,11 @@ export const ProtocolBadger = styled.div`
   display: flex;
   align-items: center;
   padding: 10px 15px;
-  background: #182f32;
+  background: ${props => props.isActive ? "#2a7b81" : "#182f32"};
   border-radius: 71px;
   opacity: 0.88;
   font-size: 18px;
+  cursor: pointer;
   margin-left: 20px;
 
   img {

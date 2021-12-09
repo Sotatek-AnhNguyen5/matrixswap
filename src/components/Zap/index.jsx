@@ -1,7 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
 import { ADDRESS_ZAP, PROTOCOL_FUNCTION, WMATIC_TOKEN } from "../../const";
-import SubmitButton from "../SubmitButton";
 import useZapCallback from "../../hooks/useZapCallback";
 import FromTokenCard from "./FromTokenCard";
 import { ActiveButton, FlexRow, StyledButton } from "../../theme/components";
@@ -301,7 +300,7 @@ const ZapTab = ({
 
   return (
     <div>
-      <FromToken>From Token</FromToken>
+      <FromToken>{isZapIn ? "From Token" : "From LP"}</FromToken>
       {selectedTokens.map((ele, i) => {
         return (
           <FromTokenCard
@@ -327,7 +326,7 @@ const ZapTab = ({
         </div>
         <div className="green-line" />
       </ExchangeWrapper>
-      <ToLpText>To LP</ToLpText>
+      <ToLpText>{isZapIn ? "To LP" : "To token"}</ToLpText>
       {isZapIn ? (
         <ToLpCard
           estimateOutput={totalEstimateOutput}

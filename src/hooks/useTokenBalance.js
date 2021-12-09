@@ -8,7 +8,6 @@ const useTokenBalance = (tokenAddress, decimals = 18) => {
   const { library, account } = useWeb3React();
 
   const getBalance = useCallback(async () => {
-    console.log('get balance')
     const lpContract = new library.eth.Contract(LpABI, tokenAddress);
     const balanceAmount = await lpContract.methods.balanceOf(account).call();
     const balanceToNumber = new BigNumber(balanceAmount)

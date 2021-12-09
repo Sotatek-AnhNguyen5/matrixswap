@@ -1,5 +1,5 @@
-import { useState, useEffect } from "react";
-import { isEmpty, take, takeWhile, uniqBy } from "lodash";
+import { useState, useEffect, useCallback } from "react";
+import { isEmpty, take, takeWhile, uniqBy, find } from "lodash";
 import useSushiFarms from "../../hooks/useSushiFarms";
 import useApeSwapFarms from "../../hooks/useApeswapFarms";
 import useQuickSwapFarms from "../../hooks/useQuickSwapFarms";
@@ -63,25 +63,57 @@ const WrappedFarm = ({ refetchVolume }) => {
     }
   }, [apeSwapFarms, sushiFarms, quickSwapFarms]);
 
+  const isActiveFilter = useCallback(
+    (key) => {
+      return !!filterKey.find((e) => e.value === key);
+    },
+    [filterKey]
+  );
+
+  const toogleFilter = useCallback(
+    (key) => {
+      const indexKey = filterKey.findIndex((e) => e.value === key);
+      if (indexKey !== -1) {
+        setFilterKey((old) => {
+          const newData = [...old];
+          newData.splice(indexKey, 1);
+          return newData;
+        });
+      } else {
+        setFilterKey((old) => {
+          const newData = [
+            ...old,
+            {
+              value: key,
+              label: key,
+            },
+          ];
+          return newData;
+        });
+      }
+    },
+    [filterKey]
+  );
+
   return (
     <WrapperFarm>
       <FlexRow>
         <LeftFilter>
           <div className="label">Farming</div>
           <WhiteColumn />
-          <ProtocolBadger>
+          <ProtocolBadger onClick={() => toogleFilter("sushiswap")} isActive={isActiveFilter("sushiswap")}>
             <img src="./images/protocols/sushiswap.png" alt="" />
             Sushiswap
           </ProtocolBadger>
-          <ProtocolBadger>
+          <ProtocolBadger onClick={() => toogleFilter("quickswap")} isActive={isActiveFilter("quickswap")}>
             <img src="./images/protocols/quickswap.png" alt="" />
             Quickswap
           </ProtocolBadger>
-          <ProtocolBadger>
+          <ProtocolBadger onClick={() => toogleFilter("apeswap")} isActive={isActiveFilter("apeswap")}>
             <img src="./images/protocols/apeswap.png" alt="" />
             Apeswap
           </ProtocolBadger>
-          <ProtocolBadger>
+          <ProtocolBadger onClick={() => toogleFilter("curve")} isActive={isActiveFilter("curve")}>
             <img src="./images/protocols/curve.png" alt="" />
             Curve
           </ProtocolBadger>

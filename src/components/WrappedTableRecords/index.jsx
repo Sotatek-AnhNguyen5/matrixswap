@@ -111,7 +111,7 @@ const FarmType = styled.div`
   text-transform: capitalize;
 `;
 
-const TableRecord = ({ data, filterKey, type, setParentData, refetchVolume }) => {
+const TableRecord = ({ data, filterKey, type, refetchVolume }) => {
   const [isSelected, setIsSelected] = useState(false);
   const [isZap, setIsZap] = useState(true);
   const farmAddress = data.rewardAddress;
@@ -203,7 +203,7 @@ const TableRecord = ({ data, filterKey, type, setParentData, refetchVolume }) =>
           <DataItem style={{ width: "15%" }}>{apr} %</DataItem>
           <DataItem style={{ width: "15%" }}>{daily}</DataItem>
           <DataItem style={{ width: "20%" }}>{moneyFormatter(tvl)} $</DataItem>
-          <DataItem style={{ width: "20%" }}>{data.deposited || 0}</DataItem>
+          <DataItem style={{ width: "20%" }}>{stakedBalance}</DataItem>
           <DataItem
             style={{ width: "5%" }}
             onClick={() => setIsSelected((value) => !value)}
