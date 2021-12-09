@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import TokenLogo from "../../TokenLogo";
-import { FlexRow } from "../../../theme/components";
-import React, { useEffect, useRef, useState } from "react";
+import { BalanceLine, FlexRow } from "../../../theme/components";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Slider from "rc-slider";
 import BigNumber from "bignumber.js";
 import InputNumber from "../../InputNumber";
@@ -97,6 +97,15 @@ const InputSlideRow = styled.div`
   font-size: 16px;
   padding-left: 10px;
   white-space: nowrap;
+
+  span {
+    text-overflow: ellipsis;
+    white-space: nowrap;
+    overflow: hidden;
+    width: 100px;
+    color: ${(props) =>
+      props.danger ? props.theme.colorDanger : "rgba(18, 70, 46, 0.6)"};
+  }
 `;
 
 const SelectTokenButton = styled.button`
@@ -136,11 +145,6 @@ const WrappedStyledImage = styled.div`
   }
 `;
 
-const BalanceLine = styled.div`
-  color: rgba(18, 70, 46, 0.6);
-  font-size: 16px;
-`;
-
 const BorderColor = styled.div`
   height: 65px;
   background-color: rgba(1, 3, 4, 0.15);
@@ -160,16 +164,23 @@ const FromTokenCard = ({
   isZapIn,
   refreshRatio,
 }) => {
-  const inputRef = useRef();
   const [percent, setPercent] = useState("0");
-  const [amount, setAmount] = useState(0);
-  const usdtValue = useConvertToUSDT(amount, token, farmType);
+  const usdtValue = useConvertToUSDT(token.amount, token, farmType);
   const [balance] = useTokenBalance(token.address, token.decimals);
   const [approve, loading, allowance] = useApproveCallBack(
     token.address,
     ADDRESS_ZAP
   );
-  const estimateOutput = useEstimateOutput(amount, token, lpToken, farmType);
+  const estimateOutput = useEstimateOutput(
+    token.amount,
+    token,
+    lpToken,
+    farmType
+  );
+
+  const insufficientBalance = useMemo(() => {
+    return new BigNumber(token.amount).gt(balance);
+  }, [token.amount, balance]);
 
   const onChangeRangePercent = (percentAmount) => {
     setPercent(percentAmount);
@@ -178,14 +189,21 @@ const FromTokenCard = ({
         .times(percentAmount)
         .div(100)
         .toFixed();
-      inputRef.current.value = toValue;
-      setAmount(toValue);
+      setSelectedTokens((old) => {
+        const newData = [...old];
+        newData[index].amount = toValue;
+        return [...newData];
+      });
       !isZapIn && refreshRatio(toValue);
     }
   };
 
   const onChangeAmountValue = (e) => {
-    setAmount(e);
+    setSelectedTokens((old) => {
+      const newData = [...old];
+      newData[index].amount = e;
+      return [...newData];
+    });
     !isZapIn && refreshRatio(e);
     if (e) {
       const amountToPercent = new BigNumber(e).div(balance).times(100);
@@ -196,19 +214,15 @@ const FromTokenCard = ({
   useEffect(() => {
     setSelectedTokens((old) => {
       const newData = [...old];
-      newData[index].amount = amount;
       newData[index].allowance = allowance;
       newData[index].approve = approve;
       newData[index].loading = loading;
       newData[index].usdtAmount = usdtValue;
       newData[index].estimateOutput = estimateOutput;
+      newData[index].insufficientBalance = insufficientBalance;
       return [...newData];
     });
-  }, [amount, allowance, loading, usdtValue, estimateOutput]);
-
-  useEffect(() => {
-    inputRef.current.value = token.amount;
-  }, [token.amount])
+  }, [allowance, loading, usdtValue, estimateOutput, insufficientBalance]);
 
   return (
     <TokenCard>
@@ -219,7 +233,7 @@ const FromTokenCard = ({
       </TokenLogoWrapper>
       <SelectTokenWrapper>
         <FlexRow justify="flex-start">
-          <SelectTokenButton onClick={openSelectToken}>
+          <SelectTokenButton onClick={isZapIn && openSelectToken}>
             {token.symbol}
           </SelectTokenButton>
           <WrappedStyledImage onClick={removeSelf}>
@@ -229,12 +243,12 @@ const FromTokenCard = ({
         </FlexRow>
         <div style={{ width: "100%" }}>
           <FlexRow justify="flex-start" marginTop="10px">
-            <BalanceLine>
+            <BalanceLine danger={insufficientBalance}>
               Balance - <span>MAX</span>
             </BalanceLine>
           </FlexRow>
           <FlexRow justify="flex-start" marginTop="10px">
-            <BalanceLine>
+            <BalanceLine danger={insufficientBalance}>
               {balance} {token.symbol}
             </BalanceLine>
           </FlexRow>
@@ -242,11 +256,11 @@ const FromTokenCard = ({
       </SelectTokenWrapper>
       <SliderWrapper>
         <SliderInputWrapper>
-          <InputSlideRow>
+          <InputSlideRow danger={insufficientBalance}>
             <span style={{ width: "20%" }}>{percent} %</span>
             <InputNumber
+              value={token.amount}
               onChange={(e) => onChangeAmountValue(e)}
-              inputRef={inputRef}
             />
           </InputSlideRow>
           <Slider

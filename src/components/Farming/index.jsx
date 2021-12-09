@@ -53,8 +53,8 @@ const FarmingTab = ({
   getLpBalance,
   pId,
 }) => {
-  const inputRef = useRef();
-  const inputRefUnstake = useRef();
+  const [amountStake, setAmountStake] = useState(0);
+  const [amountUnstake, setAmountUnStake] = useState(0);
   const [approve, loadingApprove, allowance] = useApproveCallBack(
     lpToken.address,
     farmAddress
@@ -63,7 +63,7 @@ const FarmingTab = ({
   const onFinishStake = async () => {
     saveToStorage();
     await Promise.all([refreshStakedBalance(), getLpBalance()]);
-    inputRef.current.value = "";
+    setAmountStake(0);
     toast("Stake successfully!");
   };
   const onFinishUnStake = async () => {
@@ -72,19 +72,19 @@ const FarmingTab = ({
     }
     await Promise.all([getLpBalance(), refreshStakedBalance()]);
     toast("Withdraw successfully!");
-    inputRefUnstake.current.value = "";
+    setAmountUnStake(0);
   };
 
   const [stake, loadingStake] = useStakeCallback(
     farmAddress,
-    inputRef,
+    amountStake,
     onFinishStake,
     type,
     pId
   );
   const [unStakeCallBack, loadingUnstake] = useUnStakeCallBack(
     farmAddress,
-    inputRefUnstake.current && inputRefUnstake.current.value,
+    amountUnstake,
     onFinishUnStake,
     type,
     pId
@@ -115,13 +115,23 @@ const FarmingTab = ({
     return !new BigNumber(lpBalance).isZero();
   }, [stakedBalance]);
 
+  const isInsufficientBalanceStake = useMemo(() => {
+    return amountStake && new BigNumber(lpBalance).lt(amountStake);
+  }, [lpBalance, amountStake]);
+
+  const inSufficientUnStakeBalance = useMemo(() => {
+    return amountUnstake && new BigNumber(stakedBalance).lt(amountUnstake);
+  }, [amountUnstake, stakedBalance]);
+
   return (
     <div>
       <StakeCard
         isActive={isActiveStake}
-        inputRef={inputRef}
+        amountStake={amountStake}
+        setAmountStake={setAmountStake}
         lpBalance={lpBalance}
         lpLabel={lpLabel}
+        insuffBalance={isInsufficientBalanceStake}
       />
       <ButtonWrapper>
         {new BigNumber(allowance).isZero() ? (
@@ -138,15 +148,22 @@ const FarmingTab = ({
             loading={loadingStake}
             labelLoading={"staking"}
             onClick={stake}
-            disabled={!isActiveStake}
+            disabled={
+              !isActiveStake ||
+              isInsufficientBalanceStake ||
+              new BigNumber(amountStake).isZero() ||
+              !amountStake
+            }
           />
         )}
       </ButtonWrapper>
       <BlackLine />
       <UnstakeCard
         isActive={isActiveUnstake}
-        inputRef={inputRefUnstake}
         stakedBalance={stakedBalance}
+        amountUnstake={amountUnstake}
+        setAmountUnstake={setAmountUnStake}
+        insuffBalance={inSufficientUnStakeBalance}
       />
       <ButtonWrapper>
         <ActiveButton
@@ -154,7 +171,12 @@ const FarmingTab = ({
           loading={loadingUnstake}
           labelLoading={"Unstaking"}
           onClick={unStakeCallBack}
-          disabled={!isActiveUnstake}
+          disabled={
+            !isActiveUnstake ||
+            inSufficientUnStakeBalance ||
+            new BigNumber(amountUnstake).isZero() ||
+            !amountUnstake
+          }
         />
       </ButtonWrapper>
     </div>

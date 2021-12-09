@@ -99,7 +99,7 @@ const WrappedFarm = ({}) => {
         <SearchWrapper filterKey={filterKey} onChange={setFilterKey} />
       </FlexRow>
       <BlackLine />
-      <DataTable data={data} setData={setData} />
+      <DataTable data={data} setData={setData} filterKey={filterKey} />
       {/*{data.map((e, index) => {*/}
       {/*  return (*/}
       {/*    <TableRecord*/}

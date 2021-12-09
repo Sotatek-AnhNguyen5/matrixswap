@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import TokenLogo from "../../TokenLogo";
 import { FlexRow } from "../../../theme/components";
-import React, { useEffect, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import Slider from "rc-slider";
 import BigNumber from "bignumber.js";
 import InputNumber from "../../InputNumber";
@@ -152,10 +152,13 @@ const ToTokenCard = ({
   farmType,
   lpToken,
 }) => {
-  const inputRef = useRef();
   const usdtValue = useConvertToUSDT(token.amount, token, farmType);
   const [balance] = useTokenBalance(token.address, token.decimals);
   const estimateOutput = useEstimateOutput(1, token, lpToken, farmType);
+
+  const estimateValue = useMemo(() => {
+    return new BigNumber(1).div(estimateOutput).times(token.amount).toFixed(8);
+  }, [token.amount, estimateOutput]);
 
   const onChangeAmountValue = async (e) => {
     await setSelectedTokens((old) => {
@@ -170,11 +173,9 @@ const ToTokenCard = ({
       old[0].amount = total.toFixed();
       return newData;
     });
-    // let totalRatio = new BigNumber(0);
     setSelectedTokens((old) => {
       const newData = old.map((e) => {
         e.ratio = new BigNumber(e.amount).div(total).times(100).toFixed();
-        // totalRatio = totalRatio.plus(new BigNumber(e.amount).div(total).times(100).toFixed());
         return e;
       });
       return [...newData];
@@ -185,14 +186,10 @@ const ToTokenCard = ({
     setSelectedTokens((old) => {
       const newData = [...old];
       newData[index].usdtAmount = usdtValue;
-      newData[index].estimateOutput = estimateOutput;
+      newData[index].estimateValue = estimateValue;
       return [...newData];
     });
-  }, [usdtValue, estimateOutput]);
-
-  useEffect(() => {
-    inputRef.current.value = token.amount;
-  }, [token.amount]);
+  }, [usdtValue, estimateValue]);
 
   return (
     <TokenCard>
@@ -226,12 +223,14 @@ const ToTokenCard = ({
         <SliderInputWrapper>
           <InputNumber
             onChange={(e) => onChangeAmountValue(e)}
-            inputRef={inputRef}
+            value={token.amount}
           />
           <span>{fromSelectedToken[0].symbol}</span>
         </SliderInputWrapper>
         <FlexRow height="64px" justify="flex-end">
-          <BalanceLine>= </BalanceLine>
+          <BalanceLine>
+            = {estimateValue} {token.symbol}
+          </BalanceLine>
         </FlexRow>
       </SliderWrapper>
     </TokenCard>

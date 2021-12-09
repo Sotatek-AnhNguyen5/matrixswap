@@ -30,7 +30,7 @@ const HeaderItem = styled.div`
   text-align: center;
 `;
 
-const DataTable = ({ data, setData }) => {
+const DataTable = ({ data, setData, filterKey }) => {
   const [sortKey, setSortKey] = useState();
   const [sortType, setSortType] = useState();
   const [cloneData, setCloneData] = useState([]);
@@ -92,8 +92,8 @@ const DataTable = ({ data, setData }) => {
       {sortedData.map((e, index) => {
         return (
           <TableRecord
-            key={index}
-            // filterKey={filterKey}
+            key={`${e.rewardAddress}-${e.poolIndex}-${index}`}
+            filterKey={filterKey}
             data={e}
             type={e.appId}
             setParentData={setData}

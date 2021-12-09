@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { FlexRow } from "../../../theme/components";
+import { BalanceLine, FlexRow } from "../../../theme/components";
 import React, { useMemo, useRef, useState } from "react";
 import InputNumber from "../../InputNumber";
 import Slider from "rc-slider";
@@ -42,16 +42,6 @@ const BorderColor = styled.div`
   background-color: rgba(1, 3, 4, 0.15);
   border-radius: 26px;
   width: 2px;
-`;
-
-const BalanceLine = styled.div`
-  font-size: 16px;
-  color: ${(props) =>
-    props.danger ? props.theme.colorDanger : "rgba(18, 70, 46, 0.6)"};
-  
-  span {
-    cursor: pointer;
-  }
 `;
 
 const SliderInputWrapper = styled.div`
@@ -102,31 +92,36 @@ const InputSlideRow = styled.div`
   }
 `;
 
-const UnstakeCard = ({ stakedBalance, inputRef, isActive }) => {
+const UnstakeCard = ({
+  stakedBalance,
+  amountUnstake,
+  setAmountUnstake,
+  isActive,
+  insuffBalance,
+}) => {
   const [percent, setPercent] = useState("0");
 
   const onChangeRangePercent = (percentAmount) => {
     setPercent(percentAmount);
     if (stakedBalance) {
-      inputRef.current.value = new BigNumber(stakedBalance)
-        .times(percentAmount)
-        .div(100)
-        .toFixed();
+      setAmountUnstake(
+        new BigNumber(stakedBalance).times(percentAmount).div(100).toFixed()
+      );
     }
   };
 
   const onMax = () => {
-    inputRef.current.value = stakedBalance;
+    setAmountUnstake(stakedBalance);
     setPercent("100");
-  }
-
-  const onChangeUnstake = (value) => {
-    const newPercent = new BigNumber(value).div(stakedBalance).times(100);
-    setPercent(newPercent.toFixed(0));
   };
 
-  const isOverBalance =
-    inputRef.current && new BigNumber(stakedBalance).lt(inputRef.current.value);
+  const onChangeUnstake = (value) => {
+    setAmountUnstake(value);
+    if (stakedBalance) {
+      const newPercent = new BigNumber(value).div(stakedBalance).times(100);
+      setPercent(newPercent.toFixed(0));
+    }
+  };
 
   return (
     <TokenCard isActive={isActive}>
@@ -136,18 +131,18 @@ const UnstakeCard = ({ stakedBalance, inputRef, isActive }) => {
           <BorderColor />
         </FlexRow>
         <FlexRow flexFlow="column" marginTop="20px" alignItems="start">
-          <BalanceLine danger={isOverBalance}>
+          <BalanceLine danger={insuffBalance}>
             Balance - <span onClick={onMax}>MAX</span>
           </BalanceLine>
-          <BalanceLine danger={isOverBalance}>{stakedBalance}</BalanceLine>
+          <BalanceLine danger={insuffBalance}>{stakedBalance}</BalanceLine>
         </FlexRow>
       </LeftCard>
       <FlexRow width="50%">
         <SliderWrapper>
           <SliderInputWrapper>
-            <InputSlideRow danger={isOverBalance}>
+            <InputSlideRow danger={insuffBalance}>
               <span style={{ width: "20%" }}>{percent} %</span>
-              <InputNumber onChange={onChangeUnstake} inputRef={inputRef} />
+              <InputNumber onChange={onChangeUnstake} value={amountUnstake} />
             </InputSlideRow>
             <Slider
               min={0}
@@ -157,11 +152,6 @@ const UnstakeCard = ({ stakedBalance, inputRef, isActive }) => {
               step={1}
             />
           </SliderInputWrapper>
-          {/*<FlexRow height="64px" justify="flex-end">*/}
-          {/*  <BalanceLine>*/}
-          {/*    = <span>$ {usdtValue}</span>*/}
-          {/*  </BalanceLine>*/}
-          {/*</FlexRow>*/}
         </SliderWrapper>
       </FlexRow>
     </TokenCard>

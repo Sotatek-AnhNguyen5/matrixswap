@@ -1,6 +1,6 @@
 import styled from "styled-components";
-import {FlexRow} from "../../../theme/components";
-import React, {useMemo, useState} from "react";
+import { BalanceLine, FlexRow } from "../../../theme/components";
+import React, { useMemo, useState } from "react";
 import InputNumber from "../../InputNumber";
 import Slider from "rc-slider";
 import BigNumber from "bignumber.js";
@@ -8,9 +8,9 @@ import BigNumber from "bignumber.js";
 const TokenCard = styled.div`
   display: flex;
   background: ${(props) =>
-          props.isActive
-                  ? "linear-gradient(90deg, #2ac031 13.55%, #3ee046 90.32%)"
-                  : "linear-gradient(90deg, #0A1C1F 0%, #0F2A2E 96.22%)"};
+    props.isActive
+      ? "linear-gradient(90deg, #2ac031 13.55%, #3ee046 90.32%)"
+      : "linear-gradient(90deg, #0A1C1F 0%, #0F2A2E 96.22%)"};
   align-items: flex-start;
   border-radius: 26px;
   width: 100%;
@@ -42,16 +42,6 @@ const BorderColor = styled.div`
   background-color: rgba(1, 3, 4, 0.15);
   border-radius: 26px;
   width: 2px;
-`;
-
-const BalanceLine = styled.div`
-  font-size: 16px;
-  color: ${(props) =>
-          props.danger ? props.theme.colorDanger : "rgba(18, 70, 46, 0.6)"};
-
-  span {
-    cursor: pointer;
-  }
 `;
 
 const SliderInputWrapper = styled.div`
@@ -98,64 +88,68 @@ const InputSlideRow = styled.div`
     overflow: hidden;
     width: 100px;
     color: ${(props) =>
-            props.danger ? props.theme.colorDanger : "rgba(18, 70, 46, 0.6)"};
+      props.danger ? props.theme.colorDanger : "rgba(18, 70, 46, 0.6)"};
   }
 `;
 
-const StakeCard = ({lpLabel, inputRef, lpBalance, isActive}) => {
+const StakeCard = ({
+  lpLabel,
+  amountStake,
+  setAmountStake,
+  lpBalance,
+  isActive,
+  insuffBalance,
+}) => {
   const [percent, setPercent] = useState("0");
 
   const onChangeRangePercent = (percentAmount) => {
     setPercent(percentAmount);
     if (lpBalance) {
-      inputRef.current.value = new BigNumber(lpBalance)
-        .times(percentAmount)
-        .div(100)
-        .toFixed();
+      setAmountStake(
+        new BigNumber(lpBalance).times(percentAmount).div(100).toFixed()
+      );
     }
   };
 
   const onMax = () => {
-    inputRef.current.value = lpBalance;
+    setAmountStake(lpBalance);
     setPercent("100");
   };
 
   const onChangeStake = (value) => {
+    setAmountStake(value);
     if (lpBalance) {
       const newPercent = new BigNumber(value).div(lpBalance).times(100);
       setPercent(newPercent.isNaN() ? "0" : newPercent.toFixed(0));
     }
   };
 
-  const isOverBalance =
-    inputRef.current && new BigNumber(lpBalance).lt(inputRef.current.value);
-
   return (
     <TokenCard isActive={isActive}>
       <LeftCard flexFlow="column">
         <FlexRow width="100%" justify="space-between">
           <FakeButton>{lpLabel}</FakeButton>
-          <BorderColor/>
+          <BorderColor />
         </FlexRow>
         <FlexRow flexFlow="column" marginTop="20px" alignItems="start">
-          <BalanceLine danger={isOverBalance}>
+          <BalanceLine danger={insuffBalance}>
             Balance - <span onClick={onMax}>MAX</span>
           </BalanceLine>
-          <BalanceLine danger={isOverBalance}>{lpBalance}</BalanceLine>
+          <BalanceLine danger={insuffBalance}>{lpBalance}</BalanceLine>
         </FlexRow>
       </LeftCard>
       <FlexRow width="50%">
         <SliderWrapper>
           <SliderInputWrapper>
-            <InputSlideRow danger={isOverBalance}>
+            <InputSlideRow danger={insuffBalance}>
               <span>{percent} %</span>
-              <InputNumber inputRef={inputRef} onChange={onChangeStake}/>
+              <InputNumber value={amountStake} onChange={onChangeStake} />
             </InputSlideRow>
             <Slider
               min={0}
               onChange={(e) => onChangeRangePercent(e)}
               defaultValue={percent}
-              marks={{0: "", 25: "", 50: "", 75: "", 100: ""}}
+              marks={{ 0: "", 25: "", 50: "", 75: "", 100: "" }}
               step={1}
             />
           </SliderInputWrapper>

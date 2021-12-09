@@ -79,3 +79,13 @@ export const ActiveButton = styled(SubmitButton)`
     background: ${(props) => (props.disabled ? "#0F2A2E" : "#0e4513")};
   }
 `;
+
+export const BalanceLine = styled.div`
+  font-size: 16px;
+  color: ${(props) =>
+  props.danger ? props.theme.colorDanger : "rgba(18, 70, 46, 0.6)"};
+
+  span {
+    cursor: pointer;
+  }
+`;

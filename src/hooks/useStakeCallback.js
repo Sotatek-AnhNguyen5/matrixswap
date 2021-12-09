@@ -4,7 +4,7 @@ import BigNumber from "bignumber.js";
 import { FARM_TYPE, PROTOCOL_FUNCTION } from "../const";
 import { useFarmContract } from "./useContract";
 
-const useStakeCallback = (farmAddress, inputRef, onFinish, type, pId) => {
+const useStakeCallback = (farmAddress, value, onFinish, type, pId) => {
   const { account } = useWeb3React();
   const [loading, setLoading] = useState(false);
   const farmContract = useFarmContract(farmAddress, type);
@@ -12,7 +12,7 @@ const useStakeCallback = (farmAddress, inputRef, onFinish, type, pId) => {
   return [
     useCallback(() => {
       setLoading(true);
-      const amount = new BigNumber(inputRef.current.value)
+      const amount = new BigNumber(value)
         .times(new BigNumber(10).pow(18))
         .toFixed(0);
       let params;
@@ -38,7 +38,7 @@ const useStakeCallback = (farmAddress, inputRef, onFinish, type, pId) => {
         console.log(e);
         setLoading(false);
       }
-    }, [farmContract, inputRef, type]),
+    }, [farmContract, value, type]),
     loading,
   ];
 };

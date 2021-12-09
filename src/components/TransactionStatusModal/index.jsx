@@ -12,6 +12,7 @@ const ActiveTitle = styled(FlexRow)`
 `;
 const WhiteTitle = styled(FlexRow)`
   font-size: 18px;
+  box-sizing: border-box;
   color: #fff;
 
   a {
@@ -35,6 +36,7 @@ const FooterButton = styled(FlexRow)`
   background: #081719;
   border-radius: 0px 0px 26px 26px;
   margin-top: 40px;
+  box-sizing: border-box;
 `;
 
 const TransactionStatusModal = ({

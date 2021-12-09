@@ -22,7 +22,7 @@ import {
 
 const FlexRowData = styled.div`
   margin-top: 15px;
-  display: flex;
+  display: ${(props) => (props.isShow ? "flex" : "none")};
   flex-wrap: wrap;
   border-radius: 12px;
 
@@ -115,7 +115,7 @@ const FarmType = styled.div`
 const TableRecord = ({ data, filterKey, type, setParentData }) => {
   const [isSelected, setIsSelected] = useState(false);
   const [isZap, setIsZap] = useState(true);
-  const farmAddress = data.rewardAddress || data.stakingRewards;
+  const farmAddress = data.rewardAddress;
   const { rewardTokens, poolIndex, apr, tvl, lpToken } = data;
   const [lpBalance, getLpBalance] = useTokenBalance(data.tokenAddress);
   const [reward, stakedBalance, refreshFarmInfo, startStakeDate] =
@@ -150,7 +150,7 @@ const TableRecord = ({ data, filterKey, type, setParentData }) => {
           lpToken.token1.symbol.toUpperCase(),
         ].indexOf(e.value.toUpperCase()) !== -1
     );
-    return isEmpty(filterKey) || isExists;
+    return isEmpty(filterKey) || !!isExists;
   }, [filterKey]);
 
   const daily = useMemo(() => {
@@ -169,6 +169,10 @@ const TableRecord = ({ data, filterKey, type, setParentData }) => {
     }
     return [lpToken.token0.symbol, lpToken.token1.symbol];
   }, [lpToken.token0, lpToken.token1]);
+
+  const wrappedSymbol = useMemo(() => {
+    return `LP ${symbol0}-${symbol1}`
+  }, [symbol0, symbol1])
 
   useEffect(() => {
     if (!new BigNumber(stakedBalance).isZero()) {
@@ -271,6 +275,7 @@ const TableRecord = ({ data, filterKey, type, setParentData }) => {
                   type={FARM_TYPE[type]}
                   lpBalance={lpBalance}
                   getLpBalance={getLpBalance}
+                  wrappedSymbol={wrappedSymbol}
                 />
               ) : (
                 <FarmingTab
@@ -288,42 +293,6 @@ const TableRecord = ({ data, filterKey, type, setParentData }) => {
           </div>
         )}
       </FlexRowData>
-      {/*{isSelected && (*/}
-      {/*  <FlexRowData isShow={isShow}>*/}
-      {/*    <DataItem>*/}
-      {/*      <WrappedDataColumn>*/}
-      {/*        <DataColumn style={{ textAlign: "left" }}>*/}
-      {/*          <div>Start date</div>*/}
-      {/*          <div>Your Staked</div>*/}
-      {/*          <div>Reward</div>*/}
-      {/*        </DataColumn>*/}
-      {/*        <DataColumn>*/}
-      {/*          <ValueSide> {convertDate(startStakeDate)} </ValueSide>*/}
-      {/*          <ValueSide>{balance}</ValueSide>*/}
-      {/*          <ValueSide>*/}
-      {/*            {reward[0]} {rewardTokens[0].symbol}*/}
-      {/*          </ValueSide>*/}
-      {/*          {rewardTokens[1] && (*/}
-      {/*            <ValueSide>*/}
-      {/*              {reward[1]} {rewardTokens[1].symbol}*/}
-      {/*            </ValueSide>*/}
-      {/*          )}*/}
-      {/*        </DataColumn>*/}
-      {/*      </WrappedDataColumn>*/}
-      {/*    </DataItem>*/}
-      {/*    <DataItem colSpan={2}>*/}
-      {/*      <FlexRow justify="center">*/}
-      {/*        <TabLabel isActive={isZap} onClick={() => setIsZap(true)}>*/}
-      {/*          Zap*/}
-      {/*        </TabLabel>*/}
-      {/*        <TabLabel isActive={!isZap} onClick={() => setIsZap(false)}>*/}
-      {/*          Farming*/}
-      {/*        </TabLabel>*/}
-      {/*      </FlexRow>*/}
-      {/*      <div style={{ padding: "10px" }}></div>*/}
-      {/*    </DataItem>*/}
-      {/*  </FlexRowData>*/}
-      {/*)}*/}
     </>
   );
 };

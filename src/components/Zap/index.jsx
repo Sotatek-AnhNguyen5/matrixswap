@@ -4,7 +4,7 @@ import { ADDRESS_ZAP, PROTOCOL_FUNCTION, WMATIC_TOKEN } from "../../const";
 import SubmitButton from "../SubmitButton";
 import useZapCallback from "../../hooks/useZapCallback";
 import FromTokenCard from "./FromTokenCard";
-import { FlexRow, StyledButton } from "../../theme/components";
+import { ActiveButton, FlexRow, StyledButton } from "../../theme/components";
 import SelectTokenModal from "../SelectTokenModal";
 import ToLpCard from "./ToLpCard";
 import { find } from "lodash";
@@ -13,6 +13,7 @@ import BigNumber from "bignumber.js";
 import ConfirmZap from "../ConfirmZap";
 import TransactionStatusModal from "../TransactionStatusModal";
 import ToTokenCard from "./ToTokenCard";
+import useZapValidate from "../../hooks/useZapValidate";
 
 const FromToken = styled.div`
   color: rgba(30, 174, 37, 0.5);
@@ -92,8 +93,7 @@ const ToLpText = styled.div`
   margin-top: 40px;
 `;
 
-const ActiveButton = styled(SubmitButton)`
-  background-color: ${(props) => props.theme.colorMainGreen};
+const ApproveButton = styled(ActiveButton)`
   width: 55%;
   font-size: 16px;
   border-radius: 26px;
@@ -101,11 +101,7 @@ const ActiveButton = styled(SubmitButton)`
   z-index: 1;
 `;
 
-const ZapButton = styled(SubmitButton)`
-  background: ${(props) =>
-    props.isApproveFirst
-      ? "linear-gradient(90.04deg, #0A1C1F 0.96%, #0F2A2E 91.92%);"
-      : props.theme.colorMainGreen};
+const ZapButton = styled(ActiveButton)`
   border-radius: 26px;
   padding: 20px;
   width: ${(props) => (props.isApproveFirst ? "50%" : "100%")};
@@ -122,13 +118,16 @@ const ZapTab = ({
   getLpBalance,
   lpBalance,
   lpToken,
+  wrappedSymbol
 }) => {
   const { account } = useWeb3React();
   const [openSelectToken, setOpenSelectToken] = useState(false);
   const [openConfirmZap, setOpenConfirmZap] = useState(false);
   const [isOpenTxStatusModal, setIsOpenTxStatusModal] = useState(false);
   const [selectedIndexTokenModal, setSelectedTokenModal] = useState();
-  const [selectedTokens, setSelectedTokens] = useState([WMATIC_TOKEN]);
+  const [selectedTokens, setSelectedTokens] = useState([
+    { ...WMATIC_TOKEN, amount: 0 },
+  ]);
   const [isZapIn, setIsZapIn] = useState(true);
   const [toTokensZapOut, setToTokensZapOut] = useState([]);
   // const isZapAble = useCheckZapToken(selectedToken, token0, token1, type);
@@ -137,6 +136,23 @@ const ZapTab = ({
     selectedTokens,
     (e) => e.allowance && new BigNumber(e.allowance).isZero()
   );
+
+  const [noAmountError, unSelectedTokenError, insuffBalance] = useZapValidate(
+    selectedTokens,
+    toTokensZapOut,
+    isZapIn
+  );
+
+  const zapButtonTitle = useMemo(() => {
+    if (unSelectedTokenError) {
+      return "Select a token";
+    } else if (noAmountError) {
+      return "Enter an amount";
+    } else if (insuffBalance) {
+      return "Insufficient balance";
+    }
+    return "Zap";
+  }, [noAmountError, unSelectedTokenError, insuffBalance]);
 
   const onFinishZap = async () => {
     getLpBalance();
@@ -230,16 +246,27 @@ const ZapTab = ({
   const onChangeTypeZap = () => {
     setIsZapIn((old) => !old);
     if (isZapIn) {
-      setToTokensZapOut([...selectedTokens]);
+      setToTokensZapOut([
+        ...selectedTokens.map((e) => {
+          e.amount = 0;
+          return e;
+        }),
+      ]);
       setSelectedTokens([
         {
           symbol: `LP ${token0.symbol} - ${token1.symbol}`,
           decimals: 18,
           address: lpAddress,
+          amount: 0,
         },
       ]);
     } else {
-      setSelectedTokens([...toTokensZapOut]);
+      setSelectedTokens([
+        ...toTokensZapOut.map((e) => {
+          e.amount = 0;
+          return e;
+        }),
+      ]);
       setToTokensZapOut([]);
     }
   };
@@ -276,7 +303,7 @@ const ZapTab = ({
         return (
           <FromTokenCard
             token={ele}
-            key={i}
+            key={`${lpAddress}-${type}`}
             index={i}
             removeSelf={() => removeFromList(i)}
             openSelectToken={() => onOpenSelectToken(i)}
@@ -309,7 +336,7 @@ const ZapTab = ({
         <>
           {toTokensZapOut.map((e, index) => (
             <ToTokenCard
-              key={e.address}
+              key={`${e.address}-${index}`}
               token={e}
               fromSelectedToken={selectedTokens}
               setFromSelectedToken={setSelectedTokens}
@@ -332,7 +359,7 @@ const ZapTab = ({
       </FlexRow>
       <FlexRow marginTop="20px" justify="flex-start">
         {tokenHaveToApprove && (
-          <ActiveButton
+          <ApproveButton
             label={"approve"}
             loading={tokenHaveToApprove.loading}
             labelLoading={"approving"}
@@ -342,7 +369,13 @@ const ZapTab = ({
         <ZapButton
           onClick={() => setOpenConfirmZap(true)}
           isApproveFirst={!!tokenHaveToApprove}
-          label={"Zap"}
+          disabled={
+            !!tokenHaveToApprove ||
+            noAmountError ||
+            unSelectedTokenError ||
+            insuffBalance
+          }
+          label={zapButtonTitle}
           labelLoading={"Zapping"}
         />
       </FlexRow>
