@@ -46,7 +46,7 @@ const BlackLine = styled.div`
   margin-bottom: 40px;
 `;
 
-const WrappedFarm = ({}) => {
+const WrappedFarm = ({ refetchVolume }) => {
   const [filterKey, setFilterKey] = useState([]);
   const [data, setData] = useState([]);
   const apeSwapFarms = useApeSwapFarms();
@@ -89,7 +89,12 @@ const WrappedFarm = ({}) => {
         <SearchWrapper filterKey={filterKey} onChange={setFilterKey} />
       </FlexRow>
       <BlackLine />
-      <DataTable data={data} setData={setData} filterKey={filterKey} />
+      <DataTable
+        refetchVolume={refetchVolume}
+        data={data}
+        setData={setData}
+        filterKey={filterKey}
+      />
       {/*{data.map((e, index) => {*/}
       {/*  return (*/}
       {/*    <TableRecord*/}

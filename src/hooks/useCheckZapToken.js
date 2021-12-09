@@ -10,10 +10,13 @@ import {
   SUSHI_FACTORY_ADDRESS,
 } from "../const";
 import { hashSha3Tokens, isValidAddress } from "../utils";
+import { useFactoryContract } from "./useContract";
 
-const useCheckZapToken = (tokenCheck, token0, token1, type) => {
+const useCheckZapToken = (tokenCheck, token0, token1, farmType) => {
   const [zapAble, setZapAble] = useState(true);
   const { library } = useWeb3React();
+  const factoryContract = useFactoryContract(farmType);
+
   const checkData = async () => {
     if (
       tokenCheck.address.toLowerCase() === token0.address.toLowerCase() ||
@@ -23,10 +26,6 @@ const useCheckZapToken = (tokenCheck, token0, token1, type) => {
       return;
     }
 
-    const factoryContract = new library.eth.Contract(
-      QuickSwapFactoryABI,
-      type === "sushi" ? SUSHI_FACTORY_ADDRESS : QUICKSWAP_FACTORY_ADDRESS
-    );
     const [pairToken0, pairToken1] = await Promise.all([
       factoryContract.methods
         .getPair(tokenCheck.address, token0.address)
@@ -42,7 +41,7 @@ const useCheckZapToken = (tokenCheck, token0, token1, type) => {
     }
 
     const zapContract = new library.eth.Contract(ZAPABI.abi, ADDRESS_ZAP);
-    const hashType = PROTOCOL_FUNCTION[type].fullnameHash;
+    const hashType = PROTOCOL_FUNCTION[farmType].fullnameHash;
     const hashPair0 = hashSha3Tokens(tokenCheck.address, token0.address);
     const hashPair1 = hashSha3Tokens(tokenCheck.address, token1.address);
     const [internateToken0, internateToken1] = await Promise.all([

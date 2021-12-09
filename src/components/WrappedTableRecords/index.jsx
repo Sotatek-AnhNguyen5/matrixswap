@@ -111,7 +111,7 @@ const FarmType = styled.div`
   text-transform: capitalize;
 `;
 
-const TableRecord = ({ data, filterKey, type, setParentData }) => {
+const TableRecord = ({ data, filterKey, type, setParentData, refetchVolume }) => {
   const [isSelected, setIsSelected] = useState(false);
   const [isZap, setIsZap] = useState(true);
   const farmAddress = data.rewardAddress;
@@ -254,14 +254,13 @@ const TableRecord = ({ data, filterKey, type, setParentData }) => {
                 <ZapTab
                   lpToken={lpToken}
                   lpAddress={lpToken.address}
-                  token0={lpToken.token0}
-                  token1={lpToken.token1}
                   changeTab={() => setIsZap(false)}
                   refreshStakeBalance={refreshFarmInfo}
                   type={FARM_TYPE[type]}
                   lpBalance={lpBalance}
                   getLpBalance={getLpBalance}
                   wrappedSymbol={wrappedSymbol}
+                  refetchVolume={refetchVolume}
                 />
               ) : (
                 <FarmingTab

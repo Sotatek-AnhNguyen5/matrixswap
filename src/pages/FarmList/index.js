@@ -11,7 +11,7 @@ const AppWrapper = styled.div`
   background-repeat: no-repeat, repeat;
   background-position: right bottom;
   background-attachment: fixed;
-  padding: 0 50px
+  padding: 0 50px;
 `;
 
 const HeaderWrapper = styled.div`
@@ -67,14 +67,14 @@ const VolumeWrapper = styled.div`
 `;
 
 const FarmList = () => {
-  const volume = useVolume24h();
+  const [volume, refetchVolume] = useVolume24h();
 
   return (
     <AppWrapper>
       <HeaderWrapper>
         <img alt="" src="./images/matrix-logo.png" className="logo" />
         <ButtonGroup>
-          <ChooseNetWork>
+          <ChooseNetWork onClick={() => refetchVolume()}>
             <img src="./images/tokens/matic.jpg" alt="" className="token" />
             <span>Polygon</span>
             <img src="./images/icons/down.png" alt="" className="down" />
@@ -90,7 +90,7 @@ const FarmList = () => {
         />
         <TradingVolume label="24h Trading Volume" amount={volume.total24h} />
       </VolumeWrapper>
-      <WrappedFarm />
+      <WrappedFarm refetchVolume={refetchVolume} />
     </AppWrapper>
   );
 };

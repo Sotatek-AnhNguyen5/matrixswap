@@ -111,16 +111,16 @@ const ZapButton = styled(ActiveButton)`
 
 const ZapTab = ({
   lpAddress,
-  token0,
-  token1,
   refreshStakeBalance,
   type,
   getLpBalance,
   lpBalance,
   lpToken,
-  wrappedSymbol
+  wrappedSymbol,
+  refetchVolume,
 }) => {
   const { account } = useWeb3React();
+  const { token0, token1 } = lpToken;
   const [openSelectToken, setOpenSelectToken] = useState(false);
   const [openConfirmZap, setOpenConfirmZap] = useState(false);
   const [isOpenTxStatusModal, setIsOpenTxStatusModal] = useState(false);
@@ -130,18 +130,14 @@ const ZapTab = ({
   ]);
   const [isZapIn, setIsZapIn] = useState(true);
   const [toTokensZapOut, setToTokensZapOut] = useState([]);
-  // const isZapAble = useCheckZapToken(selectedToken, token0, token1, type);
 
   const tokenHaveToApprove = find(
     selectedTokens,
     (e) => e.allowance && new BigNumber(e.allowance).isZero()
   );
 
-  const [noAmountError, unSelectedTokenError, insuffBalance] = useZapValidate(
-    selectedTokens,
-    toTokensZapOut,
-    isZapIn
-  );
+  const [noAmountError, unSelectedTokenError, insuffBalance, invalidToken] =
+    useZapValidate(selectedTokens, toTokensZapOut, isZapIn);
 
   const zapButtonTitle = useMemo(() => {
     if (unSelectedTokenError) {
@@ -150,13 +146,20 @@ const ZapTab = ({
       return "Enter an amount";
     } else if (insuffBalance) {
       return "Insufficient balance";
+    } else if (invalidToken) {
+      return "Invalid token";
     }
     return "Zap";
-  }, [noAmountError, unSelectedTokenError, insuffBalance]);
+  }, [noAmountError, unSelectedTokenError, insuffBalance, invalidToken]);
 
   const onFinishZap = async () => {
-    getLpBalance();
-    refreshStakeBalance();
+    if (!isZapIn) {
+      toTokensZapOut.forEach((e) => e.refreshBalance());
+    }
+    const balanceJob = [];
+    selectedTokens.forEach((e) => e.refreshBalance());
+    await Promise.all([getLpBalance(), refreshStakeBalance(), balanceJob]);
+    refetchVolume();
   };
 
   const params = useMemo(() => {
@@ -303,7 +306,7 @@ const ZapTab = ({
         return (
           <FromTokenCard
             token={ele}
-            key={`${lpAddress}-${type}`}
+            key={`${lpAddress}-${type}-${i}`}
             index={i}
             removeSelf={() => removeFromList(i)}
             openSelectToken={() => onOpenSelectToken(i)}
@@ -373,6 +376,7 @@ const ZapTab = ({
             !!tokenHaveToApprove ||
             noAmountError ||
             unSelectedTokenError ||
+            invalidToken ||
             insuffBalance
           }
           label={zapButtonTitle}

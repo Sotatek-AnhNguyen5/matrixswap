@@ -10,6 +10,7 @@ import useConvertToUSDT from "../../../hooks/useConvertToUSDT";
 import useApproveCallBack from "../../../hooks/useApproveCallBack";
 import { ADDRESS_ZAP } from "../../../const";
 import useEstimateOutput from "../../../hooks/useEstimateOutput";
+import useCheckZapToken from "../../../hooks/useCheckZapToken";
 
 const TokenCard = styled.div`
   display: flex;
@@ -153,9 +154,17 @@ const ToTokenCard = ({
   lpToken,
 }) => {
   const usdtValue = useConvertToUSDT(token.amount, token, farmType);
-  const [balance] = useTokenBalance(token.address, token.decimals);
+  const [balance, refreshBalance] = useTokenBalance(
+    token.address,
+    token.decimals
+  );
   const estimateOutput = useEstimateOutput(1, token, lpToken, farmType);
-
+  const isZapAble = useCheckZapToken(
+    token,
+    lpToken.token0,
+    lpToken.token1,
+    farmType
+  );
   const estimateValue = useMemo(() => {
     return new BigNumber(1).div(estimateOutput).times(token.amount).toFixed(8);
   }, [token.amount, estimateOutput]);
@@ -187,9 +196,11 @@ const ToTokenCard = ({
       const newData = [...old];
       newData[index].usdtAmount = usdtValue;
       newData[index].estimateValue = estimateValue;
+      newData[index].isZapAble = isZapAble;
+      newData[index].refreshBalance = refreshBalance;
       return [...newData];
     });
-  }, [usdtValue, estimateValue]);
+  }, [usdtValue, estimateValue, isZapAble, refreshBalance]);
 
   return (
     <TokenCard>

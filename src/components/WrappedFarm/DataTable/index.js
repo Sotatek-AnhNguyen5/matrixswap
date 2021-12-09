@@ -31,7 +31,7 @@ const HeaderItem = styled.div`
   text-align: center;
 `;
 
-const DataTable = ({ data, setData, filterKey }) => {
+const DataTable = ({ data, setData, filterKey, refetchVolume }) => {
   const [sortKey, setSortKey] = useState();
   const [sortType, setSortType] = useState();
 
@@ -108,6 +108,7 @@ const DataTable = ({ data, setData, filterKey }) => {
               data={e}
               type={e.appId}
               setParentData={setData}
+              refetchVolume={refetchVolume}
             />
           </LazyLoad>
         );

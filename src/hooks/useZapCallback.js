@@ -19,11 +19,9 @@ const useZapCallback = (params, onFinish, isZapIn) => {
     useCallback(() => {
       setStatus(STATUS_ZAP.waiting);
       setLoading(true);
-      console.log(params)
       try {
         const methods = isZapIn ? "zapInMultiToken" : "zapOutMultipleToken";
         const param = isZapIn ? [params] : [...params];
-        console.log(param)
         zapContract.methods[methods](...param)
           .send({ from: account })
           .on("confirmation", async function (number, receipt) {

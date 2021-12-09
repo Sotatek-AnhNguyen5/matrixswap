@@ -10,6 +10,7 @@ import useConvertToUSDT from "../../../hooks/useConvertToUSDT";
 import useApproveCallBack from "../../../hooks/useApproveCallBack";
 import { ADDRESS_ZAP } from "../../../const";
 import useEstimateOutput from "../../../hooks/useEstimateOutput";
+import useCheckZapToken from "../../../hooks/useCheckZapToken";
 
 const TokenCard = styled.div`
   display: flex;
@@ -166,7 +167,22 @@ const FromTokenCard = ({
 }) => {
   const [percent, setPercent] = useState("0");
   const usdtValue = useConvertToUSDT(token.amount, token, farmType);
-  const [balance] = useTokenBalance(token.address, token.decimals);
+  const [balance, refreshBalance] = useTokenBalance(token.address, token.decimals);
+  const isZapAble = useCheckZapToken(
+    token,
+    lpToken.token0,
+    lpToken.token1,
+    farmType
+  );
+
+  const setAmount = (value) => {
+    setSelectedTokens((old) => {
+      const newData = [...old];
+      newData[index].amount = value;
+      return [...newData];
+    });
+  };
+
   const [approve, loading, allowance] = useApproveCallBack(
     token.address,
     ADDRESS_ZAP
@@ -189,21 +205,13 @@ const FromTokenCard = ({
         .times(percentAmount)
         .div(100)
         .toFixed();
-      setSelectedTokens((old) => {
-        const newData = [...old];
-        newData[index].amount = toValue;
-        return [...newData];
-      });
+      setAmount(toValue);
       !isZapIn && refreshRatio(toValue);
     }
   };
 
   const onChangeAmountValue = (e) => {
-    setSelectedTokens((old) => {
-      const newData = [...old];
-      newData[index].amount = e;
-      return [...newData];
-    });
+    setAmount(e);
     !isZapIn && refreshRatio(e);
     if (e) {
       const amountToPercent = new BigNumber(e).div(balance).times(100);
@@ -220,9 +228,19 @@ const FromTokenCard = ({
       newData[index].usdtAmount = usdtValue;
       newData[index].estimateOutput = estimateOutput;
       newData[index].insufficientBalance = insufficientBalance;
+      newData[index].isZapAble = isZapAble;
+      newData[index].refreshBalance = refreshBalance;
       return [...newData];
     });
-  }, [allowance, loading, usdtValue, estimateOutput, insufficientBalance]);
+  }, [
+    allowance,
+    loading,
+    usdtValue,
+    estimateOutput,
+    insufficientBalance,
+    isZapAble,
+    refreshBalance,
+  ]);
 
   return (
     <TokenCard>
@@ -244,7 +262,7 @@ const FromTokenCard = ({
         <div style={{ width: "100%" }}>
           <FlexRow justify="flex-start" marginTop="10px">
             <BalanceLine danger={insufficientBalance}>
-              Balance - <span>MAX</span>
+              Balance - <span onClick={() => setAmount(balance)}>MAX</span>
             </BalanceLine>
           </FlexRow>
           <FlexRow justify="flex-start" marginTop="10px">
