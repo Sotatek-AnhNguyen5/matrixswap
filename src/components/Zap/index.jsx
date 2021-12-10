@@ -139,7 +139,9 @@ const ZapTab = ({
     useZapValidate(selectedTokens, toTokensZapOut, isZapIn);
 
   const zapButtonTitle = useMemo(() => {
-    if (unSelectedTokenError) {
+    if (tokenHaveToApprove) {
+      return "Zap";
+    } else if (unSelectedTokenError) {
       return "Select a token";
     } else if (noAmountError) {
       return "Enter an amount";
@@ -149,7 +151,13 @@ const ZapTab = ({
       return "Invalid token";
     }
     return "Zap";
-  }, [noAmountError, unSelectedTokenError, insuffBalance, invalidToken]);
+  }, [
+    noAmountError,
+    unSelectedTokenError,
+    insuffBalance,
+    invalidToken,
+    tokenHaveToApprove,
+  ]);
 
   const onFinishZap = async () => {
     if (!isZapIn) {
@@ -159,6 +167,23 @@ const ZapTab = ({
     selectedTokens.forEach((e) => e.refreshBalance());
     await Promise.all([getLpBalance(), refreshStakeBalance(), balanceJob]);
     refetchVolume();
+    setSelectedTokens((old) => {
+      const newData = [...old].map((e) => {
+        e.amount = 0;
+        e.estimateOutput = 0;
+        return e;
+      });
+      return [...newData];
+    });
+    if (!isZapIn) {
+      setToTokensZapOut((old) => {
+        const newData = [...old].map((e) => {
+          e.amount = 0;
+          return e;
+        });
+        return [...newData];
+      });
+    }
   };
 
   const params = useMemo(() => {

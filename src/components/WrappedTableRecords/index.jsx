@@ -18,6 +18,7 @@ import {
   GrayLabelText,
   WhiteLabelText,
 } from "../../theme/components";
+import { forceCheck } from "react-lazyload";
 
 const FlexRowData = styled.div`
   margin-top: 15px;
@@ -111,7 +112,7 @@ const FarmType = styled.div`
   text-transform: capitalize;
 `;
 
-const TableRecord = ({ data, filterKey, type, refetchVolume }) => {
+const TableRecord = ({ data, filterKey, type, refetchVolume, setParentData }) => {
   const [isSelected, setIsSelected] = useState(false);
   const [isZap, setIsZap] = useState(true);
   const farmAddress = data.rewardAddress;
@@ -170,8 +171,26 @@ const TableRecord = ({ data, filterKey, type, refetchVolume }) => {
   }, [lpToken.token0, lpToken.token1]);
 
   const wrappedSymbol = useMemo(() => {
-    return `LP ${symbol0}-${symbol1}`
-  }, [symbol0, symbol1])
+    return `LP ${symbol0}-${symbol1}`;
+  }, [symbol0, symbol1]);
+
+  useEffect(() => {
+    forceCheck();
+  }, []);
+
+  // useEffect(() => {
+  //   if (!new BigNumber(stakedBalance).isZero()) {
+  //     setParentData((old) => {
+  //       const farmList = [...old];
+  //       const indexFarm = findIndex(farmList, (e) => {
+  //         return e.rewardAddress === farmAddress;
+  //       });
+  //       farmList[indexFarm].deposited = stakedBalance;
+  //       return farmList;
+  //     });
+  //   }
+  // }, [stakedBalance]);
+
 
   return (
     <>

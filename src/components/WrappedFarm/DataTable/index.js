@@ -1,14 +1,29 @@
 import styled from "styled-components";
 import { FaAngleDown, FaAngleUp } from "react-icons/fa";
-import { useCallback, useEffect, useState } from "react";
+import {useEffect, useState} from "react";
 import TableRecord from "../../WrappedTableRecords";
 import { FlexRow } from "../../../theme/components";
 import BigNumber from "bignumber.js";
 import LazyLoad from "react-lazyload";
+import { forceCheck } from 'react-lazyload';
 
 const Table = styled.div`
   width: 95%;
   margin-left: auto;
+`;
+
+const WrappedSortImage = styled.div`
+  display: flex;
+  align-items: center;
+  flex-flow: column;
+`;
+
+const SortSvgUp = styled(FaAngleUp)`
+  color: ${(props) => (props.isActive ? "#fff" : props.theme.colorGray2)};
+`;
+
+const SortSvgDown = styled(FaAngleDown)`
+  color: ${(props) => (props.isActive ? "#fff" : props.theme.colorGray2)};
 `;
 
 const FlexRowHeader = styled(FlexRow)`
@@ -52,10 +67,10 @@ const DataTable = ({ data, setData, filterKey, refetchVolume }) => {
     const bigA = new BigNumber(a[key]);
     const bigB = new BigNumber(b[key]);
     if (bigA.lt(bigB)) {
-      return 1;
+      return -1;
     }
     if (bigA.gt(bigB)) {
-      return -1;
+      return 1;
     }
 
     return 0;
@@ -64,19 +79,25 @@ const DataTable = ({ data, setData, filterKey, refetchVolume }) => {
     return (
       <span onClick={() => onChangeSort(type)}>
         {label}
-        {sortKey === type &&
-          (sortType === "desc" ? <FaAngleDown /> : <FaAngleUp />)}
+        <WrappedSortImage>
+          <SortSvgUp isActive={sortKey === type && sortType === "asc"} />
+          <SortSvgDown isActive={sortKey === type && sortType === "desc"} />
+        </WrappedSortImage>
       </span>
     );
   };
 
   let sortedData;
 
-  if (!sortType || sortType === "asc") {
-    sortedData = data.sort(compareFunction);
-  } else if (sortType === "desc") {
+  if (!sortType || sortType === "desc") {
     sortedData = data.sort(compareFunction).reverse();
+  } else if (sortType === "asc") {
+    sortedData = data.sort(compareFunction);
   }
+
+  useEffect(() => {
+    forceCheck();
+  }, [filterKey])
 
   return (
     <Table>
@@ -100,9 +121,7 @@ const DataTable = ({ data, setData, filterKey, refetchVolume }) => {
         return (
           <LazyLoad
             key={`${e.rewardAddress}-${e.poolIndex}-${index}`}
-            height={250}
-            offset={1300}
-            once
+            height={200}
           >
             <TableRecord
               filterKey={filterKey}
