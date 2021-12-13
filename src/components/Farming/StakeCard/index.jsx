@@ -15,7 +15,7 @@ const TokenCard = styled.div`
   border-radius: 26px;
   width: 100%;
   margin-top: 20px;
-  padding: 20px 20px 20px 40px;
+  padding: 15px 20px 15px 40px;
   box-sizing: border-box;
 `;
 
@@ -27,15 +27,16 @@ const SliderWrapper = styled.div`
   display: flex;
   flex-flow: column;
   align-items: flex-start;
-  padding: 0px 20px 20px 20px;
+  padding: 0 20px;
+  width: 100%;
 `;
 
 const FakeButton = styled.div`
   background: rgba(1, 3, 4, 0.15);
   border-radius: 16px;
-  padding: 20px;
+  padding: 16px 20px;
   color: #fff;
-  font-size: 18px;
+  font-size: 16px;
 `;
 const BorderColor = styled.div`
   height: 45px;
@@ -50,16 +51,17 @@ const SliderInputWrapper = styled.div`
   width: 100%;
   display: flex;
   flex-flow: column;
-  min-height: 65px;
+  min-height: 54px;
 
   .input-wrapper {
-    width: 90%;
+    width: 100%;
   }
-
+  
   input {
+    font-family: ChakraPetch, sans-serif;
     text-align: right;
     font-weight: 400;
-    font-size: 24px;
+    font-size: 18px;
     color: rgba(255, 255, 255, 0.6);
     background: transparent;
     border: 0;
@@ -131,11 +133,11 @@ const StakeCard = ({
           <FakeButton>{lpLabel}</FakeButton>
           <BorderColor />
         </FlexRow>
-        <FlexRow flexFlow="column" marginTop="20px" alignItems="start">
+        <FlexRow flexFlow="column" marginTop="10px" alignItems="start">
           <BalanceLine danger={insuffBalance}>
             Balance - <span onClick={onMax}>MAX</span>
           </BalanceLine>
-          <BalanceLine danger={insuffBalance}>{lpBalance}</BalanceLine>
+          <BalanceLine isNumber danger={insuffBalance}>{lpBalance}</BalanceLine>
         </FlexRow>
       </LeftCard>
       <FlexRow width="50%">

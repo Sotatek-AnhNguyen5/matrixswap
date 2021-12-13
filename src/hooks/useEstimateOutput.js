@@ -162,6 +162,8 @@ const useEstimateOutput = (amountToken, token, lpToken, type) => {
   useEffect(() => {
     if (amountToken && token.address) {
       estimateOutput(lpToken, amountToken, token);
+    }else {
+      setValue(0)
     }
   }, [lpToken, amountToken, token]);
 

@@ -19,6 +19,7 @@ import {
   WhiteLabelText,
 } from "../../theme/components";
 import { forceCheck } from "react-lazyload";
+import FormatNumber from "../FormatNumber";
 
 const FlexRowData = styled.div`
   margin-top: 15px;
@@ -31,6 +32,10 @@ const FlexRowData = styled.div`
 
   &:hover {
     background-color: ${(props) => (props.hover ? "#193034" : "")};
+
+    .styled-number {
+      font-weight: ${(props) => (props.hover ? "700" : "400")};
+    }
   }
 
   .farm-data-wrapper {
@@ -55,6 +60,7 @@ const FlexRowData = styled.div`
         color: white;
         text-decoration: none;
         text-align: left;
+        font-size: 18px;
         //white-space: nowrap;
       }
 
@@ -68,6 +74,7 @@ const FlexRowData = styled.div`
 const DataItem = styled.div`
   text-align: center;
   padding: 20px 20px;
+  white-space: nowrap;
 `;
 
 const GrayColumn = styled.div`
@@ -81,7 +88,8 @@ const ZapFarmWrapper = styled.div`
   padding: 20px 30px 50px 20px;
   border: 2px solid #000000;
   border-radius: 12px;
-  width: 60%;
+  width: 40%;
+  margin-left: auto;
 `;
 
 const ClaimButton = styled(ActiveButton)`
@@ -105,14 +113,20 @@ const TabLabel = styled.div`
 `;
 
 const FarmType = styled.div`
-  font-size: 14px;
+  font-size: 16px;
   font-weight: 400;
   color: ${(props) => props.theme.colorGray};
   text-align: left;
   text-transform: capitalize;
 `;
 
-const TableRecord = ({ data, filterKey, type, refetchVolume, setParentData }) => {
+const TableRecord = ({
+  data,
+  filterKey,
+  type,
+  refetchVolume,
+  setParentData,
+}) => {
   const [isSelected, setIsSelected] = useState(false);
   const [isZap, setIsZap] = useState(true);
   const farmAddress = data.rewardAddress;
@@ -170,33 +184,28 @@ const TableRecord = ({ data, filterKey, type, refetchVolume, setParentData }) =>
     return [lpToken.token0.symbol, lpToken.token1.symbol];
   }, [lpToken.token0, lpToken.token1]);
 
-  const wrappedSymbol = useMemo(() => {
-    return `LP ${symbol0}-${symbol1}`;
-  }, [symbol0, symbol1]);
-
   useEffect(() => {
     forceCheck();
   }, []);
 
-  // useEffect(() => {
-  //   if (!new BigNumber(stakedBalance).isZero()) {
-  //     setParentData((old) => {
-  //       const farmList = [...old];
-  //       const indexFarm = findIndex(farmList, (e) => {
-  //         return e.rewardAddress === farmAddress;
-  //       });
-  //       farmList[indexFarm].deposited = stakedBalance;
-  //       return farmList;
-  //     });
-  //   }
-  // }, [stakedBalance]);
-
+  useEffect(() => {
+    if (!new BigNumber(lpBalance).isZero()) {
+      setParentData((old) => {
+        const farmList = [...old];
+        const indexFarm = findIndex(farmList, (e) => {
+          return e.rewardAddress === farmAddress;
+        });
+        farmList[indexFarm].lpBalance = lpBalance;
+        return farmList;
+      });
+    }
+  }, [lpBalance]);
 
   return (
     <>
       <FlexRowData hover={!isSelected} isShow={isShow}>
         <div className="data-wrapper">
-          <DataItem style={{ width: "25%" }}>
+          <DataItem style={{ width: "20%" }}>
             <div className="wrapped-token-logo">
               <TokenLogo
                 style={{ width: "40px", height: "40px", marginRight: "10px" }}
@@ -219,10 +228,21 @@ const TableRecord = ({ data, filterKey, type, refetchVolume, setParentData }) =>
               </div>
             </div>
           </DataItem>
-          <DataItem style={{ width: "15%" }}>{apr} %</DataItem>
-          <DataItem style={{ width: "15%" }}>{daily}</DataItem>
-          <DataItem style={{ width: "20%" }}>{moneyFormatter(tvl)} $</DataItem>
-          <DataItem style={{ width: "20%" }}>{stakedBalance}</DataItem>
+          <DataItem style={{ width: "10%" }}>
+            <FormatNumber amount={apr} /> %
+          </DataItem>
+          <DataItem style={{ width: "10%" }}>
+            <FormatNumber amount={daily} />
+          </DataItem>
+          <DataItem style={{ width: "10%" }}>
+            <FormatNumber amount={`$ ${moneyFormatter(tvl)}`} />
+          </DataItem>
+          <DataItem style={{ width: "15%" }}>
+            <FormatNumber amount={`$ ${stakedBalance}`} />
+          </DataItem>
+          <DataItem style={{ width: "15%" }}>
+            <FormatNumber amount={lpBalance} />
+          </DataItem>
           <DataItem
             style={{ width: "5%" }}
             onClick={() => setIsSelected((value) => !value)}
@@ -278,8 +298,9 @@ const TableRecord = ({ data, filterKey, type, refetchVolume, setParentData }) =>
                   type={FARM_TYPE[type]}
                   lpBalance={lpBalance}
                   getLpBalance={getLpBalance}
-                  wrappedSymbol={wrappedSymbol}
                   refetchVolume={refetchVolume}
+                  symbol0={symbol0}
+                  symbol1={symbol1}
                 />
               ) : (
                 <FarmingTab

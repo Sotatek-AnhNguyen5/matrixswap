@@ -19,12 +19,12 @@ const Wrapper = styled.div`
 
       .select__placeholder {
         color: ${(props) => props.theme.colorGray};
-        font-size: 24px;
+        font-size: 14px;
       }
 
       .select__input-container {
         color: #fff;
-        font-size: 24px;
+        font-size: 14px;
       }
 
       .select__multi-value {

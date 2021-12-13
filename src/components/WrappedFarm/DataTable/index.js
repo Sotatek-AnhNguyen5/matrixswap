@@ -44,6 +44,7 @@ const FlexRowHeader = styled(FlexRow)`
 const HeaderItem = styled.div`
   padding: 0 20px;
   text-align: center;
+  font-size: 16px;
 `;
 
 const DataTable = ({ data, setData, filterKey, refetchVolume }) => {
@@ -102,18 +103,21 @@ const DataTable = ({ data, setData, filterKey, refetchVolume }) => {
   return (
     <Table>
       <FlexRowHeader>
-        <HeaderItem style={{ width: "25%" }} />
-        <HeaderItem style={{ width: "15%" }}>
+        <HeaderItem style={{ width: "20%" }} />
+        <HeaderItem style={{ width: "10%" }}>
           {renderLabelWithSort("apr", "APR")}
         </HeaderItem>
-        <HeaderItem style={{ width: "15%" }}>
+        <HeaderItem style={{ width: "10%" }}>
           {renderLabelWithSort("daily", "Daily")}
         </HeaderItem>
-        <HeaderItem style={{ width: "20%" }}>
+        <HeaderItem style={{ width: "10%" }}>
           {renderLabelWithSort("tvl", "TVL")}
         </HeaderItem>
-        <HeaderItem style={{ width: "20%" }}>
+        <HeaderItem style={{ width: "15%" }}>
           {renderLabelWithSort("deposited", "Deposited")}
+        </HeaderItem>
+        <HeaderItem style={{ width: "15%" }}>
+          {renderLabelWithSort("lpBalance", "LP Balance")}
         </HeaderItem>
         <HeaderItem style={{ width: "5%" }} />
       </FlexRowHeader>

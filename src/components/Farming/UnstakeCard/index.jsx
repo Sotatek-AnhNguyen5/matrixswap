@@ -6,7 +6,7 @@ import Slider from "rc-slider";
 import BigNumber from "bignumber.js";
 
 const TokenCard = styled.div`
-  display: flex;
+  display: ${(props) => (props.isActive ? "flex" : "none")};
   background: ${(props) =>
     props.isActive
       ? "linear-gradient(90deg, #2ac031 13.55%, #3ee046 90.32%)"
@@ -27,16 +27,17 @@ const SliderWrapper = styled.div`
   display: flex;
   flex-flow: column;
   align-items: flex-start;
-  padding: 0px 20px 20px 20px;
+  padding: 0 20px;
+  width: 100%;
 `;
-
 const FakeButton = styled.div`
   background: rgba(1, 3, 4, 0.15);
   border-radius: 16px;
-  padding: 20px;
+  padding: 16px 20px;
   color: #fff;
-  font-size: 18px;
+  font-size: 16px;
 `;
+
 const BorderColor = styled.div`
   height: 45px;
   background-color: rgba(1, 3, 4, 0.15);
@@ -50,16 +51,17 @@ const SliderInputWrapper = styled.div`
   width: 100%;
   display: flex;
   flex-flow: column;
-  min-height: 65px;
+  min-height: 54px;
 
   .input-wrapper {
-    width: 90%;
+    width: 100%;
   }
 
   input {
+    font-family: ChakraPetch, sans-serif;
     text-align: right;
     font-weight: 400;
-    font-size: 24px;
+    font-size: 18px;
     color: rgba(255, 255, 255, 0.6);
     background: transparent;
     border: 0;
@@ -127,14 +129,14 @@ const UnstakeCard = ({
     <TokenCard isActive={isActive}>
       <LeftCard flexFlow="column">
         <FlexRow width="100%" justify="space-between">
-          <FakeButton>Your Balance</FakeButton>
+          <FakeButton>Your Stake</FakeButton>
           <BorderColor />
         </FlexRow>
-        <FlexRow flexFlow="column" marginTop="20px" alignItems="start">
+        <FlexRow flexFlow="column" marginTop="10px" alignItems="start">
           <BalanceLine danger={insuffBalance}>
             Balance - <span onClick={onMax}>MAX</span>
           </BalanceLine>
-          <BalanceLine danger={insuffBalance}>{stakedBalance}</BalanceLine>
+          <BalanceLine isNumber danger={insuffBalance}>{stakedBalance}</BalanceLine>
         </FlexRow>
       </LeftCard>
       <FlexRow width="50%">

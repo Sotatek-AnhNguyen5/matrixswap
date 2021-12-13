@@ -19,7 +19,7 @@ const Wrapper = styled.div`
 
     color: ${(props) => props.theme.colorGray};
     font-weight: 400;
-    font-size: 24px;
+    font-size: 16px;
     display: flex;
     align-items: center;
   }
@@ -27,7 +27,7 @@ const Wrapper = styled.div`
   .volume-wrapper {
     margin-left: auto;
     color: ${(props) => props.theme.colorMainGreen};
-    font-size: 36px;
+    font-size: 24px;
     text-align: right;
     font-family: "CUFEL", sans-serif;
   }

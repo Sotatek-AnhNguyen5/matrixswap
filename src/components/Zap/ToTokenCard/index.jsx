@@ -1,36 +1,23 @@
 import styled from "styled-components";
 import TokenLogo from "../../TokenLogo";
-import { FlexRow } from "../../../theme/components";
+import { BalanceLine, FlexRow } from "../../../theme/components";
 import React, { useEffect, useMemo, useRef, useState } from "react";
-import Slider from "rc-slider";
 import BigNumber from "bignumber.js";
 import InputNumber from "../../InputNumber";
 import useTokenBalance from "../../../hooks/useTokenBalance";
 import useConvertToUSDT from "../../../hooks/useConvertToUSDT";
-import useApproveCallBack from "../../../hooks/useApproveCallBack";
-import { ADDRESS_ZAP } from "../../../const";
 import useEstimateOutput from "../../../hooks/useEstimateOutput";
 import useCheckZapToken from "../../../hooks/useCheckZapToken";
-
-const TokenCard = styled.div`
-  display: flex;
-  align-items: center;
-  background: linear-gradient(90.04deg, #0a1c1f 0.96%, #0f2a2e 91.92%);
-  border-radius: 26px;
-  width: 100%;
-  margin-top: 20px;
-`;
-
-const TokenLogoWrapper = styled.div`
-  background: rgba(1, 3, 4, 0.2);
-  border-radius: 26px 0px 0px 26px;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  padding: 40px 15px;
-  width: 10%;
-  height: 100px;
-`;
+import {
+  InputSlideRow,
+  SelectTokenButton,
+  SelectTokenWrapper,
+  SliderInputWrapper,
+  SliderWrapper,
+  TokenCard,
+  TokenLogoWrapper,
+  WrappedStyledImage,
+} from "../../../theme/TokenCard";
 
 const LogoBorder = styled.div`
   background: rgba(1, 3, 4, 0.2);
@@ -47,91 +34,21 @@ const LogoBorder = styled.div`
   }
 `;
 
-const SelectTokenWrapper = styled.div`
-  display: flex;
-  flex-flow: column;
-  padding: 20px;
-  width: 50%;
-`;
-
-const SliderWrapper = styled.div`
-  display: flex;
-  flex-flow: column;
-  padding: 20px;
-  width: 40%;
-`;
-
-const SliderInputWrapper = styled.div`
-  background: rgba(1, 3, 4, 0.1);
-  border-radius: 16px;
-  width: 100%;
-  display: flex;
-  flex-flow: column;
-  min-height: 65px;
+const SliderInputWrapper2 = styled(SliderInputWrapper)`
 
   .input-wrapper {
     width: 100%;
   }
 
-  input {
-    text-align: right;
-    font-weight: 400;
-    font-size: 24px;
-    color: #fff;
-    background: transparent;
-    border: 0;
-    outline: 0;
-    padding: 10px 20px;
-  }
-
   span {
-    margin-left: auto;
-    margin-bottom: 10px;
-    margin-right: 20px;
+    margin: 0 10px 10px auto;
+    color: rgba(255, 255, 255, 0.6);
   }
 `;
 
-const SelectTokenButton = styled.button`
-  background: rgba(1, 3, 4, 0.15);
-  cursor: pointer;
-  font-size: 18px;
+const BalanceLine2 = styled(BalanceLine)`
   color: #fff;
-  border-bottom-left-radius: 16px;
-  border-top-left-radius: 16px;
-  padding: 0 20px;
-  width: 150px;
-  height: 65px;
-  border: 0;
-
-  &:hover {
-    background: rgba(81, 139, 167, 0.15);
-  }
-`;
-
-const WrappedStyledImage = styled.div`
-  border-bottom-right-radius: 16px;
-  border-top-right-radius: 16px;
-  background: rgba(1, 3, 4, 0.15);
-  height: 65px;
-  display: flex;
-  align-items: center;
-  padding: 0 10px;
-  cursor: pointer;
-
-  img {
-    width: 20px;
-    height: 20px;
-  }
-
-  &:hover {
-    background: rgba(81, 139, 167, 0.15);
-  }
-`;
-
-const BalanceLine = styled.div`
-  color: #fff;
-  font-size: 16px;
-`;
+`
 
 const BorderColor = styled.div`
   height: 65px;
@@ -221,27 +138,29 @@ const ToTokenCard = ({
         </FlexRow>
         <div style={{ width: "100%" }}>
           <FlexRow justify="flex-start" marginTop="10px">
-            <BalanceLine>Balance</BalanceLine>
+            <BalanceLine2>Balance</BalanceLine2>
           </FlexRow>
-          <FlexRow justify="flex-start" marginTop="10px">
-            <BalanceLine>
+          <FlexRow justify="flex-start">
+            <BalanceLine2>
               {balance} {token.symbol}
-            </BalanceLine>
+            </BalanceLine2>
           </FlexRow>
         </div>
       </SelectTokenWrapper>
       <SliderWrapper>
-        <SliderInputWrapper>
-          <InputNumber
-            onChange={(e) => onChangeAmountValue(e)}
-            value={token.amount}
-          />
+        <SliderInputWrapper2>
+          <InputSlideRow>
+            <InputNumber
+              onChange={(e) => onChangeAmountValue(e)}
+              value={token.amount}
+            />
+          </InputSlideRow>
           <span>{fromSelectedToken[0].symbol}</span>
-        </SliderInputWrapper>
-        <FlexRow height="64px" justify="flex-end">
-          <BalanceLine>
+        </SliderInputWrapper2>
+        <FlexRow height="38px" justify="flex-end">
+          <BalanceLine2 isNumber>
             = {estimateValue} {token.symbol}
-          </BalanceLine>
+          </BalanceLine2>
         </FlexRow>
       </SliderWrapper>
     </TokenCard>

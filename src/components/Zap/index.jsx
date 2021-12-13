@@ -115,8 +115,10 @@ const ZapTab = ({
   getLpBalance,
   lpBalance,
   lpToken,
-  wrappedSymbol,
   refetchVolume,
+  symbol0,
+  symbol1,
+  changeTab,
 }) => {
   const { account } = useWeb3React();
   const { token0, token1 } = lpToken;
@@ -167,7 +169,7 @@ const ZapTab = ({
     selectedTokens.forEach((e) => e.refreshBalance());
     await Promise.all([getLpBalance(), refreshStakeBalance(), balanceJob]);
     refetchVolume();
-    setSelectedTokens((old) => {
+    await setSelectedTokens((old) => {
       const newData = [...old].map((e) => {
         e.amount = 0;
         e.estimateOutput = 0;
@@ -176,7 +178,7 @@ const ZapTab = ({
       return [...newData];
     });
     if (!isZapIn) {
-      setToTokensZapOut((old) => {
+      await setToTokensZapOut((old) => {
         const newData = [...old].map((e) => {
           e.amount = 0;
           return e;
@@ -184,6 +186,7 @@ const ZapTab = ({
         return [...newData];
       });
     }
+    changeTab();
   };
 
   const params = useMemo(() => {
@@ -281,7 +284,7 @@ const ZapTab = ({
       ]);
       setSelectedTokens([
         {
-          symbol: `LP ${token0.symbol} - ${token1.symbol}`,
+          symbol: `LP ${symbol0} - ${symbol1}`,
           decimals: 18,
           address: lpAddress,
           amount: 0,
@@ -291,6 +294,7 @@ const ZapTab = ({
       setSelectedTokens([
         ...toTokensZapOut.map((e) => {
           e.amount = 0;
+          e.estimateOutput = 0;
           return e;
         }),
       ]);
@@ -355,8 +359,8 @@ const ZapTab = ({
       {isZapIn ? (
         <ToLpCard
           estimateOutput={totalEstimateOutput}
-          token0={token0}
-          token1={token1}
+          symbol0={symbol0}
+          symbol1={symbol1}
           lpBalance={lpBalance}
         />
       ) : (
@@ -416,8 +420,8 @@ const ZapTab = ({
         isModalOpen={openConfirmZap}
         setIsModalOpen={setOpenConfirmZap}
         fromTokenList={selectedTokens}
-        token0={token0}
-        token1={token1}
+        symbol0={symbol0}
+        symbol1={symbol1}
         onZap={onZap}
         estimateOutput={totalEstimateOutput}
         isZapIn={isZapIn}

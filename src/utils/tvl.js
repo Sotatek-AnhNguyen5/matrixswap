@@ -1,6 +1,5 @@
 import QuickSwapFactoryABI from "../abi/quickswapFactoryABI.json";
 import {
-  PROTOCOL_FUNCTION,
   QUICKSWAP_FACTORY_ADDRESS,
   USDT_ADDRESS,
   WETH_ADDRESS,

@@ -1,7 +1,7 @@
 import web3 from "web3";
 import moment from "moment";
 import { Keccak } from "sha3";
-import {findIndex} from "lodash";
+import { find, findIndex } from "lodash";
 import ERC20ABI from "../abi/IERC20ABI.json";
 
 const zero_address = "0x0000000000000000000000000000000000000000";
@@ -15,7 +15,7 @@ export function isValidAddress(address) {
 }
 
 export function unWrappedTokenSymbol(symbol) {
-  return symbol === 'WETH' ? 'ETH' : symbol;
+  return symbol === "WETH" ? "ETH" : symbol;
 }
 
 export function moneyFormatter(num, digits = 2) {
@@ -52,33 +52,52 @@ export function convertDate(input) {
 export function hashSha3Tokens(token0, token1) {
   const hash = new Keccak(256);
   hash.update(token0 + token1);
-  return hash.digest({ buffer: Buffer.alloc(32)});;
+  return hash.digest({ buffer: Buffer.alloc(32) });
 }
 
 export const removeStakeInfoFromStorage = (farmAddress) => {
   const stakeInfo = JSON.parse(localStorage.getItem("stakeInfo")) || [];
   const farmIndex = findIndex(stakeInfo, { farmAddress });
   if (farmIndex !== -1) {
-    stakeInfo.splice(farmIndex, 1)
-    localStorage.setItem(
-      "stakeInfo",
-      JSON.stringify(stakeInfo)
-    );
+    stakeInfo.splice(farmIndex, 1);
+    localStorage.setItem("stakeInfo", JSON.stringify(stakeInfo));
   }
 };
 
+export const getDataFromStorage = (keyType, predicate) => {
+  const dataInfo = JSON.parse(sessionStorage.getItem(keyType)) || [];
+  return find(dataInfo, predicate);
+};
+
+export const putDataToStorage = (keyType, data) => {
+  const dataInfo = JSON.parse(sessionStorage.getItem(keyType)) || [];
+  sessionStorage.setItem(keyType, JSON.stringify([...dataInfo, data]));
+  return true;
+};
+
 export const getTokenInfo = async (address, library) => {
+  const dataFromStorage = getDataFromStorage("tokenInfo", { address });
+  if (dataFromStorage) {
+    const { name, decimals, symbol, address } = dataFromStorage;
+    return {
+      name,
+      decimals,
+      symbol,
+      address,
+    };
+  }
   const token0Contract = new library.eth.Contract(ERC20ABI, address);
   const [name, symbol, decimals] = await Promise.all([
     token0Contract.methods.name().call(),
     token0Contract.methods.symbol().call(),
     token0Contract.methods.decimals().call(),
   ]);
-
-  return {
+  const data = {
     name,
     symbol,
     decimals,
     address,
   };
+  putDataToStorage("tokenInfo", data);
+  return data;
 };

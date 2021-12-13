@@ -15,23 +15,9 @@ import StakeCard from "./StakeCard";
 import { ActiveButton } from "../../theme/components";
 import UnstakeCard from "./UnstakeCard";
 
-const BalanceRow = styled.div`
-  display: flex;
-  margin-top: 10px;
-  justify-content: space-between;
-`;
-
-const InputWrapper = styled.div`
-  width: 100%;
-  margin-right: 30px;
-
-  .input-wrapper {
-    margin-bottom: 20px;
-  }
-`;
-
 const ButtonWrapper = styled.div`
   margin-top: 20px;
+  display: ${(props) => (props.isHide ? "none" : "block")};
 `;
 
 const BlackLine = styled.div`
@@ -41,6 +27,7 @@ const BlackLine = styled.div`
   width: 90%;
   margin-top: 40px;
   border-radius: 2px;
+  display: ${(props) => (props.isActive ? "block" : "none")};
 `;
 
 const FarmingTab = ({
@@ -112,7 +99,7 @@ const FarmingTab = ({
   }, [lpBalance]);
 
   const isActiveUnstake = useMemo(() => {
-    return !new BigNumber(lpBalance).isZero();
+    return !new BigNumber(stakedBalance).isZero();
   }, [stakedBalance]);
 
   const isInsufficientBalanceStake = useMemo(() => {
@@ -157,7 +144,7 @@ const FarmingTab = ({
           />
         )}
       </ButtonWrapper>
-      <BlackLine />
+      <BlackLine isActive={isActiveUnstake} />
       <UnstakeCard
         isActive={isActiveUnstake}
         stakedBalance={stakedBalance}
@@ -165,14 +152,13 @@ const FarmingTab = ({
         setAmountUnstake={setAmountUnStake}
         insuffBalance={inSufficientUnStakeBalance}
       />
-      <ButtonWrapper>
+      <ButtonWrapper isHide={!isActiveUnstake}>
         <ActiveButton
           label={"Unstake"}
           loading={loadingUnstake}
           labelLoading={"Unstaking"}
           onClick={unStakeCallBack}
           disabled={
-            !isActiveUnstake ||
             inSufficientUnStakeBalance ||
             new BigNumber(amountUnstake).isZero() ||
             !amountUnstake

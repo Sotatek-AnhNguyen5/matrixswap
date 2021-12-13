@@ -9,6 +9,11 @@
     src: local('CUFEL'), url("fonts/cufel/CUFEL.otf") format("opentype");
 }
 
+@font-face {
+    font-family: 'ChakraPetch';
+    src: local('ChakraPetch'), url("fonts/ChakraPetch/ChakraPetch-Regular.ttf") format("truetype");
+}
+
 body {
     margin: 0;
     -webkit-font-smoothing: antialiased;

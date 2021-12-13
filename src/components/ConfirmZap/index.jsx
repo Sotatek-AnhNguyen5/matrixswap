@@ -15,7 +15,7 @@ const customStyles = {
     transform: "translate(-50%, -50%)",
     backgroundColor: "#0D2528",
     borderRadius: "26px",
-    width: "650px",
+    width: "520px",
     padding: 0,
   },
 };
@@ -28,12 +28,12 @@ const ModalHeader = styled.div`
 
   span {
     color: #fff;
-    font-size: 36px;
+    font-size: 24px;
   }
 
   img {
-    width: 30px;
-    height: 30px;
+    width: 14px;
+    height: 14px;
     right: 20px;
     cursor: pointer;
     position: absolute;
@@ -67,13 +67,16 @@ const DoubleLogoWrapper = styled.div`
 `;
 
 const SmallWhiteText = styled.span`
-  font-size: 24px;
+  font-size: 14px;
   color: #fff;
+  font-family: ${(props) =>
+    props.isNumber ? "ChakraPetch, sans-serif" : "Ocr-A, serif"};
 `;
 
 const SmallerGrayText = styled.span`
-  font-size: 18px;
+  font-size: 14px;
   color: ${(props) => props.theme.colorGray};
+  font-family: ChakraPetch, sans-serif;
 `;
 
 const LeftTokenWrapper = styled.div`
@@ -92,14 +95,15 @@ const LeftTokenWrapper = styled.div`
 
 const GrayText = styled.div`
   color: #3f7178;
-  font-size: 18px;
+  font-size: 14px;
   margin-right: auto;
 `;
 
 const GrayRightText = styled.div`
   display: flex;
   text-align: right;
-  font-size: 16px;
+  font-family: ChakraPetch, sans-serif;
+  font-size: 14px;
   color: #51909a;
   margin-left: auto;
   margin-top: ${(props) => props.marginTop ?? "0"};
@@ -123,8 +127,8 @@ const ConfirmZap = ({
   isModalOpen,
   setIsModalOpen,
   fromTokenList,
-  token0,
-  token1,
+  symbol0,
+  symbol1,
   estimateOutput,
   onZap,
   zapLoading,
@@ -140,8 +144,8 @@ const ConfirmZap = ({
   };
 
   const lpTokenLabel = useMemo(() => {
-    return `LP ${token0.symbol}-${token1.symbol}`;
-  }, [token0, token1]);
+    return `LP ${symbol0}-${symbol1}`;
+  }, [symbol0, symbol1]);
 
   const conversionRateRow = (element) => {
     if (isRevert) {
@@ -165,7 +169,7 @@ const ConfirmZap = ({
     }
   };
 
-  const conversionRateRowZapOut = (element) =>{
+  const conversionRateRowZapOut = (element) => {
     if (isRevert) {
       const rate = new BigNumber(element.amount)
         .div(element.estimateValue)
@@ -209,7 +213,7 @@ const ConfirmZap = ({
                   <SmallWhiteText>{e.symbol}</SmallWhiteText>
                 </LeftTokenWrapper>
                 <RightTokenWrapper>
-                  <SmallWhiteText>{e.amount}</SmallWhiteText>
+                  <SmallWhiteText isNumber>{e.amount}</SmallWhiteText>
                   <SmallerGrayText>{e.usdtAmount} $</SmallerGrayText>
                 </RightTokenWrapper>
               </TokenCard>
@@ -220,12 +224,12 @@ const ConfirmZap = ({
             <TokenCard marginTop="40px">
               <LeftTokenWrapper>
                 <DoubleLogoWrapper>
-                  <TokenLogo symbol={token0.symbol} />
-                  <TokenLogo symbol={token1.symbol} />
+                  <TokenLogo symbol={symbol0} />
+                  <TokenLogo symbol={symbol1} />
                 </DoubleLogoWrapper>
               </LeftTokenWrapper>
               <RightTokenWrapper>
-                <SmallWhiteText>{estimateOutput}</SmallWhiteText>
+                <SmallWhiteText isNumber>{estimateOutput}</SmallWhiteText>
               </RightTokenWrapper>
             </TokenCard>
           </>
@@ -234,12 +238,12 @@ const ConfirmZap = ({
             <TokenCard>
               <LeftTokenWrapper>
                 <DoubleLogoWrapper>
-                  <TokenLogo symbol={token0.symbol} />
-                  <TokenLogo symbol={token1.symbol} />
+                  <TokenLogo symbol={symbol0} />
+                  <TokenLogo symbol={symbol1} />
                 </DoubleLogoWrapper>
               </LeftTokenWrapper>
               <RightTokenWrapper>
-                <SmallWhiteText>{fromTokenList[0].amount}</SmallWhiteText>
+                <SmallWhiteText isNumber>{fromTokenList[0].amount}</SmallWhiteText>
               </RightTokenWrapper>
             </TokenCard>
             <FlexRow justify="center" marginTop="40px">
@@ -252,8 +256,8 @@ const ConfirmZap = ({
                   <SmallWhiteText>{e.symbol}</SmallWhiteText>
                 </LeftTokenWrapper>
                 <RightTokenWrapper>
-                  <SmallWhiteText>{e.estimateValue}</SmallWhiteText>
-                  <SmallerGrayText>{e.usdtAmount} $</SmallerGrayText>
+                  <SmallWhiteText isNumber>{e.estimateValue}</SmallWhiteText>
+                  <SmallerGrayText isNumber>{e.usdtAmount} $</SmallerGrayText>
                 </RightTokenWrapper>
               </TokenCard>
             ))}
@@ -270,15 +274,11 @@ const ConfirmZap = ({
             />
             {isZapIn ? (
               <FlexRow flexFlow="column">
-                {fromTokenList.map((e) =>
-                  conversionRateRow(e)
-                )}
+                {fromTokenList.map((e) => conversionRateRow(e))}
               </FlexRow>
             ) : (
               <FlexRow flexFlow="column">
-                {toTokensZapOut.map((e) =>
-                  conversionRateRowZapOut(e)
-                )}
+                {toTokensZapOut.map((e) => conversionRateRowZapOut(e))}
               </FlexRow>
             )}
           </GrayRightText>

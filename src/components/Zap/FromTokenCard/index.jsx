@@ -11,15 +11,15 @@ import useApproveCallBack from "../../../hooks/useApproveCallBack";
 import { ADDRESS_ZAP } from "../../../const";
 import useEstimateOutput from "../../../hooks/useEstimateOutput";
 import useCheckZapToken from "../../../hooks/useCheckZapToken";
-
-const TokenCard = styled.div`
-  display: flex;
-  align-items: center;
-  background: linear-gradient(270deg, #3ee046 8.98%, #27bc2e 92.35%);
-  border-radius: 26px;
-  width: 100%;
-  margin-top: 20px;
-`;
+import {
+  InputSlideRow,
+  SelectTokenButton,
+  SelectTokenWrapper,
+  SliderInputWrapper,
+  SliderWrapper,
+  TokenCard,
+  WrappedStyledImage,
+} from "../../../theme/TokenCard";
 
 const TokenLogoWrapper = styled.div`
   background: rgba(1, 3, 4, 0.2);
@@ -29,7 +29,6 @@ const TokenLogoWrapper = styled.div`
   justify-content: center;
   padding: 40px 15px;
   width: 10%;
-  height: 100px;
 `;
 
 const LogoBorder = styled.div`
@@ -44,105 +43,6 @@ const LogoBorder = styled.div`
   img {
     width: 40px;
     height: 40px;
-  }
-`;
-
-const SelectTokenWrapper = styled.div`
-  display: flex;
-  flex-flow: column;
-  padding: 20px;
-  width: 50%;
-`;
-
-const SliderWrapper = styled.div`
-  display: flex;
-  flex-flow: column;
-  padding: 20px;
-  width: 40%;
-`;
-
-const SliderInputWrapper = styled.div`
-  background: rgba(1, 3, 4, 0.1);
-  border-radius: 16px;
-  width: 100%;
-  display: flex;
-  flex-flow: column;
-  min-height: 65px;
-
-  .input-wrapper {
-    width: 90%;
-  }
-
-  input {
-    text-align: right;
-    font-weight: 400;
-    font-size: 24px;
-    color: rgba(255, 255, 255, 0.6);
-    background: transparent;
-    border: 0;
-    outline: 0;
-    padding: 10px 20px;
-  }
-
-  .rc-slider {
-    margin-bottom: -5px;
-  }
-`;
-
-const InputSlideRow = styled.div`
-  width: 100%;
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-  color: rgba(18, 70, 46, 0.6);
-  font-size: 16px;
-  padding-left: 10px;
-  white-space: nowrap;
-
-  span {
-    text-overflow: ellipsis;
-    white-space: nowrap;
-    overflow: hidden;
-    width: 100px;
-    color: ${(props) =>
-      props.danger ? props.theme.colorDanger : "rgba(18, 70, 46, 0.6)"};
-  }
-`;
-
-const SelectTokenButton = styled.button`
-  background: rgba(1, 3, 4, 0.15);
-  cursor: pointer;
-  font-size: 18px;
-  color: #fff;
-  border-bottom-left-radius: 16px;
-  border-top-left-radius: 16px;
-  padding: 0 20px;
-  width: 150px;
-  height: 65px;
-  border: 0;
-
-  &:hover {
-    background: rgba(81, 139, 167, 0.15);
-  }
-`;
-
-const WrappedStyledImage = styled.div`
-  border-bottom-right-radius: 16px;
-  border-top-right-radius: 16px;
-  background: rgba(1, 3, 4, 0.15);
-  height: 65px;
-  display: flex;
-  align-items: center;
-  padding: 0 10px;
-  cursor: pointer;
-
-  img {
-    width: 20px;
-    height: 20px;
-  }
-
-  &:hover {
-    background: rgba(81, 139, 167, 0.15);
   }
 `;
 
@@ -167,7 +67,10 @@ const FromTokenCard = ({
 }) => {
   const [percent, setPercent] = useState("0");
   const usdtValue = useConvertToUSDT(token.amount, token, farmType);
-  const [balance, refreshBalance] = useTokenBalance(token.address, token.decimals);
+  const [balance, refreshBalance] = useTokenBalance(
+    token.address,
+    token.decimals
+  );
   const isZapAble = useCheckZapToken(
     token,
     lpToken.token0,
@@ -243,7 +146,7 @@ const FromTokenCard = ({
   ]);
 
   return (
-    <TokenCard>
+    <TokenCard isActiveBg={true}>
       <TokenLogoWrapper>
         <LogoBorder>
           <TokenLogo symbol={token.symbol} />
@@ -265,7 +168,7 @@ const FromTokenCard = ({
               Balance - <span onClick={() => setAmount(balance)}>MAX</span>
             </BalanceLine>
           </FlexRow>
-          <FlexRow justify="flex-start" marginTop="10px">
+          <FlexRow justify="flex-start">
             <BalanceLine danger={insufficientBalance}>
               {balance} {token.symbol}
             </BalanceLine>
@@ -289,10 +192,8 @@ const FromTokenCard = ({
             step={1}
           />
         </SliderInputWrapper>
-        <FlexRow height="64px" justify="flex-end">
-          <BalanceLine>
-            = <span>$ {usdtValue}</span>
-          </BalanceLine>
+        <FlexRow height="38px" justify="flex-end">
+          <BalanceLine isNumber>= $ {usdtValue}</BalanceLine>
         </FlexRow>
       </SliderWrapper>
     </TokenCard>

@@ -4,14 +4,13 @@ import GreenSpin from "../GreenSpin";
 import styled from "styled-components";
 import { useCallback, useMemo } from "react";
 import { STATUS_ZAP } from "../../hooks/useZapCallback";
-import { useWeb3React } from "@web3-react/core";
 
 const ActiveTitle = styled(FlexRow)`
   color: ${(props) => props.theme.colorMainGreen};
-  font-size: 20px;
+  font-size: 16px;
 `;
 const WhiteTitle = styled(FlexRow)`
-  font-size: 18px;
+  font-size: 14px;
   box-sizing: border-box;
   color: #fff;
 
