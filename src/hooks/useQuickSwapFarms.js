@@ -5,10 +5,10 @@ import {
 } from "./useContract";
 import { DEFAULT_PAIR, DRAGON_QUICK_TOKEN, FARM_TYPE } from "../const";
 import { useEffect, useState } from "react";
-import { getDataToken } from "../utils/token";
+import { getDataToken, getLPBalance } from "../utils/token";
 import { calculateTVL } from "../utils/tvl";
 import { calculateAPR } from "../utils/apr";
-import { getDepositedQuickSwap } from "../utils/deposited";
+import { getDeposited, getDepositedQuickSwap } from "../utils/deposited";
 import { useWeb3React } from "@web3-react/core";
 
 const useQuickSwapFarms = () => {
@@ -58,11 +58,15 @@ const useQuickSwapFarms = () => {
     );
 
     let listDeposited = [];
+    let listLpBalance = [];
     if (account) {
       listDeposited = await Promise.all(
         resWithTokenAddress.map((item) =>
           getDepositedQuickSwap(library, item.stakingRewards, account)
         )
+      );
+      listLpBalance = await Promise.all(
+        listLpToken.map((item) => getLPBalance(item.address, library, account))
       );
     }
 
@@ -73,6 +77,7 @@ const useQuickSwapFarms = () => {
         tvl: listTVL[index],
         apr: listAPR[index],
         deposited: listDeposited[index],
+        lpBalance: listLpBalance[index],
         rewardAddress: item.stakingRewards,
         tokenAddress: item.id,
         appId: "quickswap",

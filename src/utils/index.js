@@ -101,3 +101,21 @@ export const getTokenInfo = async (address, library) => {
   putDataToStorage("tokenInfo", data);
   return data;
 };
+
+export const formatSmallNumber = (amount) => {
+  if (amount.includes(".")) {
+    const amountSplit = amount.split(".");
+    const amountAfterZero = amountSplit[1].split("");
+    let number = 0;
+    let formattedNumber = "";
+    amountAfterZero.map((e) => {
+      if (number >= 2) return;
+      if (e !== "0") {
+        number += 1;
+      }
+      formattedNumber += e;
+    });
+    return `${amountSplit[0]}.${formattedNumber}`;
+  }
+  return amount;
+};

@@ -141,7 +141,9 @@ const ZapTab = ({
     useZapValidate(selectedTokens, toTokensZapOut, isZapIn);
 
   const zapButtonTitle = useMemo(() => {
-    if (tokenHaveToApprove) {
+    if (!account) {
+      return "No wallet connected";
+    } else if (tokenHaveToApprove) {
       return "Zap";
     } else if (unSelectedTokenError) {
       return "Select a token";

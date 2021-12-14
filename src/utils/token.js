@@ -1,5 +1,6 @@
 import PairABI from "../abi/QuickSwapPair.json";
 import { getTokenInfo } from "./index";
+import BigNumber from "bignumber.js";
 
 export const getDataToken = async (address, library) => {
   try {
@@ -25,4 +26,10 @@ export const getDataToken = async (address, library) => {
   } catch (e) {
     return {};
   }
+};
+
+export const getLPBalance = async (address, library, account) => {
+  const lpContract = new library.eth.Contract(PairABI, address);
+  const balance = await lpContract.methods.balanceOf(account).call();
+  return new BigNumber(balance).div(new BigNumber(10).pow(18)).toFixed();
 };

@@ -24,8 +24,10 @@ const useTokensWithBalance = (lstToken = []) => {
   };
 
   useEffect(() => {
-    getData();
-  }, [lstToken]);
+    if (account) {
+      getData();
+    }
+  }, [lstToken, account]);
 
   return tokens;
 };

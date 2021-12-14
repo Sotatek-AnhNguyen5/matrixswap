@@ -9,12 +9,12 @@ import {
   WATCH_TOKEN,
   WMATIC_TOKEN,
 } from "../const";
-import { getDataToken } from "../utils/token";
+import { getDataToken, getLPBalance } from "../utils/token";
 import { calculateTVL } from "../utils/tvl";
 import { useFactoryContract, useLibrary } from "./useContract";
 import { calculateAPR } from "../utils/apr";
-import {getDeposited} from "../utils/deposited";
-import {useWeb3React} from "@web3-react/core";
+import { getDeposited } from "../utils/deposited";
+import { useWeb3React } from "@web3-react/core";
 
 const ABR_USDC_POOL_INDEX = "10";
 const WATCH_BANANA_POOL_INDEX = "8";
@@ -54,11 +54,16 @@ const useApeSwapFarms = () => {
     );
 
     let listDeposited = [];
+    let listLpBalance = [];
     if (account) {
       listDeposited = await Promise.all(
-        data.pools.map((item, index) =>
+        data.pools.map((item) =>
           getDeposited(library, item.rewarder.id, item.id, account)
         )
+      );
+
+      listLpBalance = await Promise.all(
+        data.pools.map((item) => getLPBalance(item.pair, library, account))
       );
     }
 
@@ -75,6 +80,7 @@ const useApeSwapFarms = () => {
         tvl: listTVL[index],
         apr: listAPR[index],
         deposited: listDeposited[index],
+        lpBalance: listLpBalance[index],
         rewardAddress: item.miniChef.id,
         poolIndex: item.id,
         rewardTokenAddress: item.rewarder.rewardToken,

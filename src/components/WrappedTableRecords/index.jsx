@@ -73,8 +73,7 @@ const FlexRowData = styled.div`
 
 const DataItem = styled.div`
   text-align: center;
-  padding: 20px 20px;
-  white-space: nowrap;
+  padding: 20px;
 `;
 
 const GrayColumn = styled.div`
@@ -95,7 +94,7 @@ const ZapFarmWrapper = styled.div`
 const ClaimButton = styled(ActiveButton)`
   padding: 10px 0;
   font-size: 16px;
-  margin-left: auto;
+  margin-left: 40px;
   letter-spacing: 2px;
   width: 150px;
 `;
@@ -188,23 +187,29 @@ const TableRecord = ({
     forceCheck();
   }, []);
 
-  useEffect(() => {
-    if (!new BigNumber(lpBalance).isZero()) {
-      setParentData((old) => {
-        const farmList = [...old];
-        const indexFarm = findIndex(farmList, (e) => {
-          return e.rewardAddress === farmAddress;
-        });
-        farmList[indexFarm].lpBalance = lpBalance;
-        return farmList;
-      });
-    }
-  }, [lpBalance]);
+  // useEffect(() => {
+  //   if (!new BigNumber(lpBalance).isZero()) {
+  //     setParentData((old) => {
+  //       const farmList = [...old];
+  //       const indexFarm = findIndex(farmList, (e) => {
+  //         return e.rewardAddress === farmAddress;
+  //       });
+  //       if (new BigNumber(lpBalance).eq(farmList[indexFarm].lpBalance)) {
+  //         return old;
+  //       }
+  //       farmList[indexFarm].lpBalance = lpBalance;
+  //       return [...farmList];
+  //     });
+  //   }
+  // }, [lpBalance]);
 
   return (
     <>
       <FlexRowData hover={!isSelected} isShow={isShow}>
-        <div className="data-wrapper">
+        <div
+          onClick={() => setIsSelected((value) => !value)}
+          className="data-wrapper"
+        >
           <DataItem style={{ width: "20%" }}>
             <div className="wrapped-token-logo">
               <TokenLogo
@@ -229,30 +234,27 @@ const TableRecord = ({
             </div>
           </DataItem>
           <DataItem style={{ width: "10%" }}>
-            <FormatNumber amount={apr} /> %
+            <FormatNumber decimals={2} amount={apr} /> %
           </DataItem>
           <DataItem style={{ width: "10%" }}>
-            <FormatNumber amount={daily} />
+            <FormatNumber decimals={2} amount={daily} />
           </DataItem>
           <DataItem style={{ width: "10%" }}>
-            <FormatNumber amount={`$ ${moneyFormatter(tvl)}`} />
+            $<FormatNumber noFormat amount={moneyFormatter(tvl)} />
           </DataItem>
           <DataItem style={{ width: "15%" }}>
-            <FormatNumber amount={`$ ${stakedBalance}`} />
+            $ <FormatNumber decimals={6} amount={stakedBalance} />
           </DataItem>
           <DataItem style={{ width: "15%" }}>
-            <FormatNumber amount={lpBalance} />
+            <FormatNumber decimals={6} amount={lpBalance} />
           </DataItem>
-          <DataItem
-            style={{ width: "5%" }}
-            onClick={() => setIsSelected((value) => !value)}
-          >
+          <DataItem style={{ width: "5%" }}>
             {!isSelected ? <FaAngleRight /> : <FaAngleDown />}
           </DataItem>
         </div>
         {isSelected && (
           <div className="farm-data-wrapper">
-            <DataItem style={{ width: "40%", textAlign: "left" }}>
+            <DataItem style={{ width: "60%", textAlign: "left" }}>
               <FlexRow justify="flex-start">
                 <GrayLabelText minWidth="200px">Start date</GrayLabelText>
                 <WhiteLabelText>{convertDate(startStakeDate)}</WhiteLabelText>

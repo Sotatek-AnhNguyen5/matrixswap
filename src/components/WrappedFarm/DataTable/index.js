@@ -91,9 +91,9 @@ const DataTable = ({ data, setData, filterKey, refetchVolume }) => {
   let sortedData;
 
   if (!sortType || sortType === "desc") {
-    sortedData = data.sort(compareFunction).reverse();
+    sortedData = [...data].sort(compareFunction).reverse();
   } else if (sortType === "asc") {
-    sortedData = data.sort(compareFunction);
+    sortedData = [...data].sort(compareFunction);
   }
 
   useEffect(() => {
@@ -125,7 +125,8 @@ const DataTable = ({ data, setData, filterKey, refetchVolume }) => {
         return (
           <LazyLoad
             key={`${e.rewardAddress}-${e.poolIndex}-${index}`}
-            height={200}
+            height={100}
+            once
           >
             <TableRecord
               filterKey={filterKey}

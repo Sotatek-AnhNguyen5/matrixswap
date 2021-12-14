@@ -18,10 +18,10 @@ const useApproveCallBack = (token, toAddress) => {
   }
 
   useEffect(() => {
-    if (token) {
+    if (token && account) {
       getAlowance();
     }
-  }, [token])
+  }, [token, account])
 
   return [useCallback(() => {
     setLoading(true)

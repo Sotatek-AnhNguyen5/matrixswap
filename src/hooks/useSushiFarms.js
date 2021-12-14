@@ -3,7 +3,7 @@ import { GET_SUSHI_FARMS } from "../graphql";
 import { useEffect, useState } from "react";
 import { isEmpty } from "lodash";
 import { FARM_TYPE, SUSHI_TOKEN, WMATIC_TOKEN } from "../const";
-import { getDataToken } from "../utils/token";
+import { getDataToken, getLPBalance } from "../utils/token";
 import { calculateTVL } from "../utils/tvl";
 import { calculateAPR } from "../utils/apr";
 import { useFactoryContract, useLibrary } from "./useContract";
@@ -44,11 +44,16 @@ const useSushiFarms = () => {
     );
 
     let listDeposited = [];
+    let listLpBalance = [];
     if (account) {
       listDeposited = await Promise.all(
-        data.pools.map((item, index) =>
+        data.pools.map((item) =>
           getDeposited(library, item.rewarder.id, item.id, account)
         )
+      );
+
+      listLpBalance = await Promise.all(
+        data.pools.map((item) => getLPBalance(item.pair, library, account))
       );
     }
 
@@ -59,6 +64,7 @@ const useSushiFarms = () => {
         tvl: listTVL[index],
         apr: listAPR[index],
         deposited: listDeposited[index],
+        lpBalance: listLpBalance[index],
         rewardAddress: item.miniChef.id,
         poolIndex: item.id,
         rewardTokenAddress: item.rewarder.rewardToken,

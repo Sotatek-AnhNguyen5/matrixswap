@@ -51,9 +51,9 @@ const ConnectButton = () => {
     return "";
   }, [account]);
 
-  useEffect(() => {
-    connect();
-  }, [connect]);
+  // useEffect(() => {
+  //   connect();
+  // }, [connect]);
 
   const isWrongNetWork = useMemo(() => {
     return error && error.name === "UnsupportedChainIdError";

@@ -17,10 +17,10 @@ const useTokenBalance = (tokenAddress, decimals = 18) => {
   }, [tokenAddress, decimals, library, account]);
 
   useEffect(() => {
-    if (tokenAddress) {
+    if (tokenAddress && account) {
       getBalance();
     }
-  }, [tokenAddress]);
+  }, [tokenAddress, account]);
 
   return [balance, getBalance];
 };

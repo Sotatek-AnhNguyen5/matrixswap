@@ -29,7 +29,7 @@ const Wrapper = styled.div`
     color: ${(props) => props.theme.colorMainGreen};
     font-size: 24px;
     text-align: right;
-    font-family: "CUFEL", sans-serif;
+    font-family: "ChakraPetch", sans-serif;
   }
 `;
 
