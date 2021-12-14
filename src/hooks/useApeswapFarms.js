@@ -61,6 +61,7 @@ const useApeSwapFarms = () => {
           getDeposited(library, item.rewarder.id, item.id, account)
         )
       );
+      console.log(listDeposited)
 
       listLpBalance = await Promise.all(
         data.pools.map((item) => getLPBalance(item.pair, library, account))
@@ -97,7 +98,7 @@ const useApeSwapFarms = () => {
     if (data && !isEmpty(data.pools)) {
       getFarmData();
     }
-  }, [data]);
+  }, [data, account]);
 
   return apeSwapFarms;
 };
