@@ -11,7 +11,7 @@ export const SelectTokenWrapper = styled.div`
 export const SliderWrapper = styled.div`
   display: flex;
   flex-flow: column;
-  padding: 10px 20px;
+  padding: 10px 20px 10px 0;
   width: 40%;
   box-sizing: border-box;
 `;
@@ -30,7 +30,7 @@ export const InputSlideRow = styled.div`
     text-overflow: ellipsis;
     white-space: nowrap;
     overflow: hidden;
-    width: 100px;
+    width: 80px;
     font-size: 14px;
     font-family: "ChakraPetch", sans-serif;
     color: ${(props) =>

@@ -35,7 +35,6 @@ const LogoBorder = styled.div`
 `;
 
 const SliderInputWrapper2 = styled(SliderInputWrapper)`
-
   .input-wrapper {
     width: 100%;
   }
@@ -48,7 +47,7 @@ const SliderInputWrapper2 = styled(SliderInputWrapper)`
 
 const BalanceLine2 = styled(BalanceLine)`
   color: #fff;
-`
+`;
 
 const BorderColor = styled.div`
   height: 65px;
@@ -82,8 +81,12 @@ const ToTokenCard = ({
     lpToken.token1,
     farmType
   );
+
   const estimateValue = useMemo(() => {
-    return new BigNumber(1).div(estimateOutput).times(token.amount).toFixed(8);
+    return new BigNumber(1)
+      .div(estimateOutput)
+      .times(token.amount || 0)
+      .toFixed(8);
   }, [token.amount, estimateOutput]);
 
   const onChangeAmountValue = async (e) => {

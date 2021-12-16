@@ -116,10 +116,8 @@ const FromTokenCard = ({
   const onChangeAmountValue = (e) => {
     setAmount(e);
     !isZapIn && refreshRatio(e);
-    if (e) {
-      const amountToPercent = new BigNumber(e).div(balance).times(100);
-      setPercent(amountToPercent.toFixed(0));
-    }
+    const amountToPercent = new BigNumber(e || 0).div(balance).times(100);
+    setPercent(amountToPercent.toFixed(0));
   };
 
   useEffect(() => {
@@ -178,7 +176,7 @@ const FromTokenCard = ({
       <SliderWrapper>
         <SliderInputWrapper>
           <InputSlideRow danger={insufficientBalance}>
-            <span style={{ width: "20%" }}>{percent} %</span>
+            <span>{percent} %</span>
             <InputNumber
               value={token.amount}
               onChange={(e) => onChangeAmountValue(e)}

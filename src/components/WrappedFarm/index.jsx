@@ -37,6 +37,7 @@ const WhiteColumn = styled.div`
   width: 2px;
   background-color: ${(props) => props.theme.colorGray};
   margin-left: 20px;
+  margin-right: 10px;
 `;
 
 const BlackLine = styled.div`

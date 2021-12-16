@@ -20,6 +20,7 @@ import {
 } from "../../theme/components";
 import { forceCheck } from "react-lazyload";
 import FormatNumber from "../FormatNumber";
+import useLPtoUSDT from "../../hooks/useTVL";
 
 const FlexRowData = styled.div`
   margin-top: 15px;
@@ -141,6 +142,7 @@ const TableRecord = ({
       data.tokenAddress,
       data.rewarderAddress
     );
+  const stakedUSDT = useLPtoUSDT(lpToken, stakedBalance, FARM_TYPE[type]);
 
   const onFinishGetReward = async () => {
     await refreshFarmInfo();
@@ -159,13 +161,28 @@ const TableRecord = ({
       filterKey,
       (e) =>
         !lpToken.token0.symbol ||
-        e.value === type ||
         [
           lpToken.token0.symbol.toUpperCase(),
           lpToken.token1.symbol.toUpperCase(),
         ].indexOf(e.value.toUpperCase()) !== -1
     );
-    return isEmpty(filterKey) || !!isExists;
+    const noSymbol = find(
+      filterKey,
+      (e) =>
+        ["quickswap", "sushiswap", "apeswap", "curve"].indexOf(e.value) === -1
+    );
+
+    const isMatchProtocol = find(filterKey, (e) => e.value === type);
+    const noProtocol = find(
+      filterKey,
+      (e) =>
+        ["quickswap", "sushiswap", "apeswap", "curve"].indexOf(e.value) !== -1
+    );
+
+    return (
+      isEmpty(filterKey) ||
+      ((!!isExists || !noSymbol) && (!!isMatchProtocol || !noProtocol))
+    );
   }, [filterKey]);
 
   const daily = useMemo(() => {
@@ -245,7 +262,7 @@ const TableRecord = ({
             $ <FormatNumber noFormat amount={moneyFormatter(tvl)} />
           </DataItem>
           <DataItem isNumber style={{ width: "15%" }}>
-            $ <FormatNumber decimals={6} amount={stakedBalance} />
+            $ <FormatNumber decimals={6} amount={stakedUSDT} />
           </DataItem>
           <DataItem style={{ width: "15%" }}>
             <FormatNumber decimals={6} amount={lpBalance} />

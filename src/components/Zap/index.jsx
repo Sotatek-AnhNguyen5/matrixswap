@@ -320,7 +320,7 @@ const ZapTab = ({
     setToTokensZapOut((old) => {
       const ratio = new BigNumber(100).div(old.length).toFixed(0);
       const newData = old.map((e) => {
-        const newAmount = new BigNumber(amount).times(ratio).div(100).toFixed();
+        const newAmount = new BigNumber(amount || 0).times(ratio).div(100).toFixed();
         e.ratio = ratio;
         e.amount = newAmount;
         return e;

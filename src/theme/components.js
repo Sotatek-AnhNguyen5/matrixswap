@@ -4,13 +4,13 @@ import SubmitButton from "../components/SubmitButton";
 export const ProtocolBadger = styled.div`
   display: flex;
   align-items: center;
-  padding: 10px 15px;
+  padding: 8px 10px;
   background: ${props => props.isActive ? "#2a7b81" : "#182f32"};
   border-radius: 71px;
   opacity: 0.88;
   font-size: 14px;
   cursor: pointer;
-  margin-left: 20px;
+  margin-left: 10px;
 
   img {
     width: 24px;

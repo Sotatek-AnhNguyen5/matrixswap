@@ -74,7 +74,7 @@ const SearchWrapper = ({ onChange, filterKey }) => {
     <Wrapper>
       <Select
         components={{ Control }}
-        defaultValue={filterKey}
+        value={filterKey}
         placeholder="Filter by token, protocol"
         isMulti
         name="colors"

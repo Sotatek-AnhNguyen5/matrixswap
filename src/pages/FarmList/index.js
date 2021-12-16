@@ -15,10 +15,10 @@ const AppWrapper = styled.div`
 `;
 
 const HeaderWrapper = styled.div`
-  padding: 50px 0;
+  padding: 30px 0;
 
   .logo {
-    width: 300px;
+    width: 200px;
   }
 
   display: flex;
@@ -33,8 +33,8 @@ const ChooseNetWork = styled.button`
   background: #021811;
   box-shadow: inset 2px 0px 11px rgba(0, 0, 0, 0.97);
   border-radius: 51px;
-  min-width: 200px;
-  min-height: 80px;
+  min-width: 180px;
+  min-height: 60px;
   font-size: 16px;
   line-height: 19px;
   color: #ffffff;

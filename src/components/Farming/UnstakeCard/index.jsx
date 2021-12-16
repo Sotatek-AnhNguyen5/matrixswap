@@ -121,7 +121,7 @@ const UnstakeCard = ({
     setAmountUnstake(value);
     if (stakedBalance) {
       const newPercent = new BigNumber(value).div(stakedBalance).times(100);
-      setPercent(newPercent.toFixed(0));
+      setPercent(newPercent.isNaN() ? "0" : newPercent.toFixed(0));
     }
   };
 
@@ -136,14 +136,16 @@ const UnstakeCard = ({
           <BalanceLine danger={insuffBalance}>
             Balance - <span onClick={onMax}>MAX</span>
           </BalanceLine>
-          <BalanceLine isNumber danger={insuffBalance}>{stakedBalance}</BalanceLine>
+          <BalanceLine isNumber danger={insuffBalance}>
+            {stakedBalance}
+          </BalanceLine>
         </FlexRow>
       </LeftCard>
       <FlexRow width="50%">
         <SliderWrapper>
           <SliderInputWrapper>
             <InputSlideRow danger={insuffBalance}>
-              <span style={{ width: "20%" }}>{percent} %</span>
+              <span>{percent} %</span>
               <InputNumber onChange={onChangeUnstake} value={amountUnstake} />
             </InputSlideRow>
             <Slider

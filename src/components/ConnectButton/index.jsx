@@ -15,10 +15,10 @@ const Wrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  min-width: 240px;
+  min-width: 200px;
   font-size: 16px;
   line-height: 19px;
-  min-height: 80px;
+  min-height: 70px;
   background: ${(props) =>
     props.isWrongNetWork
       ? 'linear-gradient(0deg, rgba(254, 5, 5, 0.5), rgba(254, 5, 5, 0.5)),url("./images/bg-connect-button-danger.png")'
@@ -58,6 +58,8 @@ const ConnectButton = () => {
   const isWrongNetWork = useMemo(() => {
     return error && error.name === "UnsupportedChainIdError";
   }, [error]);
+
+  console.log(isWrongNetWork)
 
   return (
     <Wrapper onClick={connect} isWrongNetWork={isWrongNetWork}>
