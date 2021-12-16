@@ -56,11 +56,9 @@ const ConnectButton = () => {
   // }, [connect]);
 
   const isWrongNetWork = useMemo(() => {
-    return error && error.name === "UnsupportedChainIdError";
+    return error && error.message.startsWith("Unsupported chain id");
   }, [error]);
 
-  console.log(isWrongNetWork)
-  console.log(error)
 
   return (
     <Wrapper onClick={connect} isWrongNetWork={isWrongNetWork}>
