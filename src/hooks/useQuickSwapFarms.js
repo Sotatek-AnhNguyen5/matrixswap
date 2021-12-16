@@ -8,7 +8,7 @@ import { useEffect, useState } from "react";
 import { getDataToken, getLPBalance } from "../utils/token";
 import { calculateTVL } from "../utils/tvl";
 import { calculateAPR } from "../utils/apr";
-import { getDeposited, getDepositedQuickSwap } from "../utils/deposited";
+import { getDepositedQuickSwap } from "../utils/deposited";
 import { useWeb3React } from "@web3-react/core";
 
 const useQuickSwapFarms = () => {

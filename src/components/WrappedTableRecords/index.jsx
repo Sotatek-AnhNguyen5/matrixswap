@@ -74,6 +74,8 @@ const FlexRowData = styled.div`
 const DataItem = styled.div`
   text-align: center;
   padding: 20px;
+  font-family: ${(props) =>
+    props.isNumber ? "ChakraPetch, sans-serif" : "Ocr-A, serif"};
 `;
 
 const GrayColumn = styled.div`
@@ -237,12 +239,12 @@ const TableRecord = ({
             <FormatNumber decimals={2} amount={apr} /> %
           </DataItem>
           <DataItem style={{ width: "10%" }}>
-            <FormatNumber decimals={2} amount={daily} />
+            <FormatNumber decimals={2} amount={daily} /> %
           </DataItem>
-          <DataItem style={{ width: "10%" }}>
-            $<FormatNumber noFormat amount={moneyFormatter(tvl)} />
+          <DataItem isNumber style={{ width: "10%" }}>
+            $ <FormatNumber noFormat amount={moneyFormatter(tvl)} />
           </DataItem>
-          <DataItem style={{ width: "15%" }}>
+          <DataItem isNumber style={{ width: "15%" }}>
             $ <FormatNumber decimals={6} amount={stakedBalance} />
           </DataItem>
           <DataItem style={{ width: "15%" }}>

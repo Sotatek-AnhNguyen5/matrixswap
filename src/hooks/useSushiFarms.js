@@ -48,7 +48,7 @@ const useSushiFarms = () => {
     if (account) {
       listDeposited = await Promise.all(
         data.pools.map((item) =>
-          getDeposited(library, item.rewarder.id, item.id, account)
+          getDeposited(library, item.miniChef.id, item.id, account)
         )
       );
 

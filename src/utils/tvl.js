@@ -6,8 +6,9 @@ import {
 } from "../const";
 import QuickSwapPair from "../abi/QuickSwapPair.json";
 import BigNumber from "bignumber.js";
-import { isValidAddress } from "./index";
-import PairABI from "../abi/QuickSwapPair.json";
+import { getDataFromStorage, isValidAddress, putDataToStorage } from "./index";
+import { convertToUSD } from "./apr";
+import moment from "moment";
 
 export const tokenToWeth = async (amount, library, token) => {
   const factoryContract = new library.eth.Contract(
@@ -59,7 +60,17 @@ export const calculateTVL = async (
   library
 ) => {
   try {
-    const lpTokenContract = new library.eth.Contract(PairABI, lpToken.address);
+    const dataFromStorage = getDataFromStorage("farmTVL", (e) => {
+      return e.farmAddress && e.farmAddress.toLowerCase() === farmAddress.toLowerCase()
+    });
+    const expiredTime = sessionStorage.getItem("farmTvlExpiredTime");
+    if (dataFromStorage && moment().isBefore(expiredTime)) {
+      return dataFromStorage.tvl;
+    }
+    const lpTokenContract = new library.eth.Contract(
+      QuickSwapPair,
+      lpToken.address
+    );
     let [pairAddress1, pairAddress2, totalSupply] = await Promise.all([
       factoryContract.methods
         .getPair(lpToken.token0.address, USDT_ADDRESS)
@@ -121,4 +132,27 @@ export const calculateTVL = async (
     console.log(e);
     return 0;
   }
+};
+
+export const calculateTVLCurve = async (
+  library,
+  depositToken,
+  farmAddress,
+  quickswapFactory
+) => {
+  const tokenContract = new library.eth.Contract(
+    QuickSwapPair,
+    depositToken.address
+  );
+  const tvl = await tokenContract.methods.balanceOf(farmAddress);
+  const usdtValue = await convertToUSD(
+    new BigNumber(tvl).div(
+      new BigNumber(10).pow(depositToken.decimals).toFixed()
+    ),
+    depositToken.decimals,
+    library,
+    depositToken.address,
+    quickswapFactory
+  );
+  return usdtValue;
 };

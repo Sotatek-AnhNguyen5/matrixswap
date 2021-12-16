@@ -1,17 +1,16 @@
 import { FARM_TYPE, PROTOCOL_FUNCTION } from "../const";
-import RewarderABI from "../abi/RewarderABI.json";
+import FarmABI from "../abi/SushiFarmABI.json";
 import BigNumber from "bignumber.js";
 
-export const getDeposited = async (library, rewarderAddress, pId, account) => {
-  const rewarderContract = new library.eth.Contract(
-    RewarderABI,
-    rewarderAddress
-  );
-  const reward = await rewarderContract.methods
-    .pendingToken(pId, account)
+export const getDeposited = async (library, farmAddress, pId, account) => {
+  const farmContract = new library.eth.Contract(FarmABI, farmAddress);
+  const stakedBalance = await farmContract.methods
+    .userInfo(pId, account)
     .call();
 
-  return new BigNumber(reward).div(new BigNumber(10).pow(18)).toFixed();
+  return new BigNumber(stakedBalance.amount)
+    .div(new BigNumber(10).pow(18))
+    .toFixed();
 };
 
 export const getDepositedQuickSwap = async (library, farmAddress, account) => {

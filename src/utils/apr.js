@@ -42,7 +42,6 @@ export const convertToUSD = async (
       .times(new BigNumber(10).pow(decimals - 6));
   } catch (e) {
     console.log(e);
-    console.log(address);
   }
 };
 

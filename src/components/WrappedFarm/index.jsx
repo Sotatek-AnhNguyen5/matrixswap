@@ -7,6 +7,7 @@ import styled from "styled-components";
 import { FlexRow, ProtocolBadger } from "../../theme/components";
 import SearchWrapper from "./SearchWrapper";
 import DataTable from "./DataTable";
+import moment from "moment";
 
 const WrapperFarm = styled.div`
   background: radial-gradient(
@@ -59,7 +60,21 @@ const WrappedFarm = ({ refetchVolume }) => {
       !isEmpty(sushiFarms) &&
       !isEmpty(quickSwapFarms)
     ) {
-      setData((old) => [...apeSwapFarms, ...sushiFarms, ...quickSwapFarms]);
+      const newData = [...apeSwapFarms, ...sushiFarms, ...quickSwapFarms];
+      const expiredTime = sessionStorage.getItem("farmTvlExpiredTime");
+      if (moment().isAfter(expiredTime) || !expiredTime) {
+        const expiredTime = moment().add(10, "minutes");
+        const listTVL = newData.map((e) => {
+          return {
+            farmAddress: e.rewardAddress,
+            tvl: e.tvl,
+          };
+        });
+        sessionStorage.setItem("farmTVL", JSON.stringify(listTVL));
+        sessionStorage.setItem("farmTvlExpiredTime", expiredTime);
+      }
+
+      setData((old) => newData);
     }
   }, [apeSwapFarms, sushiFarms, quickSwapFarms]);
 
@@ -101,19 +116,31 @@ const WrappedFarm = ({ refetchVolume }) => {
         <LeftFilter>
           <div className="label">Farming</div>
           <WhiteColumn />
-          <ProtocolBadger onClick={() => toogleFilter("sushiswap")} isActive={isActiveFilter("sushiswap")}>
+          <ProtocolBadger
+            onClick={() => toogleFilter("sushiswap")}
+            isActive={isActiveFilter("sushiswap")}
+          >
             <img src="./images/protocols/sushiswap.png" alt="" />
             Sushiswap
           </ProtocolBadger>
-          <ProtocolBadger onClick={() => toogleFilter("quickswap")} isActive={isActiveFilter("quickswap")}>
+          <ProtocolBadger
+            onClick={() => toogleFilter("quickswap")}
+            isActive={isActiveFilter("quickswap")}
+          >
             <img src="./images/protocols/quickswap.png" alt="" />
             Quickswap
           </ProtocolBadger>
-          <ProtocolBadger onClick={() => toogleFilter("apeswap")} isActive={isActiveFilter("apeswap")}>
+          <ProtocolBadger
+            onClick={() => toogleFilter("apeswap")}
+            isActive={isActiveFilter("apeswap")}
+          >
             <img src="./images/protocols/apeswap.png" alt="" />
             Apeswap
           </ProtocolBadger>
-          <ProtocolBadger onClick={() => toogleFilter("curve")} isActive={isActiveFilter("curve")}>
+          <ProtocolBadger
+            onClick={() => toogleFilter("curve")}
+            isActive={isActiveFilter("curve")}
+          >
             <img src="./images/protocols/curve.png" alt="" />
             Curve
           </ProtocolBadger>
