@@ -15,7 +15,7 @@ const Wrapper = styled.div`
   display: flex;
   justify-content: center;
   align-items: center;
-  min-width: 200px;
+  min-width: 220px;
   font-size: 16px;
   line-height: 19px;
   min-height: 70px;
@@ -60,6 +60,7 @@ const ConnectButton = () => {
   }, [error]);
 
   console.log(isWrongNetWork)
+  console.log(error)
 
   return (
     <Wrapper onClick={connect} isWrongNetWork={isWrongNetWork}>
