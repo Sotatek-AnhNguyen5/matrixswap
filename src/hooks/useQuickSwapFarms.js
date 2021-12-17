@@ -61,8 +61,14 @@ const useQuickSwapFarms = () => {
     let listLpBalance = [];
     if (account) {
       listDeposited = await Promise.all(
-        resWithTokenAddress.map((item) =>
-          getDepositedQuickSwap(library, item.stakingRewards, account)
+        resWithTokenAddress.map((item, index) =>
+          getDepositedQuickSwap(
+            library,
+            item.stakingRewards,
+            account,
+            factoryContract,
+            listLpToken[index]
+          )
         )
       );
       listLpBalance = await Promise.all(

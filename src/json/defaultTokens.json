@@ -840,7 +840,7 @@
       "symbol": "QUICK",
       "decimals": 18,
       "chainId": 137,
-      "logoURI": "https://raw.githubusercontent.com/sameepsi/quickswap-interface/master/public/favicon.jpeg"
+      "logoURI": "https://i.imgur.com/8G7QIrR.png"
     },
     {
       "name": "QuickChart",
@@ -856,7 +856,7 @@
       "symbol": "RAMP",
       "decimals": 18,
       "chainId": 137,
-      "logoURI": "https://rampdefi.com/assets/RAMP_LOGO_V4_256.png"
+      "logoURI": "https://s2.coinmarketcap.com/static/img/coins/64x64/7463.png"
     },
     {
       "name": "Rebalance Token",
@@ -992,7 +992,7 @@
       "symbol": "UNI",
       "decimals": 18,
       "chainId": 137,
-      "logoURI": "https://raw.githubusercontent.com/sameepsi/quickswap-interface/master/public/favicon1.png"
+      "logoURI": "https://s2.coinmarketcap.com/static/img/coins/64x64/7083.png"
     },
     {
       "name": "USD Coin",

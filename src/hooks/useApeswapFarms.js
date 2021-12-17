@@ -57,8 +57,8 @@ const useApeSwapFarms = () => {
     let listLpBalance = [];
     if (account) {
       listDeposited = await Promise.all(
-        data.pools.map((item) =>
-          getDeposited(library, item.miniChef.id, item.id, account)
+        data.pools.map((item, index) =>
+          getDeposited(library, item.miniChef.id, item.id, account, factoryContract, listLpToken[index] )
         )
       );
 
