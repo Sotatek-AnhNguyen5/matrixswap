@@ -138,13 +138,6 @@ const WrappedFarm = ({ refetchVolume }) => {
             <img src="./images/protocols/apeswap.png" alt="" />
             Apeswap
           </ProtocolBadger>
-          <ProtocolBadger
-            onClick={() => toogleFilter("curve")}
-            isActive={isActiveFilter("curve")}
-          >
-            <img src="./images/protocols/curve.png" alt="" />
-            Curve
-          </ProtocolBadger>
         </LeftFilter>
         <SearchWrapper filterKey={filterKey} onChange={setFilterKey} />
       </FlexRow>
