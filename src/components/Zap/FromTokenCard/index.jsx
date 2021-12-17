@@ -29,9 +29,13 @@ const TokenLogoWrapper = styled.div`
   justify-content: center;
   padding: 40px 15px;
   width: 10%;
+  position: relative;
+  z-index: 0;
 `;
 
 const LogoBorder = styled.div`
+  position: relative;
+  z-index: 1;
   background: rgba(1, 3, 4, 0.2);
   border-radius: 50%;
   display: flex;
@@ -44,6 +48,18 @@ const LogoBorder = styled.div`
     width: 40px;
     height: 40px;
   }
+`;
+
+const DoubleLogoWrapper = styled.div`
+  width: 92px;
+  position: relative;
+  display: flex;
+`;
+
+const LogoBorder2 = styled(LogoBorder)`
+  z-index: 0;
+  position: relative;
+  margin-left: -20px;
 `;
 
 const BorderColor = styled.div`
@@ -64,6 +80,8 @@ const FromTokenCard = ({
   farmType,
   isZapIn,
   refreshRatio,
+  symbol0,
+  symbol1
 }) => {
   const [percent, setPercent] = useState("0");
   const usdtValue = useConvertToUSDT(token.amount, token, farmType);
@@ -146,9 +164,16 @@ const FromTokenCard = ({
   return (
     <TokenCard isActiveBg={true}>
       <TokenLogoWrapper>
-        <LogoBorder>
+        {isZapIn ? <LogoBorder>
           <TokenLogo symbol={token.symbol} />
-        </LogoBorder>
+        </LogoBorder> : <DoubleLogoWrapper>
+          <LogoBorder>
+            <TokenLogo symbol={symbol0} />
+          </LogoBorder>
+          <LogoBorder2>
+            <TokenLogo symbol={symbol1} />
+          </LogoBorder2>
+        </DoubleLogoWrapper>}
       </TokenLogoWrapper>
       <SelectTokenWrapper>
         <FlexRow justify="flex-start">

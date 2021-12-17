@@ -21,6 +21,7 @@ export const ProtocolBadger = styled.div`
 
 export const FlexRow = styled.div`
   display: flex;
+  z-index: 0;
   justify-content: ${(props) => props.justify ?? "space-between"};
   margin-top: ${(props) => props.marginTop ?? "0"};
   align-items: ${(props) => props.alignItems ?? "center"};

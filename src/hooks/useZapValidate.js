@@ -19,7 +19,7 @@ const useZapValidate = (selectedTokens, toTokensZapOut, isZapIn) => {
     );
     setInsufficientBalance(!!tokenInsuffBalance);
     const tokenNoAmount = find(isZapIn ? selectedTokens : toTokensZapOut, (e) =>
-      new BigNumber(e.amount).isZero()
+      new BigNumber(e.amount).isZero() || !e.amount
     );
     const unSelected = find(
       isZapIn ? selectedTokens : toTokensZapOut,

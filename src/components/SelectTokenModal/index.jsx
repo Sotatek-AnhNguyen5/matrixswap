@@ -2,7 +2,7 @@ import styled from "styled-components";
 import { useMemo, useState } from "react";
 import Modal from "react-modal";
 import DefaultToken from "../../json/defaultTokens.json";
-import { startsWith } from "lodash";
+import { find, startsWith } from "lodash";
 import useListTokenWithBalance from "../../hooks/useListTokenWithBalance";
 import { FlexRow, GridContainer } from "../../theme/components";
 import TokenLogo from "../TokenLogo";
@@ -21,10 +21,10 @@ const InputWrapper = styled.div`
   margin-top: 20px;
 
   input {
-    padding: 20px;
+    padding: 10px 20px;
     box-sizing: border-box;
     background-color: #0a1b1e;
-    font-size: 24px;
+    font-size: 16px;
     outline: 0;
     box-shadow: inset 0px 0px 5px rgba(0, 0, 0, 0.25);
     border-radius: 12px;
@@ -47,6 +47,7 @@ const TokenRow = styled.div`
   cursor: pointer;
   color: white;
 
+
   .token-item {
     box-sizing: border-box;
     border-radius: 6px;
@@ -55,6 +56,8 @@ const TokenRow = styled.div`
     align-items: center;
     justify-content: space-between;
     width: 100%;
+    background-color: ${(props) =>
+            props.isSelected ? "#0f1a1c" : "transparent"};
 
     .token-logo {
       display: flex;
@@ -86,12 +89,12 @@ const ModalHeader = styled.div`
 
   span {
     color: #fff;
-    font-size: 36px;
+    font-size: 24px;
   }
 
   img {
-    width: 30px;
-    height: 30px;
+    width: 20px;
+    height: 20px;
     right: 20px;
     cursor: pointer;
     position: absolute;
@@ -102,7 +105,7 @@ const ModalContent = styled.div`
   padding: 20px 30px 40px 30px;
 
   .title-content {
-    font-size: 24px;
+    font-size: 16px;
     color: #fff;
   }
 `;
@@ -122,7 +125,8 @@ const CommonBaseItem = styled.div`
   color: #fff;
   border-radius: 71px;
   opacity: 0.88;
-  background-color: ${(props) => props.theme.colorDarkerGray};
+  background-color: ${(props) =>
+    props.isSelected ? "#0f1a1c" : props.theme.colorDarkerGray};
   font-weight: 400;
   font-size: 24px;
   cursor: pointer;
@@ -166,11 +170,13 @@ const SelectTokenModal = ({
   onSetSelectedToken,
   isModalOpen,
   setIsModalOpen,
+  selectedToken,
 }) => {
   const [filterKey, setFilterKey] = useState();
   const closeModal = () => setIsModalOpen(false);
 
   const onSelectToken = (token) => {
+    if (isSelectedToken(token)) return;
     onSetSelectedToken(token);
     closeModal();
   };
@@ -180,6 +186,11 @@ const SelectTokenModal = ({
   }, []);
 
   const listTokenWithBalance = useListTokenWithBalance(listToken);
+
+  const isSelectedToken = (token) => {
+    const isSelect = find(selectedToken, (e) => e.address === token.address);
+    return !!isSelect;
+  };
 
   return (
     <Modal
@@ -202,7 +213,11 @@ const SelectTokenModal = ({
           templateColumns="auto auto auto"
         >
           {CommonBaseList.map((e) => (
-            <CommonBaseItem onClick={() => onSelectToken(e)} key={e.address}>
+            <CommonBaseItem
+              isSelected={isSelectedToken(e)}
+              onClick={() => onSelectToken(e)}
+              key={e.address}
+            >
               <TokenLogo symbol={e.symbol} />
               {e.symbol}
             </CommonBaseItem>
@@ -226,6 +241,7 @@ const SelectTokenModal = ({
                   startsWith(e.symbol, filterKey) ||
                   !filterKey
                 }
+                isSelected={isSelectedToken(e)}
                 onClick={() => onSelectToken(e)}
                 key={e.address}
               >

@@ -3,6 +3,7 @@ import moment from "moment";
 import { Keccak } from "sha3";
 import { find, findIndex } from "lodash";
 import ERC20ABI from "../abi/IERC20ABI.json";
+import BigNumber from "bignumber.js";
 
 const zero_address = "0x0000000000000000000000000000000000000000";
 
@@ -116,6 +117,18 @@ export const formatSmallNumber = (amount) => {
       formattedNumber += e;
     });
     return `${amountSplit[0]}.${formattedNumber}`;
+  }
+  return amount;
+};
+
+export const formatNumber = (amount) => {
+  if (amount.includes(".")) {
+    const amountSplit = amount.split(".");
+    const arrayNumberAfterDot = amountSplit[1].split("");
+    if (arrayNumberAfterDot.length <= 2) {
+      return amount;
+    }
+    return new BigNumber(amount).toFixed(2) + "...";
   }
   return amount;
 };

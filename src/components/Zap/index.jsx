@@ -92,12 +92,19 @@ const ToLpText = styled.div`
   margin-top: 40px;
 `;
 
+const ButtonWrapper = styled.div`
+  width: 100%;
+  position: relative;
+  z-index: 0;
+`;
+
 const ApproveButton = styled(ActiveButton)`
   width: 55%;
   font-size: 16px;
   border-radius: 26px;
   padding: 20px;
   z-index: 1;
+  position: relative;
 `;
 
 const ZapButton = styled(ActiveButton)`
@@ -136,6 +143,8 @@ const ZapTab = ({
     selectedTokens,
     (e) => e.allowance && new BigNumber(e.allowance).isZero()
   );
+
+  const selectedListToken = isZapIn ? selectedTokens : toTokensZapOut;
 
   const [noAmountError, unSelectedTokenError, insuffBalance, invalidToken] =
     useZapValidate(selectedTokens, toTokensZapOut, isZapIn);
@@ -320,7 +329,10 @@ const ZapTab = ({
     setToTokensZapOut((old) => {
       const ratio = new BigNumber(100).div(old.length).toFixed(0);
       const newData = old.map((e) => {
-        const newAmount = new BigNumber(amount || 0).times(ratio).div(100).toFixed();
+        const newAmount = new BigNumber(amount || 0)
+          .times(ratio)
+          .div(100)
+          .toFixed();
         e.ratio = ratio;
         e.amount = newAmount;
         return e;
@@ -345,6 +357,8 @@ const ZapTab = ({
             lpToken={lpToken}
             farmType={type}
             isZapIn={isZapIn}
+            symbol0={symbol0}
+            symbol1={symbol1}
           />
         );
       })}
@@ -391,32 +405,35 @@ const ZapTab = ({
         )}
       </FlexRow>
       <FlexRow marginTop="20px" justify="flex-start">
-        {tokenHaveToApprove && (
-          <ApproveButton
-            label={"approve"}
-            loading={tokenHaveToApprove.loading}
-            labelLoading={"approving"}
-            onClick={tokenHaveToApprove.approve}
+        <ButtonWrapper>
+          {tokenHaveToApprove && (
+            <ApproveButton
+              label={"approve"}
+              loading={tokenHaveToApprove.loading}
+              labelLoading={"approving"}
+              onClick={tokenHaveToApprove.approve}
+            />
+          )}
+          <ZapButton
+            onClick={() => setOpenConfirmZap(true)}
+            isApproveFirst={!!tokenHaveToApprove}
+            disabled={
+              !!tokenHaveToApprove ||
+              noAmountError ||
+              unSelectedTokenError ||
+              invalidToken ||
+              insuffBalance
+            }
+            label={zapButtonTitle}
+            labelLoading={"Zapping"}
           />
-        )}
-        <ZapButton
-          onClick={() => setOpenConfirmZap(true)}
-          isApproveFirst={!!tokenHaveToApprove}
-          disabled={
-            !!tokenHaveToApprove ||
-            noAmountError ||
-            unSelectedTokenError ||
-            invalidToken ||
-            insuffBalance
-          }
-          label={zapButtonTitle}
-          labelLoading={"Zapping"}
-        />
+        </ButtonWrapper>
       </FlexRow>
       <SelectTokenModal
         isModalOpen={openSelectToken}
         setIsModalOpen={setOpenSelectToken}
         onSetSelectedToken={onSelectedToken}
+        selectedToken={selectedListToken}
       />
       <ConfirmZap
         isModalOpen={openConfirmZap}
@@ -431,6 +448,7 @@ const ZapTab = ({
       />
       <TransactionStatusModal
         isModalOpen={isOpenTxStatusModal}
+        isZapIn={isZapIn}
         setIsModalOpen={setIsOpenTxStatusModal}
         status={zapStatus}
         txHash={txHash}
@@ -438,6 +456,7 @@ const ZapTab = ({
         token1={token1}
         lpAddress={lpAddress}
         estimateOutput={totalEstimateOutput}
+        toTokensZapOut={toTokensZapOut}
       />
     </div>
   );

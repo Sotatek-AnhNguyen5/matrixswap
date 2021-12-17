@@ -13,7 +13,6 @@ const WhiteTitle = styled(FlexRow)`
   font-size: 14px;
   box-sizing: border-box;
   color: #fff;
-
   a {
     text-decoration: none;
     color: #fff;
@@ -24,6 +23,10 @@ const WhiteTitle = styled(FlexRow)`
     }
   }
 `;
+
+const ExtendMessage = styled(WhiteTitle)`
+  max-width: 400px;
+`
 
 const StyledCheck = styled.img`
   width: 80px;
@@ -47,6 +50,8 @@ const TransactionStatusModal = ({
   token0,
   token1,
   lpAddress,
+  isZapIn,
+  toTokensZapOut,
 }) => {
   const closeModal = () => setIsModalOpen(false);
 
@@ -57,7 +62,7 @@ const TransactionStatusModal = ({
         toMetamaskSymbol = toMetamaskSymbol.substr(0, 10);
       }
 
-      const wasAdded = await window.ethereum.request({
+      window.ethereum.request({
         method: "wallet_watchAsset",
         params: {
           type: "ERC20", // Initially only supports ERC20, but eventually more!
@@ -88,6 +93,12 @@ const TransactionStatusModal = ({
     },
   };
 
+  const messageZapOut = useMemo(() => {
+    let message = "";
+    toTokensZapOut.forEach((e) => message+= `${e.estimateValue} ${e.symbol} `)
+    return message;
+  }, [toTokensZapOut])
+
   const ModalContent = useMemo(() => {
     if (status === STATUS_ZAP.waiting) {
       return (
@@ -98,9 +109,19 @@ const TransactionStatusModal = ({
           <ActiveTitle justify="center" marginTop="40px">
             Waiting For Confirmation
           </ActiveTitle>
-          <WhiteTitle justify="center" marginTop="20px">
-            Zapping tokens for {estimateOutput} LP
-          </WhiteTitle>
+          {isZapIn ? (
+            <>
+              <WhiteTitle justify="center" marginTop="20px">
+                Zapping tokens for {estimateOutput} LP
+              </WhiteTitle>
+            </>
+          ) : (
+            <>
+              <ExtendMessage justify="center" marginTop="20px">
+                Zapping LP for {messageZapOut}
+              </ExtendMessage>
+            </>
+          )}
           <WhiteTitle justify="center" marginTop="20px">
             Confirm transaction on your wallet
           </WhiteTitle>
@@ -133,7 +154,9 @@ const TransactionStatusModal = ({
             </a>
           </WhiteTitle>
           <WhiteTitle justify="center" marginTop="20px">
-            <a onClick={onAddLpToWallet}>Add {`LP ${token0.symbol}-${token1.symbol}`} to Metamask</a>
+            <a onClick={onAddLpToWallet}>
+              Add {`LP ${token0.symbol}-${token1.symbol}`} to Metamask
+            </a>
           </WhiteTitle>
           <ActiveButton
             label="Close"
@@ -144,7 +167,7 @@ const TransactionStatusModal = ({
         </>
       );
     }
-  }, [status, estimateOutput, txHash]);
+  }, [status, estimateOutput, txHash, isZapIn, toTokensZapOut]);
 
   return (
     <Modal

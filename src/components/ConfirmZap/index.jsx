@@ -190,7 +190,6 @@ const ConfirmZap = ({
       );
     }
   };
-
   return (
     <Modal
       isOpen={isModalOpen}
@@ -241,6 +240,7 @@ const ConfirmZap = ({
                   <TokenLogo symbol={symbol0} />
                   <TokenLogo symbol={symbol1} />
                 </DoubleLogoWrapper>
+                <SmallWhiteText isNumber>{fromTokenList[0].symbol}</SmallWhiteText>
               </LeftTokenWrapper>
               <RightTokenWrapper>
                 <SmallWhiteText isNumber>{fromTokenList[0].amount}</SmallWhiteText>

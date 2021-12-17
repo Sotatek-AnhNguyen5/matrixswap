@@ -1,7 +1,7 @@
 import { memo, useMemo } from "react";
 import styled from "styled-components";
 import BigNumber from "bignumber.js";
-import { formatSmallNumber } from "../../utils";
+import {formatNumber, formatSmallNumber} from "../../utils";
 
 export const StyledNumber = styled.span`
   font-size: 18px;
@@ -9,15 +9,15 @@ export const StyledNumber = styled.span`
   font-weight: 400;
 `;
 
-const FormatNumber = ({ amount, decimals, noFormat }) =>
+const FormatNumber = ({ amount, noFormat }) =>
   useMemo(() => {
     if (noFormat) {
       return <StyledNumber className="styled-number">{amount}</StyledNumber>;
     }
-    const bigAmount = new BigNumber(amount);
+    const bigAmount = new BigNumber(amount).toFixed();
     return (
-      <StyledNumber className="styled-number">
-        {formatSmallNumber(bigAmount.toFixed())}
+      <StyledNumber title={bigAmount} className="styled-number">
+        {formatNumber(bigAmount)}
       </StyledNumber>
     );
   }, [amount]);
