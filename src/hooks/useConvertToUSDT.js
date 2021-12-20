@@ -3,8 +3,10 @@ import { debounce } from "lodash";
 import { convertToUSD } from "../utils/apr";
 import { useFactoryContract, useLibrary } from "./useContract";
 import { FARM_TYPE, USDT_TOKEN } from "../const";
+import { convertLPtoUSDT } from "../utils/deposited";
+import BigNumber from "bignumber.js";
 
-const useConvertToUSDT = (amount, token, farmType) => {
+const useConvertToUSDT = (amount, token, farmType, isZapIn, lpToken) => {
   const library = useLibrary();
   const [uSDTValue, setUSDTValue] = useState(0);
   const factoryContract = useFactoryContract(farmType);
@@ -23,6 +25,19 @@ const useConvertToUSDT = (amount, token, farmType) => {
     []
   );
 
+  const getUSDTfromLP = useCallback(
+    debounce(async (amountToken, tokenFrom) => {
+      const value = await convertLPtoUSDT(
+        factoryContract,
+        tokenFrom,
+        new BigNumber(amountToken).times(new BigNumber(10).pow(18)).toFixed(),
+        library
+      );
+      value && setUSDTValue(value);
+    }, 500),
+    []
+  );
+
   useEffect(() => {
     if (!amount) {
       setUSDTValue(0);
@@ -31,10 +46,14 @@ const useConvertToUSDT = (amount, token, farmType) => {
       token.address.toLowerCase() === USDT_TOKEN.address.toLowerCase()
     ) {
       setUSDTValue(amount);
-    } else if (amount && token.address) {
-      getUSDTValue(amount, token);
+    } else if (amount && token.address && lpToken) {
+      if (isZapIn) {
+        getUSDTValue(amount, token);
+      } else {
+        getUSDTfromLP(amount, lpToken);
+      }
     }
-  }, [amount, token]);
+  }, [amount, token, lpToken]);
 
   return uSDTValue;
 };

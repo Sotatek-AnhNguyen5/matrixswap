@@ -81,10 +81,16 @@ const FromTokenCard = ({
   isZapIn,
   refreshRatio,
   symbol0,
-  symbol1
+  symbol1,
 }) => {
   const [percent, setPercent] = useState("0");
-  const usdtValue = useConvertToUSDT(token.amount, token, farmType);
+  const usdtValue = useConvertToUSDT(
+    token.amount,
+    token,
+    farmType,
+    isZapIn,
+    lpToken
+  );
   const [balance, refreshBalance] = useTokenBalance(
     token.address,
     token.decimals
@@ -135,7 +141,11 @@ const FromTokenCard = ({
     setAmount(e);
     !isZapIn && refreshRatio(e);
     const amountToPercent = new BigNumber(e || 0).div(balance).times(100);
-    setPercent(amountToPercent.toFixed(0));
+    setPercent(
+      amountToPercent.toFixed(0) === "Infinity"
+        ? "0"
+        : amountToPercent.toFixed(0)
+    );
   };
 
   useEffect(() => {
@@ -164,16 +174,20 @@ const FromTokenCard = ({
   return (
     <TokenCard isActiveBg={true}>
       <TokenLogoWrapper>
-        {isZapIn ? <LogoBorder>
-          <TokenLogo symbol={token.symbol} />
-        </LogoBorder> : <DoubleLogoWrapper>
+        {isZapIn ? (
           <LogoBorder>
-            <TokenLogo symbol={symbol0} />
+            <TokenLogo symbol={token.symbol} />
           </LogoBorder>
-          <LogoBorder2>
-            <TokenLogo symbol={symbol1} />
-          </LogoBorder2>
-        </DoubleLogoWrapper>}
+        ) : (
+          <DoubleLogoWrapper>
+            <LogoBorder>
+              <TokenLogo symbol={symbol0} />
+            </LogoBorder>
+            <LogoBorder2>
+              <TokenLogo symbol={symbol1} />
+            </LogoBorder2>
+          </DoubleLogoWrapper>
+        )}
       </TokenLogoWrapper>
       <SelectTokenWrapper>
         <FlexRow justify="flex-start">

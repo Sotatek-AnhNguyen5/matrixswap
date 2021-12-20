@@ -253,19 +253,19 @@ const TableRecord = ({
             </div>
           </DataItem>
           <DataItem style={{ width: "10%" }}>
-            <FormatNumber decimals={2} amount={apr} /> %
+            <FormatNumber amount={apr} /> %
           </DataItem>
           <DataItem style={{ width: "10%" }}>
-            <FormatNumber decimals={2} amount={daily} /> %
+            <FormatNumber amount={daily} /> %
           </DataItem>
           <DataItem isNumber style={{ width: "10%" }}>
             $ <FormatNumber noFormat amount={moneyFormatter(tvl)} />
           </DataItem>
           <DataItem isNumber style={{ width: "15%" }}>
-            $ <FormatNumber decimals={6} amount={stakedUSDT} />
+            $ <FormatNumber amount={stakedUSDT} />
           </DataItem>
           <DataItem style={{ width: "15%" }}>
-            <FormatNumber decimals={6} amount={lpBalance} />
+            <FormatNumber amount={lpBalance} />
           </DataItem>
           <DataItem style={{ width: "5%" }}>
             {!isSelected ? <FaAngleRight /> : <FaAngleDown />}

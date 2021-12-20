@@ -6,11 +6,9 @@ import WrappedFarm from "../../components/WrappedFarm";
 
 const AppWrapper = styled.div`
   min-height: 100%;
-  background-image: url("./images/matrix-number.png"),
+  background-image: url("./images/main-bg.png"),
     radial-gradient(54.3% 54.3% at 50.9% 45.7%, #0e2326 0%, #032115 100%);
   background-repeat: no-repeat, repeat;
-  background-position: right bottom;
-  background-attachment: fixed;
   padding: 0 50px;
 `;
 
