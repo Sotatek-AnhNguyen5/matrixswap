@@ -69,6 +69,7 @@ const DoubleLogoWrapper = styled.div`
 const SmallWhiteText = styled.span`
   font-size: 14px;
   color: #fff;
+  margin-left: ${(props) => props.ml ?? "30px"};
   font-family: ${(props) =>
     props.isNumber ? "ChakraPetch, sans-serif" : "Ocr-A, serif"};
 `;
@@ -226,6 +227,9 @@ const ConfirmZap = ({
                   <TokenLogo symbol={symbol0} />
                   <TokenLogo symbol={symbol1} />
                 </DoubleLogoWrapper>
+                <SmallWhiteText ml="5px !important">
+                  LP {symbol0} - {symbol1}
+                </SmallWhiteText>
               </LeftTokenWrapper>
               <RightTokenWrapper>
                 <SmallWhiteText isNumber>{estimateOutput}</SmallWhiteText>
@@ -240,10 +244,14 @@ const ConfirmZap = ({
                   <TokenLogo symbol={symbol0} />
                   <TokenLogo symbol={symbol1} />
                 </DoubleLogoWrapper>
-                <SmallWhiteText isNumber>{fromTokenList[0].symbol}</SmallWhiteText>
+                <SmallWhiteText isNumber>
+                  {fromTokenList[0].symbol}
+                </SmallWhiteText>
               </LeftTokenWrapper>
               <RightTokenWrapper>
-                <SmallWhiteText isNumber>{fromTokenList[0].amount}</SmallWhiteText>
+                <SmallWhiteText isNumber>
+                  {fromTokenList[0].amount}
+                </SmallWhiteText>
               </RightTokenWrapper>
             </TokenCard>
             <FlexRow justify="center" marginTop="40px">

@@ -58,7 +58,9 @@ export function hashSha3Tokens(token0, token1) {
 
 export const removeStakeInfoFromStorage = (farmAddress) => {
   const stakeInfo = JSON.parse(localStorage.getItem("stakeInfo")) || [];
-  const farmIndex = findIndex(stakeInfo, { farmAddress });
+  const farmIndex = findIndex(stakeInfo, (e) => {
+    return e.farmAddress.toLowerCase() === farmAddress.toLowerCase();
+  });
   if (farmIndex !== -1) {
     stakeInfo.splice(farmIndex, 1);
     localStorage.setItem("stakeInfo", JSON.stringify(stakeInfo));
@@ -128,7 +130,7 @@ export const formatNumber = (amount) => {
     if (arrayNumberAfterDot.length <= 2) {
       return amount;
     }
-    return new BigNumber(amount).toFixed(2) + "...";
+    return "0.00...";
   }
   return amount;
 };

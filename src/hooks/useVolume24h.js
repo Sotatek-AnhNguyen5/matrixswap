@@ -7,6 +7,8 @@ import BigNumber from "bignumber.js";
 import { USDT_ADDRESS } from "../const";
 import { convertToUSD } from "../utils/apr";
 import moment from "moment";
+import { convertLPtoUSDT } from "../utils/deposited";
+import {getDataToken} from "../utils/token";
 
 const useVolume24h = () => {
   const library = useLibrary();
@@ -38,6 +40,26 @@ const useVolume24h = () => {
         };
       })
     );
+
+    const totalZapOutVolume = await Promise.all(
+      data.zapOutEntities.map(async (e) => {
+        const lpToken = await getDataToken(e.lpToken, library);
+        const toUSDT = await convertLPtoUSDT(
+          factoryContract,
+          lpToken,
+          e.amount,
+          library
+        );
+        return {
+          createTime: e.createTime,
+          amount: new BigNumber(toUSDT),
+        };
+      })
+    );
+    totalZapOutVolume.forEach((e) => (total = e.amount.plus(total)));
+    totalZapOutVolume
+      .filter((e) => e.createTime >= yesterday)
+      .forEach((e) => (total24h = e.amount.plus(total24h)));
     totalVolume.forEach((e) => (total = e.amount.plus(total)));
     totalVolume
       .filter((e) => e.createTime >= yesterday)

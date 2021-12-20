@@ -6,9 +6,8 @@ import {
 } from "../const";
 import QuickSwapPair from "../abi/QuickSwapPair.json";
 import BigNumber from "bignumber.js";
-import { getDataFromStorage, isValidAddress, putDataToStorage } from "./index";
+import { isValidAddress } from "./index";
 import { convertToUSD } from "./apr";
-import moment from "moment";
 
 export const tokenToWeth = async (amount, library, token) => {
   const factoryContract = new library.eth.Contract(
@@ -60,13 +59,6 @@ export const calculateTVL = async (
   library
 ) => {
   try {
-    const dataFromStorage = getDataFromStorage("farmTVL", (e) => {
-      return e.farmAddress && e.farmAddress.toLowerCase() === farmAddress.toLowerCase()
-    });
-    const expiredTime = sessionStorage.getItem("farmTvlExpiredTime");
-    if (dataFromStorage && moment().isBefore(expiredTime)) {
-      return dataFromStorage.tvl;
-    }
     const lpTokenContract = new library.eth.Contract(
       QuickSwapPair,
       lpToken.address

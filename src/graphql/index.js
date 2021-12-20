@@ -10,6 +10,13 @@ export const GET_ZAPS = gql`
       amount
       createTime
     }
+    zapOutEntities {
+      id
+      lpToken
+      protocol
+      amount
+      createTime
+    }
   }
 `;
 

@@ -42,10 +42,7 @@ export const getDepositedQuickSwap = async (
   );
   const stakedBalance = await farmContract.methods.balanceOf(account).call();
 
-  const amount = new BigNumber(stakedBalance)
-    .div(new BigNumber(10).pow(18))
-    .toFixed();
-  return convertLPtoUSDT(factoryContract, lpToken, amount, library);
+  return convertLPtoUSDT(factoryContract, lpToken, stakedBalance, library);
 };
 
 export const convertLPtoUSDT = async (
@@ -77,7 +74,6 @@ export const convertLPtoUSDT = async (
     ]);
     const tokenRate = new BigNumber(reverse._reserve1).div(reverse._reserve0);
     const tokenHold = new BigNumber(amount)
-      .times(new BigNumber(10).pow(18))
       .div(lpToken.totalSupply)
       .times(
         isUsedToken0 ? lpToken.reserves._reserve0 : lpToken.reserves._reserve1

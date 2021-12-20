@@ -58,6 +58,8 @@ const TokenRow = styled.div`
     width: 100%;
     background-color: ${(props) =>
             props.isSelected ? "#0f1a1c" : "transparent"};
+    cursor: ${(props) =>
+            props.isSelected ? "not-allowed" : "pointer"};
 
     .token-logo {
       display: flex;
@@ -127,9 +129,10 @@ const CommonBaseItem = styled.div`
   opacity: 0.88;
   background-color: ${(props) =>
     props.isSelected ? "#0f1a1c" : props.theme.colorDarkerGray};
+  cursor: ${(props) =>
+          props.isSelected ? "not-allowed" : "pointer"};
   font-weight: 400;
   font-size: 24px;
-  cursor: pointer;
 
   img {
     margin-right: 10px;

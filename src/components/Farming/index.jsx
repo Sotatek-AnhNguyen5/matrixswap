@@ -54,10 +54,10 @@ const FarmingTab = ({
     toast("Stake successfully!");
   };
   const onFinishUnStake = async () => {
+    await Promise.all([getLpBalance(), refreshStakedBalance()]);
     if (new BigNumber(stakedBalance).isZero()) {
       removeStakeInfoFromStorage();
     }
-    await Promise.all([getLpBalance(), refreshStakedBalance()]);
     toast("Withdraw successfully!");
     setAmountUnStake(0);
   };

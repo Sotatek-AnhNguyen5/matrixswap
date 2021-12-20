@@ -1,10 +1,11 @@
-import { useState, useEffect } from "react";
-import { useWeb3React } from "@web3-react/core";
+import {useState, useEffect} from "react";
+import {useWeb3React} from "@web3-react/core";
 import BigNumber from "bignumber.js";
-import { find } from "lodash";
-import { FARM_TYPE } from "../const";
-import { useFarmContract } from "./useContract";
+import {find} from "lodash";
+import {FARM_TYPE} from "../const";
+import {useFarmContract} from "./useContract";
 import RewarderABI from "../abi/RewarderABI.json";
+import {removeStakeInfoFromStorage} from "../utils";
 
 const useFarmUserInfo = (
   farmAddress,
@@ -13,7 +14,7 @@ const useFarmUserInfo = (
   lpTokenAddress,
   rewarderAddress
 ) => {
-  const { library, account } = useWeb3React();
+  const {library, account} = useWeb3React();
   const [reward, setReward] = useState([0, 0]);
   const [balance, setBalance] = useState(0);
   const [startDate, setStartDate] = useState("");
@@ -72,8 +73,11 @@ const useFarmUserInfo = (
       (e) => e.farmAddress.toLowerCase() === farmAddress.toLowerCase()
     );
 
-    if (farmInfo) {
+    if (new BigNumber(balanceAmount).gt(0) && farmInfo) {
       setStartDate(farmInfo.startDate);
+    } else {
+      removeStakeInfoFromStorage(farmAddress)
+      setStartDate("")
     }
   };
 
