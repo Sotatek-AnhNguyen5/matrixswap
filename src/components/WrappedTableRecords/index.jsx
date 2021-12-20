@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { FaAngleDown, FaAngleRight } from "react-icons/fa";
-import React, { useState, useMemo, useEffect } from "react";
+import React, {useState, useMemo, useEffect, useCallback} from "react";
 import useFarmUserInfo from "../../hooks/useFarmUserInfo";
 import { toast } from "react-toastify";
 import BigNumber from "bignumber.js";
@@ -149,6 +149,17 @@ const TableRecord = ({
     toast("Get reward successfully!");
   };
 
+  const onRefreshList = useCallback(() => {
+    setParentData((old) => {
+      const farmList = [...old];
+      const indexFarm = findIndex(farmList, (e) => {
+        return e.rewardAddress === farmAddress;
+      });
+      farmList[indexFarm].deposited = stakedUSDT;
+      return [...farmList];
+    });
+  }, [stakedUSDT, setParentData])
+
   const [onGetReward, loadingGetReward] = useGetRewardCallback(
     farmAddress,
     FARM_TYPE[type],
@@ -205,22 +216,6 @@ const TableRecord = ({
   useEffect(() => {
     forceCheck();
   }, []);
-
-  // useEffect(() => {
-  //   if (!new BigNumber(lpBalance).isZero()) {
-  //     setParentData((old) => {
-  //       const farmList = [...old];
-  //       const indexFarm = findIndex(farmList, (e) => {
-  //         return e.rewardAddress === farmAddress;
-  //       });
-  //       if (new BigNumber(lpBalance).eq(farmList[indexFarm].lpBalance)) {
-  //         return old;
-  //       }
-  //       farmList[indexFarm].lpBalance = lpBalance;
-  //       return [...farmList];
-  //     });
-  //   }
-  // }, [lpBalance]);
 
   return (
     <>
@@ -333,6 +328,7 @@ const TableRecord = ({
                   getLpBalance={getLpBalance}
                   pId={poolIndex}
                   lpToken={lpToken}
+                  refreshList={onRefreshList}
                 />
               )}
             </ZapFarmWrapper>

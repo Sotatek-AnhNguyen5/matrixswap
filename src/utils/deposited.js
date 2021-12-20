@@ -23,10 +23,7 @@ export const getDeposited = async (
     .userInfo(pId, account)
     .call();
 
-  const amount = new BigNumber(stakedBalance.amount)
-    .div(new BigNumber(10).pow(18))
-    .toFixed();
-  return convertLPtoUSDT(factoryContract, lpToken, amount, library);
+  return convertLPtoUSDT(factoryContract, lpToken, stakedBalance.amount, library);
 };
 
 export const getDepositedQuickSwap = async (
@@ -99,7 +96,6 @@ export const convertLPtoUSDT = async (
     const isUsedToken0 = isValidAddress(pair0);
     const usedToken = isUsedToken0 ? lpToken.token0 : lpToken.token1;
     const tokenHold = new BigNumber(amount)
-      .times(new BigNumber(10).pow(18))
       .div(lpToken.totalSupply)
       .times(
         isUsedToken0 ? lpToken.reserves._reserve0 : lpToken.reserves._reserve1

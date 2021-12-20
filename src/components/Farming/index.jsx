@@ -39,6 +39,7 @@ const FarmingTab = ({
   lpBalance,
   getLpBalance,
   pId,
+  refreshList,
 }) => {
   const [amountStake, setAmountStake] = useState(0);
   const [amountUnstake, setAmountUnStake] = useState(0);
@@ -49,12 +50,12 @@ const FarmingTab = ({
 
   const onFinishStake = async () => {
     saveToStorage();
-    await Promise.all([refreshStakedBalance(), getLpBalance()]);
+    await Promise.all([refreshStakedBalance(), getLpBalance(), refreshList()]);
     setAmountStake(0);
     toast("Stake successfully!");
   };
   const onFinishUnStake = async () => {
-    await Promise.all([getLpBalance(), refreshStakedBalance()]);
+    await Promise.all([getLpBalance(), refreshStakedBalance(), refreshList()]);
     if (new BigNumber(stakedBalance).isZero()) {
       removeStakeInfoFromStorage();
     }

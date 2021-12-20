@@ -258,6 +258,7 @@ const ZapTab = ({
       setSelectedTokens(data);
     } else {
       setToTokensZapOut(data);
+      averageRatio(selectedTokens[0].amount);
     }
   };
 
@@ -277,6 +278,7 @@ const ZapTab = ({
         newData.splice(index, 1);
         return [...newData];
       });
+    averageRatio(selectedTokens[0].amount);
   };
 
   const onOpenSelectToken = (index) => {
