@@ -44,7 +44,7 @@ const SubmitButton = ({
       onClick={() => !loading && onClick()}
     >
       {loading ? `${labelLoading}` : label}
-      {loading && <AiOutlineLoading />}
+      {loading ? <AiOutlineLoading /> : ""}
     </ButtonAction>
   );
 };

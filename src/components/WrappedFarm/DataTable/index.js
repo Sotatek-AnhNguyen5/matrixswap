@@ -42,7 +42,7 @@ const FlexRowHeader = styled(FlexRow)`
 `;
 
 const HeaderItem = styled.div`
-  padding: 0 20px;
+  padding: 0 10px;
   text-align: center;
   font-size: 16px;
 `;
@@ -103,7 +103,7 @@ const DataTable = ({ data, setData, filterKey, refetchVolume }) => {
   return (
     <Table>
       <FlexRowHeader>
-        <HeaderItem style={{ width: "20%" }} />
+        <HeaderItem style={{ width: "25%" }} />
         <HeaderItem style={{ width: "10%" }}>
           {renderLabelWithSort("apr", "APR")}
         </HeaderItem>

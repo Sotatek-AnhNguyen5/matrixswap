@@ -62,19 +62,6 @@ const WrappedFarm = ({ refetchVolume }) => {
       !isEmpty(quickSwapFarms)
     ) {
       const newData = [...apeSwapFarms, ...sushiFarms, ...quickSwapFarms];
-      const expiredTime = sessionStorage.getItem("farmTvlExpiredTime");
-      if (moment().isAfter(expiredTime) || !expiredTime) {
-        const expiredTime = moment().add(10, "minutes");
-        const listTVL = newData.map((e) => {
-          return {
-            farmAddress: e.rewardAddress,
-            tvl: e.tvl,
-          };
-        });
-        sessionStorage.setItem("farmTVL", JSON.stringify(listTVL));
-        sessionStorage.setItem("farmTvlExpiredTime", expiredTime);
-      }
-
       setData((old) => newData);
     }
   }, [apeSwapFarms, sushiFarms, quickSwapFarms]);

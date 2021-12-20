@@ -74,9 +74,10 @@ const FlexRowData = styled.div`
 
 const DataItem = styled.div`
   text-align: center;
-  padding: 20px;
+  padding: 20px 10px;
   font-family: ${(props) =>
     props.isNumber ? "ChakraPetch, sans-serif" : "Ocr-A, serif"};
+  white-space: nowrap;
 `;
 
 const GrayColumn = styled.div`
@@ -224,7 +225,7 @@ const TableRecord = ({
           onClick={() => setIsSelected((value) => !value)}
           className="data-wrapper"
         >
-          <DataItem style={{ width: "20%" }}>
+          <DataItem style={{ width: "25%" }}>
             <div className="wrapped-token-logo">
               <TokenLogo
                 style={{ width: "40px", height: "40px", marginRight: "10px" }}
