@@ -243,9 +243,12 @@ const ZapTab = ({
   const onAddTokens = () => {
     if (isZapIn) {
       setSelectedTokens((old) => [...old, {}]);
+      setSelectedTokenModal(selectedTokens.length);
     } else {
       setToTokensZapOut((old) => [...old, {}]);
+      setSelectedTokenModal(toTokensZapOut.length);
     }
+    setOpenSelectToken(true);
   };
 
   const onSelectedToken = (token) => {

@@ -14,6 +14,7 @@ import { removeStakeInfoFromStorage } from "../../utils";
 import StakeCard from "./StakeCard";
 import { ActiveButton } from "../../theme/components";
 import UnstakeCard from "./UnstakeCard";
+import { useWeb3React } from "@web3-react/core";
 
 const ButtonWrapper = styled.div`
   margin-top: 20px;
@@ -41,6 +42,7 @@ const FarmingTab = ({
   pId,
   refreshList,
 }) => {
+  const { account } = useWeb3React();
   const [amountStake, setAmountStake] = useState(0);
   const [amountUnstake, setAmountUnStake] = useState(0);
   const [approve, loadingApprove, allowance] = useApproveCallBack(
@@ -124,7 +126,7 @@ const FarmingTab = ({
       <ButtonWrapper>
         {new BigNumber(allowance).isZero() ? (
           <ActiveButton
-            label={"approve"}
+            label={!account ? "No wallet connected" : "approve"}
             loading={loadingApprove}
             labelLoading={"approving"}
             onClick={approve}

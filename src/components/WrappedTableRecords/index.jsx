@@ -216,7 +216,7 @@ const TableRecord = ({
 
   useEffect(() => {
     forceCheck();
-  }, []);
+  }, [filterKey, isShow]);
 
   return (
     <>

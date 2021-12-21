@@ -42,11 +42,15 @@ const useCheckZapToken = (tokenCheck, token0, token1, farmType) => {
 
     const zapContract = new library.eth.Contract(ZAPABI.abi, ADDRESS_ZAP);
     const hashType = PROTOCOL_FUNCTION[farmType].fullnameHash;
-    const hashPair0 = hashSha3Tokens(tokenCheck.address, token0.address);
-    const hashPair1 = hashSha3Tokens(tokenCheck.address, token1.address);
+    // const hashPair0 = hashSha3Tokens(tokenCheck.address, token0.address);
+    // const hashPair1 = hashSha3Tokens(tokenCheck.address, token1.address);
     const [internateToken0, internateToken1] = await Promise.all([
-      zapContract.methods.getIntermediateToken(hashType, hashPair0).call(),
-      zapContract.methods.getIntermediateToken(hashType, hashPair1).call(),
+      zapContract.methods
+        .getIntermediateToken(hashType, tokenCheck.address, token0.address)
+        .call(),
+      zapContract.methods
+        .getIntermediateToken(hashType, tokenCheck.address, token1.address)
+        .call(),
     ]);
 
     if (isValidAddress(internateToken0) || isValidAddress(internateToken1)) {

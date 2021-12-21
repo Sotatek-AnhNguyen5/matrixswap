@@ -49,7 +49,7 @@ export const convertLPtoUSDT = async (
   library
 ) => {
   if (new BigNumber(amount).isZero()) {
-    return 0;
+    return "0";
   }
   let [pairAddress1, pairAddress2] = await Promise.all([
     factoryContract.methods
