@@ -142,7 +142,7 @@ const FromTokenCard = ({
     !isZapIn && refreshRatio(e);
     const amountToPercent = new BigNumber(e || 0).div(balance).times(100);
     setPercent(
-      amountToPercent.toFixed(0) === "Infinity"
+      amountToPercent.toFixed(0) === "Infinity" || amountToPercent.isNaN()
         ? "0"
         : amountToPercent.toFixed(0)
     );

@@ -52,12 +52,12 @@ const FarmingTab = ({
 
   const onFinishStake = async () => {
     saveToStorage();
-    await Promise.all([refreshStakedBalance(), getLpBalance(), refreshList()]);
+    await Promise.all([refreshStakedBalance(), getLpBalance()]);
     setAmountStake(0);
     toast("Stake successfully!");
   };
   const onFinishUnStake = async () => {
-    await Promise.all([getLpBalance(), refreshStakedBalance(), refreshList()]);
+    await Promise.all([getLpBalance(), refreshStakedBalance()]);
     if (new BigNumber(stakedBalance).isZero()) {
       removeStakeInfoFromStorage();
     }
@@ -82,10 +82,11 @@ const FarmingTab = ({
 
   const saveToStorage = () => {
     const stakeInfo = JSON.parse(localStorage.getItem("stakeInfo")) || [];
-    const farmInfo = find(stakeInfo, { farmAddress });
+    const farmInfo = find(stakeInfo, { farmAddress, pId });
     if (isEmpty(farmInfo)) {
       const farm = {
         farmAddress,
+        pId,
         startDate: moment().format(),
       };
       stakeInfo.push(farm);

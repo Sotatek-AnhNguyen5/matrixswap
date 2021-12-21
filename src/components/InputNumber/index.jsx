@@ -4,6 +4,7 @@ import {
   isNotValidASCIINumber,
   isPreventASCIICharacters,
 } from "../../utils/input";
+import BigNumber from "bignumber.js";
 
 const InputWrapper = styled.div`
   width: 100%;
@@ -41,11 +42,16 @@ const InputNumber = ({ color, inputRef, onChange, disabled, value }) => {
         onKeyPress={(e) =>
           isPreventASCIICharacters(e.key) && e.preventDefault()
         }
-        onChange={(e) => onChange(e.target.value)}
+        onChange={(e) => {
+          if (new BigNumber(e.target.value).isPositive() || !e.target.value) {
+            onChange(e.target.value);
+          }
+        }}
         ref={inputRef}
         type="number"
         disabled={disabled}
         value={value}
+        min="0"
       />
     </InputWrapper>
   );

@@ -46,7 +46,7 @@ const useLPtoUSDT = (lpToken, amount, type) => {
         .times(tokenRate)
         .times(2);
 
-      setValue(totalSupplyUsdt.toFixed(6));
+      setValue(totalSupplyUsdt.toFixed());
       return;
     }
 
@@ -75,7 +75,7 @@ const useLPtoUSDT = (lpToken, amount, type) => {
         usedToken
       );
       setValue(
-        totalSupplyToUSDT.times(2).div(new BigNumber(10).pow(6)).toFixed(6)
+        totalSupplyToUSDT.times(2).div(new BigNumber(10).pow(6)).toFixed()
       );
     }
   };

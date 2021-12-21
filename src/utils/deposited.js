@@ -80,7 +80,7 @@ export const convertLPtoUSDT = async (
       .times(tokenRate)
       .times(2);
 
-    return totalSupplyUsdt.toFixed(6);
+    return totalSupplyUsdt.toFixed();
   }
 
   let [pair0, pair1] = await Promise.all([
@@ -106,6 +106,6 @@ export const convertLPtoUSDT = async (
       library,
       usedToken
     );
-    return totalSupplyToUSDT.times(2).div(new BigNumber(10).pow(6)).toFixed(6);
+    return totalSupplyToUSDT.times(2).div(new BigNumber(10).pow(6)).toFixed();
   }
 };
