@@ -4,6 +4,7 @@ import { ActiveButton, FlexRow } from "../../theme/components";
 import TokenLogo from "../TokenLogo";
 import { useMemo, useState } from "react";
 import BigNumber from "bignumber.js";
+import { formatCurrency } from "../../utils";
 
 const customStyles = {
   content: {
@@ -135,6 +136,7 @@ const ConfirmZap = ({
   zapLoading,
   isZapIn,
   toTokensZapOut,
+  totalTxCost,
 }) => {
   const closeModal = () => setIsModalOpen(false);
   const [isRevert, setIsRevert] = useState(false);
@@ -293,7 +295,7 @@ const ConfirmZap = ({
         </FlexRow>
         <FlexRow marginTop="20px">
           <GrayText>Transaction Cost</GrayText>
-          <GrayRightText>0 WATIC</GrayRightText>
+          <GrayRightText>{formatCurrency(totalTxCost, 8)} WATIC</GrayRightText>
         </FlexRow>
         <ActiveButton
           marginTop="40px"

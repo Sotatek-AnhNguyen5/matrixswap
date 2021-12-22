@@ -31,6 +31,11 @@ const AddTokenButton = styled(StyledButton)`
   margin-top: 40px;
   border: 2px dashed rgba(62, 224, 70, 0.6);
   background: transparent;
+  opacity: 0.6;
+  &:hover {
+    opacity: 1;
+    background: transparent;
+  }
 `;
 
 const ExchangeWrapper = styled.div`
@@ -326,6 +331,19 @@ const ZapTab = ({
     return total.toFixed();
   }, [selectedTokens]);
 
+  const totalTxCost = useMemo(() => {
+    let total = new BigNumber(0);
+    selectedTokens
+      .filter((e) => e.txCost)
+      .forEach((e) => (total = total.plus(e.txCost)));
+    if (!isZapIn) {
+      toTokensZapOut
+        .filter((e) => e.txCost)
+        .forEach((e) => (total = total.plus(e.txCost)));
+    }
+    return total.toFixed();
+  }, [selectedTokens, toTokensZapOut, isZapIn]);
+
   useEffect(() => {
     zapLoading && setIsOpenTxStatusModal(true);
   }, [zapLoading]);
@@ -450,6 +468,7 @@ const ZapTab = ({
         estimateOutput={totalEstimateOutput}
         isZapIn={isZapIn}
         toTokensZapOut={toTokensZapOut}
+        totalTxCost={totalTxCost}
       />
       <TransactionStatusModal
         isModalOpen={isOpenTxStatusModal}

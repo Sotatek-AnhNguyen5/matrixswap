@@ -55,14 +55,6 @@ export const WhiteLabelText = styled.div`
 
 export const StyledButton = styled.button`
   cursor: pointer;
-
-  &:hover {
-    filter: brightness(100);
-  }
-
-  &:active {
-    filter: brightness(100);
-  }
 `;
 
 export const ActiveButton = styled(SubmitButton)`
@@ -91,5 +83,6 @@ export const BalanceLine = styled.div`
 
   span {
     cursor: pointer;
+    font-family: ${props => props.isNumber ? "ChakraPetch, sans-serif" : "Ocr-A, serif"};
   }
 `;

@@ -3,11 +3,50 @@ import {
   QUICKSWAP_FACTORY_ADDRESS,
   USDT_ADDRESS,
   WETH_ADDRESS,
+  WMATIC_TOKEN,
 } from "../const";
 import QuickSwapPair from "../abi/QuickSwapPair.json";
 import BigNumber from "bignumber.js";
 import { isValidAddress } from "./index";
-import { convertToUSD } from "./apr";
+
+export const tokenToWMATIC = async (
+  amount,
+  library,
+  token,
+  factoryContract
+) => {
+  if (token.address.toLowerCase() === WMATIC_TOKEN.address.toLowerCase()) {
+    return amount;
+  }
+  const pairWMATIC = await factoryContract.methods
+    .getPair(WMATIC_TOKEN.address, token.address)
+    .call();
+
+  const pairContract = new library.eth.Contract(QuickSwapPair, pairWMATIC);
+
+  const [token0, reserves] = await Promise.all([
+    pairContract.methods.token0().call(),
+    pairContract.methods.getReserves().call(),
+  ]);
+
+  const tokenRate =
+    token0.toLowerCase() === WMATIC_TOKEN.address.toLowerCase()
+      ? new BigNumber(
+          new BigNumber(reserves._reserve0).div(new BigNumber(10).pow(18))
+        ).div(
+          new BigNumber(reserves._reserve1).div(
+            new BigNumber(10).pow(token.decimals)
+          )
+        )
+      : new BigNumber(
+          new BigNumber(reserves._reserve1).div(new BigNumber(10).pow(18))
+        ).div(
+          new BigNumber(reserves._reserve0).div(
+            new BigNumber(10).pow(token.decimals)
+          )
+        );
+  return new BigNumber(amount).times(tokenRate);
+};
 
 export const tokenToWeth = async (amount, library, token) => {
   const factoryContract = new library.eth.Contract(
@@ -124,27 +163,4 @@ export const calculateTVL = async (
     console.log(e);
     return 0;
   }
-};
-
-export const calculateTVLCurve = async (
-  library,
-  depositToken,
-  farmAddress,
-  quickswapFactory
-) => {
-  const tokenContract = new library.eth.Contract(
-    QuickSwapPair,
-    depositToken.address
-  );
-  const tvl = await tokenContract.methods.balanceOf(farmAddress);
-  const usdtValue = await convertToUSD(
-    new BigNumber(tvl).div(
-      new BigNumber(10).pow(depositToken.decimals).toFixed()
-    ),
-    depositToken.decimals,
-    library,
-    depositToken.address,
-    quickswapFactory
-  );
-  return usdtValue;
 };

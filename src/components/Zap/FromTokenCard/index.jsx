@@ -20,6 +20,8 @@ import {
   TokenCard,
   WrappedStyledImage,
 } from "../../../theme/TokenCard";
+import { formatCurrency } from "../../../utils";
+import useTransactionCost from "../../../hooks/useTransactionCost";
 
 const TokenLogoWrapper = styled.div`
   background: rgba(1, 3, 4, 0.2);
@@ -91,6 +93,15 @@ const FromTokenCard = ({
     isZapIn,
     lpToken
   );
+
+  const txCost = useTransactionCost(
+    token,
+    lpToken,
+    isZapIn,
+    token.amount,
+    farmType
+  );
+
   const [balance, refreshBalance] = useTokenBalance(
     token.address,
     token.decimals
@@ -159,6 +170,7 @@ const FromTokenCard = ({
       newData[index].insufficientBalance = insufficientBalance;
       newData[index].isZapAble = isZapAble;
       newData[index].refreshBalance = refreshBalance;
+      newData[index].txCost = txCost;
       return [...newData];
     });
   }, [
@@ -169,6 +181,7 @@ const FromTokenCard = ({
     insufficientBalance,
     isZapAble,
     refreshBalance,
+    txCost,
   ]);
 
   return (
@@ -201,12 +214,12 @@ const FromTokenCard = ({
         </FlexRow>
         <div style={{ width: "100%" }}>
           <FlexRow justify="flex-start" marginTop="10px">
-            <BalanceLine danger={insufficientBalance}>
+            <BalanceLine isNumber danger={insufficientBalance}>
               Balance - <span onClick={() => setAmount(balance)}>MAX</span>
             </BalanceLine>
           </FlexRow>
           <FlexRow justify="flex-start">
-            <BalanceLine danger={insufficientBalance}>
+            <BalanceLine isNumber danger={insufficientBalance}>
               {balance} {token.symbol}
             </BalanceLine>
           </FlexRow>
@@ -224,13 +237,13 @@ const FromTokenCard = ({
           <Slider
             min={0}
             onChange={(e) => onChangeRangePercent(e)}
-            defaultValue={percent}
+            value={percent}
             marks={{ 0: "", 25: "", 50: "", 75: "", 100: "" }}
             step={1}
           />
         </SliderInputWrapper>
         <FlexRow height="38px" justify="flex-end">
-          <BalanceLine isNumber>= $ {usdtValue}</BalanceLine>
+          <BalanceLine isNumber>= $ {formatCurrency(usdtValue)}</BalanceLine>
         </FlexRow>
       </SliderWrapper>
     </TokenCard>

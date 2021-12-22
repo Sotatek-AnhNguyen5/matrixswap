@@ -67,7 +67,8 @@ const BorderColor = styled.div`
 `;
 export const BalanceValue = styled.div`
   font-size: 14px;
-  color: ${(props) => props.theme.colorGray}
+  color: ${(props) => props.theme.colorGray};
+  font-family: ${props => props.isNumber ? "ChakraPetch, sans-serif" : "Ocr-A, serif"};
 `;
 
 const ToLpCard = ({ symbol0, symbol1, lpBalance, estimateOutput }) => {
@@ -92,10 +93,10 @@ const ToLpCard = ({ symbol0, symbol1, lpBalance, estimateOutput }) => {
         </FlexRow>
         <div style={{ width: "100%" }}>
           <FlexRow justify="flex-start" marginTop="10px">
-            <BalanceValue>Balance</BalanceValue>
+            <BalanceValue isNumber>Balance</BalanceValue>
           </FlexRow>
           <FlexRow justify="flex-start">
-            <BalanceValue>{lpBalance} LP</BalanceValue>
+            <BalanceValue isNumber>{lpBalance} LP</BalanceValue>
           </FlexRow>
         </div>
       </SelectTokenWrapper>

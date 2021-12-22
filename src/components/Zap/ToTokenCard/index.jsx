@@ -18,6 +18,8 @@ import {
   TokenLogoWrapper,
   WrappedStyledImage,
 } from "../../../theme/TokenCard";
+import { formatCurrency } from "../../../utils";
+import useConvertToWMATIC from "../../../hooks/useConvertToWmatic";
 
 const LogoBorder = styled.div`
   background: rgba(1, 3, 4, 0.2);
@@ -70,6 +72,7 @@ const ToTokenCard = ({
   lpToken,
 }) => {
   const usdtValue = useConvertToUSDT(token.amount, token, farmType);
+  const txCost = useConvertToWMATIC(token.amount, token, farmType);
   const [balance, refreshBalance] = useTokenBalance(
     token.address,
     token.decimals
@@ -118,9 +121,10 @@ const ToTokenCard = ({
       newData[index].estimateValue = estimateValue;
       newData[index].isZapAble = isZapAble;
       newData[index].refreshBalance = refreshBalance;
+      newData[index].txCost = txCost;
       return [...newData];
     });
-  }, [usdtValue, estimateValue, isZapAble, refreshBalance]);
+  }, [usdtValue, estimateValue, isZapAble, refreshBalance, txCost]);
 
   return (
     <TokenCard>
@@ -141,10 +145,10 @@ const ToTokenCard = ({
         </FlexRow>
         <div style={{ width: "100%" }}>
           <FlexRow justify="flex-start" marginTop="10px">
-            <BalanceLine2>Balance</BalanceLine2>
+            <BalanceLine2 isNumber>Balance</BalanceLine2>
           </FlexRow>
           <FlexRow justify="flex-start">
-            <BalanceLine2>
+            <BalanceLine2 isNumber>
               {balance} {token.symbol}
             </BalanceLine2>
           </FlexRow>
@@ -162,7 +166,7 @@ const ToTokenCard = ({
         </SliderInputWrapper2>
         <FlexRow height="38px" justify="flex-end">
           <BalanceLine2 isNumber>
-            = {estimateValue} {token.symbol}
+            = {formatCurrency(estimateValue)} {token.symbol}
           </BalanceLine2>
         </FlexRow>
       </SliderWrapper>

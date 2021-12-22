@@ -16,10 +16,15 @@ const ButtonAction = styled.button`
   font-weight: 600;
   font-size: 16px;
   color: white;
+
   svg {
     @keyframes spin {
-      0% { transform: rotate(0deg); }
-      100% { transform: rotate(360deg); }
+      0% {
+        transform: rotate(0deg);
+      }
+      100% {
+        transform: rotate(360deg);
+      }
     }
     margin-left: 20px;
     animation: spin 2s linear infinite;
@@ -41,7 +46,7 @@ const SubmitButton = ({
       style={style}
       disabled={disabled}
       loading={loading}
-      onClick={() => !loading && onClick()}
+      onClick={() => (!loading ? onClick() : undefined)}
     >
       {loading ? `${labelLoading}` : label}
       {loading ? <AiOutlineLoading /> : ""}

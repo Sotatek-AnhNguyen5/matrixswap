@@ -151,7 +151,7 @@ const UnstakeCard = ({
             <Slider
               min={0}
               onChange={(e) => onChangeRangePercent(e)}
-              defaultValue={percent}
+              value={percent}
               marks={{ 0: "", 25: "", 50: "", 75: "", 100: "" }}
               step={1}
             />
