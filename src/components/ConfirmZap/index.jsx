@@ -101,6 +101,11 @@ const GrayText = styled.div`
   margin-right: auto;
 `;
 
+const NumberSpan = styled.span`
+  font-family: ChakraPetch, sans-serif;
+  font-size: 14px;
+`
+
 const GrayRightText = styled.div`
   display: flex;
   text-align: right;
@@ -156,18 +161,18 @@ const ConfirmZap = ({
         .div(element.amount)
         .toFixed(8);
       return (
-        <span key={element.address}>
+        <NumberSpan key={element.address}>
           1 {element.symbol} - {rate} {lpTokenLabel}
-        </span>
+        </NumberSpan>
       );
     } else {
       const rate = new BigNumber(element.amount)
         .div(element.estimateOutput)
         .toFixed(8);
       return (
-        <span key={element.address}>
+        <NumberSpan key={element.address}>
           1 {lpTokenLabel} - {rate} {element.symbol}
-        </span>
+        </NumberSpan>
       );
     }
   };
@@ -178,18 +183,18 @@ const ConfirmZap = ({
         .div(element.estimateValue)
         .toFixed(8);
       return (
-        <span key={element.address}>
+        <NumberSpan key={element.address}>
           1 {element.symbol} - {rate} {lpTokenLabel}
-        </span>
+        </NumberSpan>
       );
     } else {
       const rate = new BigNumber(element.estimateValue)
         .div(element.amount)
         .toFixed(8);
       return (
-        <span key={element.address}>
+        <NumberSpan key={element.address}>
           1 {lpTokenLabel} - {rate} {element.symbol}
-        </span>
+        </NumberSpan>
       );
     }
   };
@@ -197,6 +202,8 @@ const ConfirmZap = ({
     <Modal
       isOpen={isModalOpen}
       onRequestClose={closeModal}
+      onAfterOpen={() => (document.body.style.overflow = "hidden")}
+      onAfterClose={() => (document.body.style.overflow = "unset")}
       style={customStyles}
       contentLabel="Select token"
       ariaHideApp={false}
@@ -295,7 +302,7 @@ const ConfirmZap = ({
         </FlexRow>
         <FlexRow marginTop="20px">
           <GrayText>Transaction Cost</GrayText>
-          <GrayRightText>{formatCurrency(totalTxCost, 8)} WATIC</GrayRightText>
+          <GrayRightText>{formatCurrency(totalTxCost, 8)} WMATIC</GrayRightText>
         </FlexRow>
         <ActiveButton
           marginTop="40px"

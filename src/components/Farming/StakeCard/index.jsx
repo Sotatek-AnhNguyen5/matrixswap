@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { BalanceLine, FlexRow } from "../../../theme/components";
+import { BalanceLine, FlexRow, MaxButton } from "../../../theme/components";
 import React, { useMemo, useState } from "react";
 import InputNumber from "../../InputNumber";
 import Slider from "rc-slider";
@@ -56,7 +56,7 @@ const SliderInputWrapper = styled.div`
   .input-wrapper {
     width: 100%;
   }
-  
+
   input {
     font-family: ChakraPetch, sans-serif;
     text-align: right;
@@ -122,7 +122,11 @@ const StakeCard = ({
     setAmountStake(value);
     if (lpBalance) {
       const newPercent = new BigNumber(value).div(lpBalance).times(100);
-      setPercent(newPercent.isNaN() ? "0" : newPercent.toFixed(0));
+      setPercent(
+        newPercent.toFixed(0) === "Infinity" || newPercent.isNaN()
+          ? "0"
+          : newPercent.toFixed(0)
+      );
     }
   };
 
@@ -134,10 +138,10 @@ const StakeCard = ({
           <BorderColor />
         </FlexRow>
         <FlexRow flexFlow="column" marginTop="10px" alignItems="start">
-          <BalanceLine danger={insuffBalance}>
-            Balance - <span onClick={onMax}>MAX</span>
+          <BalanceLine danger={insuffBalance}>Balance</BalanceLine>
+          <BalanceLine isNumber danger={insuffBalance}>
+            {lpBalance}
           </BalanceLine>
-          <BalanceLine isNumber danger={insuffBalance}>{lpBalance}</BalanceLine>
         </FlexRow>
       </LeftCard>
       <FlexRow width="50%">
@@ -155,6 +159,9 @@ const StakeCard = ({
               step={1}
             />
           </SliderInputWrapper>
+          <MaxButton marginTop="10px" isActive={isActive} onClick={onMax}>
+            MAX
+          </MaxButton>
         </SliderWrapper>
       </FlexRow>
     </TokenCard>

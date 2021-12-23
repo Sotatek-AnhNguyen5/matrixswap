@@ -1,5 +1,5 @@
 import styled from "styled-components";
-import { useMemo, useState } from "react";
+import { useEffect, useMemo, useState } from "react";
 import Modal from "react-modal";
 import DefaultToken from "../../json/defaultTokens.json";
 import { find, startsWith } from "lodash";
@@ -47,7 +47,6 @@ const TokenRow = styled.div`
   cursor: pointer;
   color: white;
 
-
   .token-item {
     box-sizing: border-box;
     border-radius: 6px;
@@ -57,9 +56,8 @@ const TokenRow = styled.div`
     justify-content: space-between;
     width: 100%;
     background-color: ${(props) =>
-            props.isSelected ? "#0f1a1c" : "transparent"};
-    cursor: ${(props) =>
-            props.isSelected ? "not-allowed" : "pointer"};
+      props.isSelected ? "#0f1a1c" : "transparent"};
+    cursor: ${(props) => (props.isSelected ? "not-allowed" : "pointer")};
 
     .token-logo {
       display: flex;
@@ -129,8 +127,7 @@ const CommonBaseItem = styled.div`
   opacity: 0.88;
   background-color: ${(props) =>
     props.isSelected ? "#0f1a1c" : props.theme.colorDarkerGray};
-  cursor: ${(props) =>
-          props.isSelected ? "not-allowed" : "pointer"};
+  cursor: ${(props) => (props.isSelected ? "not-allowed" : "pointer")};
   font-weight: 400;
   font-size: 24px;
 
@@ -199,6 +196,8 @@ const SelectTokenModal = ({
     <Modal
       isOpen={isModalOpen}
       onRequestClose={closeModal}
+      onAfterOpen={() => (document.body.style.overflow = "hidden")}
+      onAfterClose={() => (document.body.style.overflow = "unset")}
       style={customStyles}
       contentLabel="Select token"
       ariaHideApp={false}

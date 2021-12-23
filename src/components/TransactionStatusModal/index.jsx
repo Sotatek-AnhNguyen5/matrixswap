@@ -13,6 +13,9 @@ const WhiteTitle = styled(FlexRow)`
   font-size: 14px;
   box-sizing: border-box;
   color: #fff;
+  font-family: ${(props) =>
+    props.isNumber ? "ChakraPetch, sans-serif" : "Ocr-A, serif"};
+
   a {
     text-decoration: none;
     color: #fff;
@@ -26,7 +29,7 @@ const WhiteTitle = styled(FlexRow)`
 
 const ExtendMessage = styled(WhiteTitle)`
   max-width: 400px;
-`
+`;
 
 const StyledCheck = styled.img`
   width: 80px;
@@ -95,9 +98,11 @@ const TransactionStatusModal = ({
 
   const messageZapOut = useMemo(() => {
     let message = "";
-    toTokensZapOut.forEach((e) => message+= `${e.estimateValue} ${e.symbol} `)
+    toTokensZapOut.forEach(
+      (e) => (message += `${e.estimateValue} ${e.symbol} `)
+    );
     return message;
-  }, [toTokensZapOut])
+  }, [toTokensZapOut]);
 
   const ModalContent = useMemo(() => {
     if (status === STATUS_ZAP.waiting) {
@@ -111,13 +116,13 @@ const TransactionStatusModal = ({
           </ActiveTitle>
           {isZapIn ? (
             <>
-              <WhiteTitle justify="center" marginTop="20px">
+              <WhiteTitle isNumber justify="center" marginTop="20px">
                 Zapping tokens for {estimateOutput} LP
               </WhiteTitle>
             </>
           ) : (
             <>
-              <ExtendMessage justify="center" marginTop="20px">
+              <ExtendMessage isNumber justify="center" marginTop="20px">
                 Zapping LP for {messageZapOut}
               </ExtendMessage>
             </>
@@ -175,6 +180,8 @@ const TransactionStatusModal = ({
       style={customStyles}
       contentLabel="Select token"
       ariaHideApp={false}
+      onAfterOpen={() => (document.body.style.overflow = "hidden")}
+      onAfterClose={() => (document.body.style.overflow = "unset")}
     >
       {ModalContent}
     </Modal>

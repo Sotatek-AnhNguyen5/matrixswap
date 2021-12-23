@@ -135,7 +135,9 @@ const FarmingTab = ({
           />
         ) : (
           <ActiveButton
-            label={"stake"}
+            label={
+              isInsufficientBalanceStake ? "Insufficient balance" : "stake"
+            }
             loading={loadingStake}
             labelLoading={"staking"}
             onClick={stake}
@@ -158,7 +160,9 @@ const FarmingTab = ({
       />
       <ButtonWrapper isHide={!isActiveUnstake}>
         <ActiveButton
-          label={"Unstake"}
+          label={
+            inSufficientUnStakeBalance ? "Insufficient balance" : "Unstake"
+          }
           loading={loadingUnstake}
           labelLoading={"Unstaking"}
           onClick={unStakeCallBack}

@@ -32,6 +32,7 @@ const AddTokenButton = styled(StyledButton)`
   border: 2px dashed rgba(62, 224, 70, 0.6);
   background: transparent;
   opacity: 0.6;
+
   &:hover {
     opacity: 1;
     background: transparent;
@@ -271,21 +272,19 @@ const ZapTab = ({
   };
 
   const removeFromList = (index) => {
-    index !== 0 &&
-      setSelectedTokens((old) => {
-        const newData = [...old];
-        newData.splice(index, 1);
-        return [...newData];
-      });
+    setSelectedTokens((old) => {
+      const newData = [...old];
+      newData.splice(index, 1);
+      return [...newData];
+    });
   };
 
   const removeFromListToTokens = (index) => {
-    index !== 0 &&
-      setToTokensZapOut((old) => {
-        const newData = [...old];
-        newData.splice(index, 1);
-        return [...newData];
-      });
+    setToTokensZapOut((old) => {
+      const newData = [...old];
+      newData.splice(index, 1);
+      return [...newData];
+    });
     averageRatio(selectedTokens[0].amount);
   };
 
@@ -351,12 +350,18 @@ const ZapTab = ({
   const averageRatio = (amount) => {
     setToTokensZapOut((old) => {
       const ratio = new BigNumber(100).div(old.length).toFixed(0);
+      let remainder = 100 % old.length;
       const newData = old.map((e) => {
         const newAmount = new BigNumber(amount || 0)
           .times(ratio)
           .div(100)
           .toFixed();
-        e.ratio = ratio;
+        if (remainder > 0) {
+          e.ratio = new BigNumber(ratio).plus(1).toFixed(0);
+          remainder--;
+        } else {
+          e.ratio = ratio;
+        }
         e.amount = newAmount;
         return e;
       });
@@ -382,6 +387,7 @@ const ZapTab = ({
             isZapIn={isZapIn}
             symbol0={symbol0}
             symbol1={symbol1}
+            selectedTokens={selectedTokens}
           />
         );
       })}

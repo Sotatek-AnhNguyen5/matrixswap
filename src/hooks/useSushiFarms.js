@@ -65,6 +65,8 @@ const useSushiFarms = () => {
         apr: listAPR[index],
         deposited: listDeposited[index],
         lpBalance: listLpBalance[index],
+        symbol0: listLpToken[index].token0.symbol,
+        symbol1: listLpToken[index].token1.symbol,
         rewardAddress: item.miniChef.id,
         poolIndex: item.id,
         rewardTokenAddress: item.rewarder.rewardToken,

@@ -48,6 +48,18 @@ const BlackLine = styled.div`
   margin-bottom: 40px;
 `;
 
+const sortAlpha = (a, b) => {
+  const labela = `${a.symbol0} - ${a.symbol1}`;
+  const labelb = `${b.symbol0} - ${a.symbol1}`;
+  if (labela < labelb) {
+    return 1;
+  }
+  if (labela > labelb) {
+    return -1;
+  }
+  return 0;
+};
+
 const WrappedFarm = ({ refetchVolume }) => {
   const [filterKey, setFilterKey] = useState([]);
   const [data, setData] = useState([]);
@@ -61,7 +73,10 @@ const WrappedFarm = ({ refetchVolume }) => {
       !isEmpty(sushiFarms) &&
       !isEmpty(quickSwapFarms)
     ) {
-      const newData = [...apeSwapFarms, ...sushiFarms, ...quickSwapFarms];
+      const newData = [...apeSwapFarms, ...sushiFarms, ...quickSwapFarms].sort(
+        sortAlpha
+      );
+
       setData((old) => newData);
     }
   }, [apeSwapFarms, sushiFarms, quickSwapFarms]);

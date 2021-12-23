@@ -82,6 +82,8 @@ const useQuickSwapFarms = () => {
         lpToken: listLpToken[index],
         tvl: listTVL[index],
         apr: listAPR[index],
+        symbol0: listLpToken[index].token0.symbol,
+        symbol1: listLpToken[index].token1.symbol,
         deposited: listDeposited[index],
         lpBalance: listLpBalance[index],
         rewardAddress: item.stakingRewards,

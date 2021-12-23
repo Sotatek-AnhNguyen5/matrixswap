@@ -1,7 +1,13 @@
 import styled from "styled-components";
 import TokenLogo from "../../TokenLogo";
-import { BalanceLine, FlexRow } from "../../../theme/components";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import { BalanceLine, FlexRow, MaxButton } from "../../../theme/components";
+import React, {
+  useCallback,
+  useEffect,
+  useMemo,
+  useRef,
+  useState,
+} from "react";
 import Slider from "rc-slider";
 import BigNumber from "bignumber.js";
 import InputNumber from "../../InputNumber";
@@ -84,6 +90,7 @@ const FromTokenCard = ({
   refreshRatio,
   symbol0,
   symbol1,
+  selectedTokens,
 }) => {
   const [percent, setPercent] = useState("0");
   const usdtValue = useConvertToUSDT(
@@ -135,6 +142,15 @@ const FromTokenCard = ({
   const insufficientBalance = useMemo(() => {
     return new BigNumber(token.amount).gt(balance);
   }, [token.amount, balance]);
+
+  const isCloseAble = useMemo(() => {
+    return selectedTokens.length >= 2;
+  }, [selectedTokens]);
+
+  const onMaxButton = useCallback(() => {
+    setAmount(balance);
+    setPercent("100");
+  }, [balance]);
 
   const onChangeRangePercent = (percentAmount) => {
     setPercent(percentAmount);
@@ -204,18 +220,23 @@ const FromTokenCard = ({
       </TokenLogoWrapper>
       <SelectTokenWrapper>
         <FlexRow justify="flex-start">
-          <SelectTokenButton onClick={isZapIn && openSelectToken}>
+          <SelectTokenButton
+            isCloseAble={isCloseAble}
+            onClick={isZapIn && openSelectToken}
+          >
             {token.symbol}
           </SelectTokenButton>
-          <WrappedStyledImage onClick={removeSelf}>
-            <img alt="" src="./images/icons/close.png" />
-          </WrappedStyledImage>
+          {isCloseAble && (
+            <WrappedStyledImage onClick={removeSelf}>
+              <img alt="" src="./images/icons/close.png" />
+            </WrappedStyledImage>
+          )}
           <BorderColor />
         </FlexRow>
         <div style={{ width: "100%" }}>
           <FlexRow justify="flex-start" marginTop="10px">
             <BalanceLine isNumber danger={insufficientBalance}>
-              Balance - <span onClick={() => setAmount(balance)}>MAX</span>
+              Balance
             </BalanceLine>
           </FlexRow>
           <FlexRow justify="flex-start">
@@ -242,7 +263,8 @@ const FromTokenCard = ({
             step={1}
           />
         </SliderInputWrapper>
-        <FlexRow height="38px" justify="flex-end">
+        <FlexRow justify="flex-end">
+          <MaxButton marginTop="10px" isActive onClick={onMaxButton}>MAX</MaxButton>
           <BalanceLine isNumber>= $ {formatCurrency(usdtValue)}</BalanceLine>
         </FlexRow>
       </SliderWrapper>

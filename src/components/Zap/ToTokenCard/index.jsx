@@ -85,6 +85,10 @@ const ToTokenCard = ({
     farmType
   );
 
+  const isCloseAble = useMemo(() => {
+    return toTokensZapOut.length >= 2;
+  }, [toTokensZapOut]);
+
   const estimateValue = useMemo(() => {
     return new BigNumber(1)
       .div(estimateOutput)
@@ -135,12 +139,14 @@ const ToTokenCard = ({
       </TokenLogoWrapper>
       <SelectTokenWrapper>
         <FlexRow justify="flex-start">
-          <SelectTokenButton onClick={openSelectToken}>
+          <SelectTokenButton isCloseAble={isCloseAble} onClick={openSelectToken}>
             {token.symbol}
           </SelectTokenButton>
-          <WrappedStyledImage onClick={removeSelf}>
-            <img alt="" src="./images/icons/close.png" />
-          </WrappedStyledImage>
+          {isCloseAble && (
+            <WrappedStyledImage onClick={removeSelf}>
+              <img alt="" src="./images/icons/close.png" />
+            </WrappedStyledImage>
+          )}
           <BorderColor />
         </FlexRow>
         <div style={{ width: "100%" }}>

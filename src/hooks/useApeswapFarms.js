@@ -58,7 +58,14 @@ const useApeSwapFarms = () => {
     if (account) {
       listDeposited = await Promise.all(
         data.pools.map((item, index) =>
-          getDeposited(library, item.miniChef.id, item.id, account, factoryContract, listLpToken[index] )
+          getDeposited(
+            library,
+            item.miniChef.id,
+            item.id,
+            account,
+            factoryContract,
+            listLpToken[index]
+          )
         )
       );
 
@@ -74,11 +81,23 @@ const useApeSwapFarms = () => {
       } else if (item.id === ABR_USDC_POOL_INDEX) {
         rewardTokens = [BANANA_TOKEN, ABR_TOKEN];
       }
+
+      let symbol0, symbol1;
+      if (["WMATIC", "USDC"].indexOf(listLpToken[index].token0.symbol) !== -1) {
+        symbol0 = listLpToken[index].token1.symbol;
+        symbol1 = listLpToken[index].token0.symbol;
+      } else {
+        symbol0 = listLpToken[index].token0.symbol;
+        symbol1 = listLpToken[index].token1.symbol;
+      }
+
       return {
         ...item,
         lpToken: listLpToken[index],
         tvl: listTVL[index],
         apr: listAPR[index],
+        symbol0,
+        symbol1,
         deposited: listDeposited[index],
         lpBalance: listLpBalance[index],
         rewardAddress: item.miniChef.id,

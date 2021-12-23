@@ -5,7 +5,7 @@ export const ProtocolBadger = styled.div`
   display: flex;
   align-items: center;
   padding: 8px 10px;
-  background: ${props => props.isActive ? "#2a7b81" : "#182f32"};
+  background: ${(props) => (props.isActive ? "#2a7b81" : "#182f32")};
   border-radius: 71px;
   opacity: 0.88;
   font-size: 14px;
@@ -77,12 +77,38 @@ export const ActiveButton = styled(SubmitButton)`
 
 export const BalanceLine = styled.div`
   font-size: 14px;
-  font-family: ${props => props.isNumber ? "ChakraPetch, sans-serif" : "Ocr-A, serif"};
+  font-family: ${(props) =>
+    props.isNumber ? "ChakraPetch, sans-serif" : "Ocr-A, serif"};
   color: ${(props) =>
-  props.danger ? props.theme.colorDanger : "rgba(18, 70, 46, 0.6)"};
+    props.danger ? props.theme.colorDanger : "rgba(18, 70, 46, 0.6)"};
 
   span {
     cursor: pointer;
-    font-family: ${props => props.isNumber ? "ChakraPetch, sans-serif" : "Ocr-A, serif"};
+    font-family: ${(props) =>
+      props.isNumber ? "ChakraPetch, sans-serif" : "Ocr-A, serif"};
   }
+`;
+
+export const MaxButton = styled.button`
+  background: #38d740;
+  padding: 10px 15px;
+  font-size: 14px;
+  color: rgba(18, 70, 46, 0.6);
+  outline: 0;
+  border: 0;
+  box-shadow: 0px 6px 6px rgba(1, 3, 4, 0.1);
+  border-radius: 7px;
+  cursor: pointer;
+  opacity: 0.8;
+  margin-right: auto;
+  margin-top: ${props => props.marginTop ?? "0"};
+
+  &:hover {
+    opacity: 1;
+  }
+
+  background: ${(props) =>
+    props.isActive
+      ? "#38d740"
+      : "linear-gradient(90deg, #0A1C1F 0%, #0F2A2E 96.22%)"};
 `;

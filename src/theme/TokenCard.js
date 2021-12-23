@@ -48,7 +48,6 @@ export const InputSlideRow = styled.div`
     outline: 0;
     padding: 10px 20px;
   }
-
 `;
 
 export const SliderInputWrapper = styled.div`
@@ -89,10 +88,12 @@ export const WrappedStyledImage = styled.div`
   }
 `;
 
-
 export const TokenCard = styled.div`
   display: flex;
-  background: ${props => props.isActiveBg ? "linear-gradient(270deg, #3ee046 8.98%, #27bc2e 92.35%)" : "linear-gradient(90.04deg, #0a1c1f 0.96%, #0f2a2e 91.92%)"} ;
+  background: ${(props) =>
+    props.isActiveBg
+      ? "linear-gradient(270deg, #3ee046 8.98%, #27bc2e 92.35%)"
+      : "linear-gradient(90.04deg, #0a1c1f 0.96%, #0f2a2e 91.92%)"};
   border-radius: 26px;
   width: 100%;
   margin-top: 20px;
@@ -103,8 +104,7 @@ export const SelectTokenButton = styled.button`
   cursor: pointer;
   font-size: 16px;
   color: #fff;
-  border-bottom-left-radius: 16px;
-  border-top-left-radius: 16px;
+  border-radius: ${(props) => (props.isCloseAble ? "16px 0 0 16px" : "16px")};
   padding: 0 20px;
   width: 150px;
   height: 55px;
