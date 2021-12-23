@@ -2,14 +2,14 @@ import { useState, useEffect, useCallback } from "react";
 import { useWeb3React } from "@web3-react/core";
 import QuickSwapPair from "../abi/QuickSwapPair.json";
 import BigNumber from "bignumber.js";
-import { useFactoryContract } from "./useContract";
+import { useFactoryContract, useLibrary } from "./useContract";
 import { isValidAddress } from "../utils";
 import { debounce } from "lodash";
 
 const WETH_ADDRESS = "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619";
 
 const useEstimateOutput = (amountToken, token, lpToken, type) => {
-  const { library } = useWeb3React();
+  const library = useLibrary();
 
   const [value, setValue] = useState(0);
   const factoryContract = useFactoryContract(type);
@@ -162,8 +162,8 @@ const useEstimateOutput = (amountToken, token, lpToken, type) => {
   useEffect(() => {
     if (amountToken && token.address) {
       estimateOutput(lpToken, amountToken, token);
-    }else {
-      setValue(0)
+    } else {
+      setValue(0);
     }
   }, [lpToken, amountToken, token]);
 

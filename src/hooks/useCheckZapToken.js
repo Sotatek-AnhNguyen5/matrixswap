@@ -1,20 +1,13 @@
-import { useWeb3React } from "@web3-react/core";
 import { isEmpty } from "lodash";
 import { useEffect, useState } from "react";
-import QuickSwapFactoryABI from "../abi/quickswapFactoryABI.json";
 import ZAPABI from "../abi/ZapABI.json";
-import {
-  ADDRESS_ZAP,
-  PROTOCOL_FUNCTION,
-  QUICKSWAP_FACTORY_ADDRESS,
-  SUSHI_FACTORY_ADDRESS,
-} from "../const";
-import { hashSha3Tokens, isValidAddress } from "../utils";
-import { useFactoryContract } from "./useContract";
+import { ADDRESS_ZAP, PROTOCOL_FUNCTION } from "../const";
+import { isValidAddress } from "../utils";
+import { useFactoryContract, useLibrary } from "./useContract";
 
 const useCheckZapToken = (tokenCheck, token0, token1, farmType) => {
   const [zapAble, setZapAble] = useState(true);
-  const { library } = useWeb3React();
+  const library = useLibrary();
   const factoryContract = useFactoryContract(farmType);
 
   const checkData = async () => {

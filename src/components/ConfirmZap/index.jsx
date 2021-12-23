@@ -58,6 +58,8 @@ const TokenCard = styled(FlexRow)`
 `;
 
 const DoubleLogoWrapper = styled.div`
+  white-space: nowrap;
+
   img {
     &:first-of-type {
       position: relative;
@@ -104,7 +106,7 @@ const GrayText = styled.div`
 const NumberSpan = styled.span`
   font-family: ChakraPetch, sans-serif;
   font-size: 14px;
-`
+`;
 
 const GrayRightText = styled.div`
   display: flex;
@@ -162,7 +164,7 @@ const ConfirmZap = ({
         .toFixed(8);
       return (
         <NumberSpan key={element.address}>
-          1 {element.symbol} - {rate} {lpTokenLabel}
+          1 {element.symbol} = {rate} {lpTokenLabel}
         </NumberSpan>
       );
     } else {
@@ -171,7 +173,7 @@ const ConfirmZap = ({
         .toFixed(8);
       return (
         <NumberSpan key={element.address}>
-          1 {lpTokenLabel} - {rate} {element.symbol}
+          1 {lpTokenLabel} = {rate} {element.symbol}
         </NumberSpan>
       );
     }
@@ -184,7 +186,7 @@ const ConfirmZap = ({
         .toFixed(8);
       return (
         <NumberSpan key={element.address}>
-          1 {element.symbol} - {rate} {lpTokenLabel}
+          1 {element.symbol} = {rate} {lpTokenLabel}
         </NumberSpan>
       );
     } else {
@@ -193,7 +195,7 @@ const ConfirmZap = ({
         .toFixed(8);
       return (
         <NumberSpan key={element.address}>
-          1 {lpTokenLabel} - {rate} {element.symbol}
+          1 {lpTokenLabel} = {rate} {element.symbol}
         </NumberSpan>
       );
     }
@@ -223,7 +225,9 @@ const ConfirmZap = ({
                 </LeftTokenWrapper>
                 <RightTokenWrapper>
                   <SmallWhiteText isNumber>{e.amount}</SmallWhiteText>
-                  <SmallerGrayText>{e.usdtAmount} $</SmallerGrayText>
+                  <SmallerGrayText>
+                    {formatCurrency(e.usdtAmount, 2)} $
+                  </SmallerGrayText>
                 </RightTokenWrapper>
               </TokenCard>
             ))}
@@ -261,6 +265,9 @@ const ConfirmZap = ({
                 <SmallWhiteText isNumber>
                   {fromTokenList[0].amount}
                 </SmallWhiteText>
+                <SmallerGrayText>
+                  {formatCurrency(fromTokenList[0].usdtAmount, 2)} $
+                </SmallerGrayText>
               </RightTokenWrapper>
             </TokenCard>
             <FlexRow justify="center" marginTop="40px">
@@ -274,7 +281,9 @@ const ConfirmZap = ({
                 </LeftTokenWrapper>
                 <RightTokenWrapper>
                   <SmallWhiteText isNumber>{e.estimateValue}</SmallWhiteText>
-                  <SmallerGrayText isNumber>{e.usdtAmount} $</SmallerGrayText>
+                  <SmallerGrayText isNumber>
+                    {formatCurrency(e.usdtAmount, 2)} $
+                  </SmallerGrayText>
                 </RightTokenWrapper>
               </TokenCard>
             ))}

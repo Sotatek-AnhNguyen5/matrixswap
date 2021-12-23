@@ -1,11 +1,11 @@
 import styled from "styled-components";
 import { FaAngleDown, FaAngleRight } from "react-icons/fa";
-import React, {useState, useMemo, useEffect, useCallback} from "react";
+import React, { useState, useMemo, useEffect, useCallback } from "react";
 import useFarmUserInfo from "../../hooks/useFarmUserInfo";
 import { toast } from "react-toastify";
 import BigNumber from "bignumber.js";
 import { find, isEmpty, findIndex } from "lodash";
-import { convertDate, moneyFormatter } from "../../utils";
+import { convertDate, moneyFormatter, rewardFormat } from "../../utils";
 import ZapTab from "../Zap";
 import FarmingTab from "../Farming";
 import useGetRewardCallback from "../../hooks/useGetRewardCallback";
@@ -159,7 +159,7 @@ const TableRecord = ({
       farmList[indexFarm].deposited = stakedUSDT;
       return [...farmList];
     });
-  }, [stakedUSDT, setParentData])
+  }, [stakedUSDT, setParentData]);
 
   const [onGetReward, loadingGetReward] = useGetRewardCallback(
     farmAddress,
@@ -277,7 +277,7 @@ const TableRecord = ({
               <FlexRow justify="flex-start" marginTop="20px">
                 <GrayLabelText minWidth="200px">Reward</GrayLabelText>
                 <WhiteLabelText>
-                  {reward[0]} {rewardTokens[0].symbol}
+                  {rewardFormat(reward[0])} {rewardTokens[0].symbol}
                 </WhiteLabelText>
                 <ClaimButton
                   disabled={new BigNumber(reward[0]).isZero()}

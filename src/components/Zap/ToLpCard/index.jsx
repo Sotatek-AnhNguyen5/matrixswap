@@ -10,6 +10,7 @@ import {
   TokenCard,
 } from "../../../theme/TokenCard";
 import InputNumber from "../../InputNumber";
+import { formatBalance } from "../../../utils";
 
 const DoubleLogoWrapper = styled.div`
   width: 92px;
@@ -68,7 +69,8 @@ const BorderColor = styled.div`
 export const BalanceValue = styled.div`
   font-size: 14px;
   color: ${(props) => props.theme.colorGray};
-  font-family: ${props => props.isNumber ? "ChakraPetch, sans-serif" : "Ocr-A, serif"};
+  font-family: ${(props) =>
+    props.isNumber ? "ChakraPetch, sans-serif" : "Ocr-A, serif"};
 `;
 
 const ToLpCard = ({ symbol0, symbol1, lpBalance, estimateOutput }) => {
@@ -96,7 +98,7 @@ const ToLpCard = ({ symbol0, symbol1, lpBalance, estimateOutput }) => {
             <BalanceValue isNumber>Balance</BalanceValue>
           </FlexRow>
           <FlexRow justify="flex-start">
-            <BalanceValue isNumber>{lpBalance} LP</BalanceValue>
+            <BalanceValue isNumber>{formatBalance(lpBalance)} LP</BalanceValue>
           </FlexRow>
         </div>
       </SelectTokenWrapper>

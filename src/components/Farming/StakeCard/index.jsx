@@ -4,6 +4,8 @@ import React, { useMemo, useState } from "react";
 import InputNumber from "../../InputNumber";
 import Slider from "rc-slider";
 import BigNumber from "bignumber.js";
+import { useWeb3React } from "@web3-react/core";
+import { formatBalance, formatCurrency } from "../../../utils";
 
 const TokenCard = styled.div`
   display: flex;
@@ -67,6 +69,10 @@ const SliderInputWrapper = styled.div`
     border: 0;
     outline: 0;
     padding: 10px 20px;
+
+    &::placeholder {
+      color: rgba(255, 255, 255, 0.6);
+    }
   }
 
   .rc-slider {
@@ -101,8 +107,10 @@ const StakeCard = ({
   lpBalance,
   isActive,
   insuffBalance,
+  usdtValue,
 }) => {
   const [percent, setPercent] = useState("0");
+  const { account } = useWeb3React();
 
   const onChangeRangePercent = (percentAmount) => {
     setPercent(percentAmount);
@@ -137,31 +145,44 @@ const StakeCard = ({
           <FakeButton>{lpLabel}</FakeButton>
           <BorderColor />
         </FlexRow>
-        <FlexRow flexFlow="column" marginTop="10px" alignItems="start">
-          <BalanceLine danger={insuffBalance}>Balance</BalanceLine>
-          <BalanceLine isNumber danger={insuffBalance}>
-            {lpBalance}
-          </BalanceLine>
-        </FlexRow>
+        {account && (
+          <FlexRow flexFlow="column" marginTop="10px" alignItems="start">
+            <BalanceLine danger={insuffBalance}>Balance</BalanceLine>
+            <BalanceLine isNumber danger={insuffBalance}>
+              {formatBalance(lpBalance)}
+            </BalanceLine>
+          </FlexRow>
+        )}
       </LeftCard>
       <FlexRow width="50%">
         <SliderWrapper>
           <SliderInputWrapper>
             <InputSlideRow danger={insuffBalance}>
               <span>{percent} %</span>
-              <InputNumber value={amountStake} onChange={onChangeStake} />
+              <InputNumber
+                value={amountStake}
+                onChange={onChangeStake}
+                placeholder={"0.000000"}
+              />
             </InputSlideRow>
-            <Slider
-              min={0}
-              onChange={(e) => onChangeRangePercent(e)}
-              value={percent}
-              marks={{ 0: "", 25: "", 50: "", 75: "", 100: "" }}
-              step={1}
-            />
+            {account && (
+              <Slider
+                min={0}
+                onChange={(e) => onChangeRangePercent(e)}
+                value={percent}
+                marks={{ 0: "", 25: "", 50: "", 75: "", 100: "" }}
+                step={1}
+              />
+            )}
           </SliderInputWrapper>
-          <MaxButton marginTop="10px" isActive={isActive} onClick={onMax}>
-            MAX
-          </MaxButton>
+          <FlexRow justify="flex-end">
+            <MaxButton marginTop="10px" isActive={isActive} onClick={onMax}>
+              MAX
+            </MaxButton>
+            <BalanceLine isNumber>
+              = $ {formatCurrency(usdtValue, 2)}
+            </BalanceLine>
+          </FlexRow>
         </SliderWrapper>
       </FlexRow>
     </TokenCard>

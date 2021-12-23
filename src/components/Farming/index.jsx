@@ -15,6 +15,7 @@ import StakeCard from "./StakeCard";
 import { ActiveButton } from "../../theme/components";
 import UnstakeCard from "./UnstakeCard";
 import { useWeb3React } from "@web3-react/core";
+import useLPtoUSDT from "../../hooks/useTVL";
 
 const ButtonWrapper = styled.div`
   margin-top: 20px;
@@ -43,17 +44,27 @@ const FarmingTab = ({
   refreshList,
 }) => {
   const { account } = useWeb3React();
-  const [amountStake, setAmountStake] = useState(0);
-  const [amountUnstake, setAmountUnStake] = useState(0);
+  const [amountStake, setAmountStake] = useState("");
+  const [amountUnstake, setAmountUnStake] = useState("");
   const [approve, loadingApprove, allowance] = useApproveCallBack(
     lpToken.address,
     farmAddress
   );
 
+  const usdtRate = useLPtoUSDT(lpToken, 1, type);
+
+  const stakeUsdtAmount = useMemo(() => {
+    return new BigNumber(amountStake || 0).times(usdtRate).toFixed();
+  }, [amountStake, usdtRate]);
+
+  const unStakeUsdtAmount = useMemo(() => {
+    return new BigNumber(amountUnstake || 0).times(usdtRate).toFixed();
+  }, [amountUnstake, usdtRate]);
+
   const onFinishStake = async () => {
     saveToStorage();
     await Promise.all([refreshStakedBalance(), getLpBalance()]);
-    setAmountStake(0);
+    setAmountStake("");
     toast("Stake successfully!");
   };
   const onFinishUnStake = async () => {
@@ -62,7 +73,7 @@ const FarmingTab = ({
       removeStakeInfoFromStorage();
     }
     toast("Withdraw successfully!");
-    setAmountUnStake(0);
+    setAmountUnStake("");
   };
 
   const [stake, loadingStake] = useStakeCallback(
@@ -123,6 +134,7 @@ const FarmingTab = ({
         lpBalance={lpBalance}
         lpLabel={lpLabel}
         insuffBalance={isInsufficientBalanceStake}
+        usdtValue={stakeUsdtAmount}
       />
       <ButtonWrapper>
         {new BigNumber(allowance).isZero() ? (
@@ -157,6 +169,7 @@ const FarmingTab = ({
         amountUnstake={amountUnstake}
         setAmountUnstake={setAmountUnStake}
         insuffBalance={inSufficientUnStakeBalance}
+        usdtValue={unStakeUsdtAmount}
       />
       <ButtonWrapper isHide={!isActiveUnstake}>
         <ActiveButton

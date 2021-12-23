@@ -230,7 +230,7 @@ const SelectTokenModal = ({
         <InputWrapper>
           <input
             onChange={(e) => setFilterKey(e.target.value)}
-            placeholder="By Name Or Address"
+            placeholder="by name or address"
             type="text"
           />
         </InputWrapper>

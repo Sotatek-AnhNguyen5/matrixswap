@@ -32,7 +32,7 @@ const InputWrapper = styled.div`
   }
 `;
 
-const InputNumber = ({ color, inputRef, onChange, disabled, value }) => {
+const InputNumber = ({ color, inputRef, onChange, disabled, value, placeholder }) => {
   return (
     <InputWrapper disabled={disabled} color={color} className={"input-wrapper"}>
       <input
@@ -49,6 +49,7 @@ const InputNumber = ({ color, inputRef, onChange, disabled, value }) => {
         }}
         ref={inputRef}
         type="number"
+        placeholder={placeholder}
         disabled={disabled}
         value={value}
         min="0"

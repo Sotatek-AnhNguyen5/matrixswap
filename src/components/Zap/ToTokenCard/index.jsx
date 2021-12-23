@@ -18,7 +18,7 @@ import {
   TokenLogoWrapper,
   WrappedStyledImage,
 } from "../../../theme/TokenCard";
-import { formatCurrency } from "../../../utils";
+import {formatBalance, formatCurrency} from "../../../utils";
 import useConvertToWMATIC from "../../../hooks/useConvertToWmatic";
 
 const LogoBorder = styled.div`
@@ -71,7 +71,7 @@ const ToTokenCard = ({
   farmType,
   lpToken,
 }) => {
-  const usdtValue = useConvertToUSDT(token.amount, token, farmType);
+  const usdtValue = useConvertToUSDT(token.amount, token, farmType, true);
   const txCost = useConvertToWMATIC(token.amount, token, farmType);
   const [balance, refreshBalance] = useTokenBalance(
     token.address,
@@ -155,7 +155,7 @@ const ToTokenCard = ({
           </FlexRow>
           <FlexRow justify="flex-start">
             <BalanceLine2 isNumber>
-              {balance} {token.symbol}
+              {formatBalance(balance)} {token.symbol}
             </BalanceLine2>
           </FlexRow>
         </div>
@@ -166,6 +166,7 @@ const ToTokenCard = ({
             <InputNumber
               onChange={(e) => onChangeAmountValue(e)}
               value={token.amount}
+              placeholder={"0.000000"}
             />
           </InputSlideRow>
           <span>{fromSelectedToken[0].symbol}</span>

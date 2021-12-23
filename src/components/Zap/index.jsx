@@ -139,9 +139,7 @@ const ZapTab = ({
   const [openConfirmZap, setOpenConfirmZap] = useState(false);
   const [isOpenTxStatusModal, setIsOpenTxStatusModal] = useState(false);
   const [selectedIndexTokenModal, setSelectedTokenModal] = useState();
-  const [selectedTokens, setSelectedTokens] = useState([
-    { ...WMATIC_TOKEN, amount: 0 },
-  ]);
+  const [selectedTokens, setSelectedTokens] = useState([{ ...WMATIC_TOKEN }]);
   const [isZapIn, setIsZapIn] = useState(true);
   const [toTokensZapOut, setToTokensZapOut] = useState([]);
 
@@ -188,7 +186,7 @@ const ZapTab = ({
     refetchVolume();
     await setSelectedTokens((old) => {
       const newData = [...old].map((e) => {
-        e.amount = 0;
+        e.amount = "";
         e.estimateOutput = 0;
         return e;
       });
@@ -197,7 +195,7 @@ const ZapTab = ({
     if (!isZapIn) {
       await setToTokensZapOut((old) => {
         const newData = [...old].map((e) => {
-          e.amount = 0;
+          e.amount = "";
           return e;
         });
         return [...newData];
@@ -258,9 +256,10 @@ const ZapTab = ({
   };
 
   const onSelectedToken = (token) => {
+    const tokenData = { ...token, amount: "" };
     const data = (old) => {
       const newData = [...old];
-      newData.splice(selectedIndexTokenModal, 1, token);
+      newData.splice(selectedIndexTokenModal, 1, tokenData);
       return [...newData];
     };
     if (isZapIn) {
@@ -298,7 +297,7 @@ const ZapTab = ({
     if (isZapIn) {
       setToTokensZapOut([
         ...selectedTokens.map((e) => {
-          e.amount = 0;
+          e.amount = "";
           return e;
         }),
       ]);
@@ -307,13 +306,13 @@ const ZapTab = ({
           symbol: `LP ${symbol0} - ${symbol1}`,
           decimals: 18,
           address: lpAddress,
-          amount: 0,
+          amount: "",
         },
       ]);
     } else {
       setSelectedTokens([
         ...toTokensZapOut.map((e) => {
-          e.amount = 0;
+          e.amount = "";
           e.estimateOutput = 0;
           return e;
         }),

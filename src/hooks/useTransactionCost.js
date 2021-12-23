@@ -60,7 +60,7 @@ const useTransactionCost = (token, lpToken, isZapIn, amount, farmType) => {
         .call();
       tokenCostAmount = tokenCostAmount.times(TRANSACTION_COST_FEE);
       if (!isValidAddress(pairToken)) {
-        tokenCostAmount = tokenCostAmount.add(
+        tokenCostAmount = tokenCostAmount.plus(
           new BigNumber(amountToken)
             .div(2)
             .minus(tokenCostAmount)

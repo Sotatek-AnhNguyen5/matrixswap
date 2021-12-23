@@ -26,8 +26,9 @@ import {
   TokenCard,
   WrappedStyledImage,
 } from "../../../theme/TokenCard";
-import { formatCurrency } from "../../../utils";
+import { formatBalance, formatCurrency } from "../../../utils";
 import useTransactionCost from "../../../hooks/useTransactionCost";
+import { useWeb3React } from "@web3-react/core";
 
 const TokenLogoWrapper = styled.div`
   background: rgba(1, 3, 4, 0.2);
@@ -92,6 +93,7 @@ const FromTokenCard = ({
   symbol1,
   selectedTokens,
 }) => {
+  const { account } = useWeb3React();
   const [percent, setPercent] = useState("0");
   const usdtValue = useConvertToUSDT(
     token.amount,
@@ -150,6 +152,7 @@ const FromTokenCard = ({
   const onMaxButton = useCallback(() => {
     setAmount(balance);
     setPercent("100");
+    !isZapIn && refreshRatio(balance);
   }, [balance]);
 
   const onChangeRangePercent = (percentAmount) => {
@@ -233,18 +236,20 @@ const FromTokenCard = ({
           )}
           <BorderColor />
         </FlexRow>
-        <div style={{ width: "100%" }}>
-          <FlexRow justify="flex-start" marginTop="10px">
-            <BalanceLine isNumber danger={insufficientBalance}>
-              Balance
-            </BalanceLine>
-          </FlexRow>
-          <FlexRow justify="flex-start">
-            <BalanceLine isNumber danger={insufficientBalance}>
-              {balance} {token.symbol}
-            </BalanceLine>
-          </FlexRow>
-        </div>
+        {account && (
+          <div style={{ width: "100%" }}>
+            <FlexRow justify="flex-start" marginTop="10px">
+              <BalanceLine isNumber danger={insufficientBalance}>
+                Balance
+              </BalanceLine>
+            </FlexRow>
+            <FlexRow justify="flex-start">
+              <BalanceLine isNumber danger={insufficientBalance}>
+                {formatBalance(balance)} {token.symbol}
+              </BalanceLine>
+            </FlexRow>
+          </div>
+        )}
       </SelectTokenWrapper>
       <SliderWrapper>
         <SliderInputWrapper>
@@ -253,19 +258,24 @@ const FromTokenCard = ({
             <InputNumber
               value={token.amount}
               onChange={(e) => onChangeAmountValue(e)}
+              placeholder={"0.000000"}
             />
           </InputSlideRow>
-          <Slider
-            min={0}
-            onChange={(e) => onChangeRangePercent(e)}
-            value={percent}
-            marks={{ 0: "", 25: "", 50: "", 75: "", 100: "" }}
-            step={1}
-          />
+          {account && (
+            <Slider
+              min={0}
+              onChange={(e) => onChangeRangePercent(e)}
+              value={percent}
+              marks={{ 0: "", 25: "", 50: "", 75: "", 100: "" }}
+              step={1}
+            />
+          )}
         </SliderInputWrapper>
         <FlexRow justify="flex-end">
-          <MaxButton marginTop="10px" isActive onClick={onMaxButton}>MAX</MaxButton>
-          <BalanceLine isNumber>= $ {formatCurrency(usdtValue)}</BalanceLine>
+          <MaxButton marginTop="10px" isActive onClick={onMaxButton}>
+            MAX
+          </MaxButton>
+          <BalanceLine isNumber>= $ {formatCurrency(usdtValue, 2)}</BalanceLine>
         </FlexRow>
       </SliderWrapper>
     </TokenCard>

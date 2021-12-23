@@ -99,16 +99,17 @@ export const MaxButton = styled.button`
   box-shadow: 0px 6px 6px rgba(1, 3, 4, 0.1);
   border-radius: 7px;
   cursor: pointer;
-  opacity: 0.8;
   margin-right: auto;
+  opacity: .6;
   margin-top: ${props => props.marginTop ?? "0"};
 
   &:hover {
+    color: rgba(8, 29, 21, 0.6);
     opacity: 1;
   }
 
   background: ${(props) =>
-    props.isActive
-      ? "#38d740"
-      : "linear-gradient(90deg, #0A1C1F 0%, #0F2A2E 96.22%)"};
+          props.isActive
+                  ? "#38d740"
+                  : "linear-gradient(90deg, #0A1C1F 0%, #0F2A2E 96.22%)"};
 `;
