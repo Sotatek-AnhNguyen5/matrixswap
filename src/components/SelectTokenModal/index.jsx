@@ -13,6 +13,7 @@ import {
   WETH_TOKEN,
   WMATIC_TOKEN,
 } from "../../const";
+import {formatTokenBalance} from "../../utils";
 
 const InputWrapper = styled.div`
   display: flex;
@@ -72,7 +73,12 @@ const TokenRow = styled.div`
       span {
         margin-left: 10px;
         font-weight: 500;
+        font-family: ChakraPetch, sans-serif;
       }
+    }
+    
+    .token-name {
+      font-family: ChakraPetch, sans-serif;
     }
 
     &:hover {
@@ -252,7 +258,7 @@ const SelectTokenModal = ({
                     <img src={e.logoURI} alt="" />
                     <span>{e.symbol}</span>
                   </div>
-                  <div className="token-name">{e.balance}</div>
+                  <div className="token-name">{formatTokenBalance(e.balance)}</div>
                 </div>
               </TokenRow>
             );

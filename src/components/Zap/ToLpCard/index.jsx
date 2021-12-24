@@ -22,7 +22,7 @@ const TokenLogoWrapper = styled.div`
   border-radius: 26px 0px 0px 26px;
   display: flex;
   justify-content: center;
-  padding: 40px 15px;
+  padding: 30px 15px;
   width: 10%;
   z-index: 0;
 `;

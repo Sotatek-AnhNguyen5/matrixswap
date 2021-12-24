@@ -143,7 +143,12 @@ const TableRecord = ({
       data.tokenAddress,
       data.rewarderAddress
     );
-  const stakedUSDT = useLPtoUSDT(lpToken, stakedBalance, FARM_TYPE[type]);
+  const usdtRate = useLPtoUSDT(lpToken, 1, FARM_TYPE[type]);
+  const stakedUSDT = useMemo(() => {
+    return new BigNumber(stakedBalance).times(usdtRate).toFixed(8);
+  }, [stakedBalance, usdtRate]);
+
+  // useLPtoUSDT(lpToken, stakedBalance, FARM_TYPE[type]);
 
   const onFinishGetReward = async () => {
     await refreshFarmInfo();
@@ -291,7 +296,7 @@ const TableRecord = ({
                 <FlexRow justify="flex-start" marginTop="20px">
                   <GrayLabelText minWidth="200px" />
                   <WhiteLabelText>
-                    {reward[1]} {rewardTokens[1].symbol}
+                    {rewardFormat(reward[1])} {rewardTokens[1].symbol}
                   </WhiteLabelText>
                 </FlexRow>
               )}
@@ -318,6 +323,7 @@ const TableRecord = ({
                   refetchVolume={refetchVolume}
                   symbol0={symbol0}
                   symbol1={symbol1}
+                  usdtRate={usdtRate}
                 />
               ) : (
                 <FarmingTab
@@ -330,6 +336,7 @@ const TableRecord = ({
                   pId={poolIndex}
                   lpToken={lpToken}
                   refreshList={onRefreshList}
+                  usdtRate={usdtRate}
                 />
               )}
             </ZapFarmWrapper>

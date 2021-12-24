@@ -45,10 +45,10 @@ export function moneyFormatter(num, digits = 2) {
     ? (num / item.value).toFixed(digits).replace(rx, "$1") + item.symbol
     : "0";
 }
+
 export function rewardFormat(num, digits = 7) {
   return new BigNumber(num).toFormat(digits).replace(/\.0+$/, "");
 }
-
 
 export function convertDate(input) {
   if (!input) {
@@ -149,5 +149,17 @@ export const formatCurrency = (amount, decimals = 6) => {
 };
 
 export const formatBalance = (amount) => {
-  return new BigNumber(amount).toFormat(6)
-}
+  const amountBig = new BigNumber(amount);
+  if (!amountBig.isZero() && amountBig.lt(0.000001)) {
+    return "0.000000";
+  }
+  return amountBig.toFormat(6).replace(/\.0+$/, "")
+};
+
+export const formatTokenBalance = (amount) => {
+  const amountBig = new BigNumber(amount);
+  if (!amountBig.isZero() && amountBig.lt(0.000001)) {
+    return "0.000000...";
+  }
+  return new BigNumber(amount).toFixed(6).replace(/\.0+$/, "");
+};

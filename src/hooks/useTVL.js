@@ -7,11 +7,11 @@ import {
   USDT_ADDRESS,
   WETH_ADDRESS,
 } from "../const";
-import { useFactoryContract } from "./useContract";
+import {useFactoryContract, useLibrary} from "./useContract";
 import { tokenToWeth, WETHtoUSDT } from "../utils/tvl";
 
 const useLPtoUSDT = (lpToken, amount, type) => {
-  const { library } = useWeb3React();
+  const library = useLibrary();
   const [value, setValue] = useState(0);
   const factoryContract = useFactoryContract(type);
 

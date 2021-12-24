@@ -132,6 +132,7 @@ const ZapTab = ({
   symbol0,
   symbol1,
   changeTab,
+  usdtRate,
 }) => {
   const { account } = useWeb3React();
   const { token0, token1 } = lpToken;
@@ -329,6 +330,10 @@ const ZapTab = ({
     return total.toFixed();
   }, [selectedTokens]);
 
+  const totalEstimateOutputUSDT = useMemo(() => {
+    return new BigNumber(totalEstimateOutput).times(usdtRate).toFixed();
+  }, [usdtRate, totalEstimateOutput])
+
   const totalTxCost = useMemo(() => {
     let total = new BigNumber(0);
     selectedTokens
@@ -474,6 +479,7 @@ const ZapTab = ({
         isZapIn={isZapIn}
         toTokensZapOut={toTokensZapOut}
         totalTxCost={totalTxCost}
+        totalEstimateOutputUSDT={totalEstimateOutputUSDT}
       />
       <TransactionStatusModal
         isModalOpen={isOpenTxStatusModal}

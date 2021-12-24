@@ -29,7 +29,7 @@ const SliderWrapper = styled.div`
   display: flex;
   flex-flow: column;
   align-items: flex-start;
-  padding: 0 20px;
+  padding: 0 0 0 20px;
   width: 100%;
 `;
 const FakeButton = styled.div`
@@ -157,7 +157,7 @@ const UnstakeCard = ({
         <SliderWrapper>
           <SliderInputWrapper>
             <InputSlideRow danger={insuffBalance}>
-              <span>{percent} %</span>
+              {account && <span>{percent} %</span>}
               <InputNumber
                 onChange={onChangeUnstake}
                 value={amountUnstake}
@@ -174,14 +174,16 @@ const UnstakeCard = ({
               />
             )}
           </SliderInputWrapper>
-          <FlexRow justify="flex-end">
-            <MaxButton marginTop="10px" isActive={isActive} onClick={onMax}>
-              MAX
-            </MaxButton>
-            <BalanceLine isNumber>
-              = $ {formatCurrency(usdtValue, 2)}
-            </BalanceLine>
-          </FlexRow>
+          {account && (
+            <FlexRow justify="flex-end">
+              <MaxButton marginTop="10px" isActive={isActive} onClick={onMax}>
+                MAX
+              </MaxButton>
+              <BalanceLine isNumber>
+                = $ {formatCurrency(usdtValue, 2)}
+              </BalanceLine>
+            </FlexRow>
+          )}
         </SliderWrapper>
       </FlexRow>
     </TokenCard>

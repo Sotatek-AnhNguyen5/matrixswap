@@ -1,21 +1,17 @@
 import styled from "styled-components";
-import InputNumber from "../InputNumber";
-import React, { useMemo, useRef, useState } from "react";
+import React, { useMemo, useState } from "react";
 import BigNumber from "bignumber.js";
 import { toast } from "react-toastify";
 import moment from "moment";
 import { isEmpty, find } from "lodash";
-import InputRange from "react-input-range";
 import useStakeCallback from "../../hooks/useStakeCallback";
 import useApproveCallBack from "../../hooks/useApproveCallBack";
-import SubmitButton from "../SubmitButton";
 import useUnStakeCallBack from "../../hooks/useUnstakeCallBack";
 import { removeStakeInfoFromStorage } from "../../utils";
 import StakeCard from "./StakeCard";
 import { ActiveButton } from "../../theme/components";
 import UnstakeCard from "./UnstakeCard";
 import { useWeb3React } from "@web3-react/core";
-import useLPtoUSDT from "../../hooks/useTVL";
 
 const ButtonWrapper = styled.div`
   margin-top: 20px;
@@ -42,6 +38,7 @@ const FarmingTab = ({
   getLpBalance,
   pId,
   refreshList,
+  usdtRate,
 }) => {
   const { account } = useWeb3React();
   const [amountStake, setAmountStake] = useState("");
@@ -51,7 +48,6 @@ const FarmingTab = ({
     farmAddress
   );
 
-  const usdtRate = useLPtoUSDT(lpToken, 1, type);
 
   const stakeUsdtAmount = useMemo(() => {
     return new BigNumber(amountStake || 0).times(usdtRate).toFixed();

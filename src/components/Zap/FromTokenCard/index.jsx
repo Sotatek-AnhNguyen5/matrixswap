@@ -36,7 +36,7 @@ const TokenLogoWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px 15px;
+  padding: 30px 15px;
   width: 10%;
   position: relative;
   z-index: 0;
@@ -254,7 +254,7 @@ const FromTokenCard = ({
       <SliderWrapper>
         <SliderInputWrapper>
           <InputSlideRow danger={insufficientBalance}>
-            <span>{percent} %</span>
+            {account && <span>{percent} %</span>}
             <InputNumber
               value={token.amount}
               onChange={(e) => onChangeAmountValue(e)}
@@ -271,12 +271,16 @@ const FromTokenCard = ({
             />
           )}
         </SliderInputWrapper>
-        <FlexRow justify="flex-end">
-          <MaxButton marginTop="10px" isActive onClick={onMaxButton}>
-            MAX
-          </MaxButton>
-          <BalanceLine isNumber>= $ {formatCurrency(usdtValue, 2)}</BalanceLine>
-        </FlexRow>
+        {account && (
+          <FlexRow justify="flex-end">
+            <MaxButton marginTop="10px" isActive onClick={onMaxButton}>
+              MAX
+            </MaxButton>
+            <BalanceLine isNumber>
+              = $ {formatCurrency(usdtValue, 2)}
+            </BalanceLine>
+          </FlexRow>
+        )}
       </SliderWrapper>
     </TokenCard>
   );

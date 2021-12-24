@@ -124,6 +124,6 @@ export const TokenLogoWrapper = styled.div`
   display: flex;
   align-items: center;
   justify-content: center;
-  padding: 40px 15px;
+  padding: 30px 15px;
   width: 10%;
 `;

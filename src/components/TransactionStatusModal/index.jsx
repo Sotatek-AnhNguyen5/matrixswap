@@ -99,9 +99,9 @@ const TransactionStatusModal = ({
   const messageZapOut = useMemo(() => {
     let message = "";
     toTokensZapOut.forEach(
-      (e) => (message += `${e.estimateValue} ${e.symbol} `)
+      (e) => (message += `${e.estimateValue} ${e.symbol} and `)
     );
-    return message;
+    return message.substring(0, message.length - 4);
   }, [toTokensZapOut]);
 
   const ModalContent = useMemo(() => {

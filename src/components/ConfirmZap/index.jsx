@@ -144,6 +144,7 @@ const ConfirmZap = ({
   isZapIn,
   toTokensZapOut,
   totalTxCost,
+  totalEstimateOutputUSDT,
 }) => {
   const closeModal = () => setIsModalOpen(false);
   const [isRevert, setIsRevert] = useState(false);
@@ -246,6 +247,9 @@ const ConfirmZap = ({
               </LeftTokenWrapper>
               <RightTokenWrapper>
                 <SmallWhiteText isNumber>{estimateOutput}</SmallWhiteText>
+                <SmallerGrayText>
+                  {formatCurrency(totalEstimateOutputUSDT, 2)} $
+                </SmallerGrayText>
               </RightTokenWrapper>
             </TokenCard>
           </>
