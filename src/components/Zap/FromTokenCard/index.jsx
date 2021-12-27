@@ -203,6 +203,10 @@ const FromTokenCard = ({
     txCost,
   ]);
 
+  useEffect(() => {
+    setPercent("0");
+  }, [isZapIn, token.address])
+
   return (
     <TokenCard isActiveBg={true}>
       <TokenLogoWrapper>

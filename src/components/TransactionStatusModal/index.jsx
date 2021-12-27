@@ -4,6 +4,7 @@ import GreenSpin from "../GreenSpin";
 import styled from "styled-components";
 import { useCallback, useMemo } from "react";
 import { STATUS_ZAP } from "../../hooks/useZapCallback";
+import { formatBalance, formatTokenBalance } from "../../utils";
 
 const ActiveTitle = styled(FlexRow)`
   color: ${(props) => props.theme.colorMainGreen};
@@ -99,7 +100,8 @@ const TransactionStatusModal = ({
   const messageZapOut = useMemo(() => {
     let message = "";
     toTokensZapOut.forEach(
-      (e) => (message += `${e.estimateValue} ${e.symbol} and `)
+      (e) =>
+        (message += `${formatTokenBalance(e.estimateValue)} ${e.symbol} and `)
     );
     return message.substring(0, message.length - 4);
   }, [toTokensZapOut]);
@@ -117,7 +119,7 @@ const TransactionStatusModal = ({
           {isZapIn ? (
             <>
               <WhiteTitle isNumber justify="center" marginTop="20px">
-                Zapping tokens for {estimateOutput} LP
+                Zapping tokens for {formatTokenBalance(estimateOutput)} LP
               </WhiteTitle>
             </>
           ) : (

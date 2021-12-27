@@ -145,7 +145,11 @@ export const formatNumber = (amount) => {
 };
 
 export const formatCurrency = (amount, decimals = 6) => {
-  return new BigNumber(amount).toFixed(decimals).replace(/\.0+$/, "");
+  const amountBig = new BigNumber(amount)
+  if(amountBig.isZero()) {
+    return "0"
+  }
+  return new BigNumber(amount).toFixed(decimals);
 };
 
 export const formatBalance = (amount) => {

@@ -18,8 +18,9 @@ import {
   TokenLogoWrapper,
   WrappedStyledImage,
 } from "../../../theme/TokenCard";
-import {formatBalance, formatCurrency} from "../../../utils";
+import { formatBalance, formatCurrency } from "../../../utils";
 import useConvertToWMATIC from "../../../hooks/useConvertToWmatic";
+import { useWeb3React } from "@web3-react/core";
 
 const LogoBorder = styled.div`
   background: rgba(1, 3, 4, 0.2);
@@ -71,6 +72,7 @@ const ToTokenCard = ({
   farmType,
   lpToken,
 }) => {
+  const { account } = useWeb3React();
   const usdtValue = useConvertToUSDT(token.amount, token, farmType, true);
   const txCost = useConvertToWMATIC(token.amount, token, farmType);
   const [balance, refreshBalance] = useTokenBalance(
@@ -139,7 +141,10 @@ const ToTokenCard = ({
       </TokenLogoWrapper>
       <SelectTokenWrapper>
         <FlexRow justify="flex-start">
-          <SelectTokenButton isCloseAble={isCloseAble} onClick={openSelectToken}>
+          <SelectTokenButton
+            isCloseAble={isCloseAble}
+            onClick={openSelectToken}
+          >
             {token.symbol}
           </SelectTokenButton>
           {isCloseAble && (
@@ -149,16 +154,18 @@ const ToTokenCard = ({
           )}
           <BorderColor />
         </FlexRow>
-        <div style={{ width: "100%" }}>
-          <FlexRow justify="flex-start" marginTop="10px">
-            <BalanceLine2 isNumber>Balance</BalanceLine2>
-          </FlexRow>
-          <FlexRow justify="flex-start">
-            <BalanceLine2 isNumber>
-              {formatBalance(balance)} {token.symbol}
-            </BalanceLine2>
-          </FlexRow>
-        </div>
+        {account && (
+          <div style={{ width: "100%" }}>
+            <FlexRow justify="flex-start" marginTop="10px">
+              <BalanceLine2 isNumber>Balance</BalanceLine2>
+            </FlexRow>
+            <FlexRow justify="flex-start">
+              <BalanceLine2 isNumber>
+                {formatBalance(balance)} {token.symbol}
+              </BalanceLine2>
+            </FlexRow>
+          </div>
+        )}
       </SelectTokenWrapper>
       <SliderWrapper>
         <SliderInputWrapper2>
@@ -171,11 +178,13 @@ const ToTokenCard = ({
           </InputSlideRow>
           <span>{fromSelectedToken[0].symbol}</span>
         </SliderInputWrapper2>
-        <FlexRow height="38px" justify="flex-end">
-          <BalanceLine2 isNumber>
-            = {formatCurrency(estimateValue)} {token.symbol}
-          </BalanceLine2>
-        </FlexRow>
+        {account && (
+          <FlexRow height="38px" justify="flex-end">
+            <BalanceLine2 isNumber>
+              = {formatCurrency(estimateValue)} {token.symbol}
+            </BalanceLine2>
+          </FlexRow>
+        )}
       </SliderWrapper>
     </TokenCard>
   );

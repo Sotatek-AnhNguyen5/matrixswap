@@ -15,7 +15,9 @@ import { useWeb3React } from "@web3-react/core";
 
 const ButtonWrapper = styled.div`
   margin-top: 20px;
-  display: ${(props) => (props.isHide ? "none" : "block")};
+  display: ${(props) => (props.isHide ? "none" : "flex")};
+  position: relative;
+  z-index: 0;
 `;
 
 const BlackLine = styled.div`
@@ -26,6 +28,23 @@ const BlackLine = styled.div`
   margin-top: 40px;
   border-radius: 2px;
   display: ${(props) => (props.isActive ? "block" : "none")};
+`;
+
+const ApproveButton = styled(ActiveButton)`
+  width: 60%;
+  font-size: 16px;
+  border-radius: 26px;
+  padding: 20px;
+  z-index: 1;
+  position: relative;
+`;
+
+const StakeButton = styled(ActiveButton)`
+  border-radius: 26px;
+  padding: 20px;
+  width: ${(props) => (props.isApproveFirst ? "50%" : "100%")};
+  z-index: 0;
+  margin-left: ${(props) => props.isApproveFirst && "-40px"};
 `;
 
 const FarmingTab = ({
@@ -39,6 +58,8 @@ const FarmingTab = ({
   pId,
   refreshList,
   usdtRate,
+  symbol0,
+  symbol1,
 }) => {
   const { account } = useWeb3React();
   const [amountStake, setAmountStake] = useState("");
@@ -47,7 +68,6 @@ const FarmingTab = ({
     lpToken.address,
     farmAddress
   );
-
 
   const stakeUsdtAmount = useMemo(() => {
     return new BigNumber(amountStake || 0).times(usdtRate).toFixed();
@@ -87,6 +107,10 @@ const FarmingTab = ({
     pId
   );
 
+  const labelLP = useMemo(() => {
+    return `LP ${symbol0} - ${symbol1}`;
+  }, [symbol0, symbol1]);
+
   const saveToStorage = () => {
     const stakeInfo = JSON.parse(localStorage.getItem("stakeInfo")) || [];
     const farmInfo = find(stakeInfo, { farmAddress, pId });
@@ -121,6 +145,10 @@ const FarmingTab = ({
     return amountUnstake && new BigNumber(stakedBalance).lt(amountUnstake);
   }, [amountUnstake, stakedBalance]);
 
+  const isHaveToApprove = useMemo(() => {
+    return new BigNumber(allowance).isZero();
+  }, [allowance]);
+
   return (
     <div>
       <StakeCard
@@ -131,18 +159,21 @@ const FarmingTab = ({
         lpLabel={lpLabel}
         insuffBalance={isInsufficientBalanceStake}
         usdtValue={stakeUsdtAmount}
+        labelLP={labelLP}
       />
       <ButtonWrapper>
-        {new BigNumber(allowance).isZero() ? (
-          <ActiveButton
+        {isHaveToApprove && (
+          <ApproveButton
             label={!account ? "No wallet connected" : "approve"}
             loading={loadingApprove}
             labelLoading={"approving"}
             onClick={approve}
-            disabled={!isActiveStake}
+            disabled={!account}
           />
-        ) : (
-          <ActiveButton
+        )}
+        {account && (
+          <StakeButton
+            isApproveFirst={isHaveToApprove}
             label={
               isInsufficientBalanceStake ? "Insufficient balance" : "stake"
             }
@@ -166,6 +197,7 @@ const FarmingTab = ({
         setAmountUnstake={setAmountUnStake}
         insuffBalance={inSufficientUnStakeBalance}
         usdtValue={unStakeUsdtAmount}
+        labelLP={labelLP}
       />
       <ButtonWrapper isHide={!isActiveUnstake}>
         <ActiveButton

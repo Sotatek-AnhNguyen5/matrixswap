@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { BalanceLine, FlexRow, MaxButton } from "../../../theme/components";
-import React, { useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo, useRef, useState } from "react";
 import InputNumber from "../../InputNumber";
 import Slider from "rc-slider";
 import BigNumber from "bignumber.js";
@@ -107,6 +107,7 @@ const UnstakeCard = ({
   isActive,
   insuffBalance,
   usdtValue,
+  labelLP,
 }) => {
   const [percent, setPercent] = useState("0");
   const { account } = useWeb3React();
@@ -137,6 +138,12 @@ const UnstakeCard = ({
     }
   };
 
+  useEffect(() => {
+    if (!amountUnstake) {
+      setPercent("0");
+    }
+  }, [amountUnstake]);
+
   return (
     <TokenCard isActive={isActive}>
       <LeftCard flexFlow="column">
@@ -148,7 +155,7 @@ const UnstakeCard = ({
           <FlexRow flexFlow="column" marginTop="10px" alignItems="start">
             <BalanceLine danger={insuffBalance}>Balance</BalanceLine>
             <BalanceLine isNumber danger={insuffBalance}>
-              {formatBalance(stakedBalance)}
+              {formatBalance(stakedBalance)} {labelLP}
             </BalanceLine>
           </FlexRow>
         )}

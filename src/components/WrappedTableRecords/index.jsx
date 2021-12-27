@@ -337,6 +337,8 @@ const TableRecord = ({
                   lpToken={lpToken}
                   refreshList={onRefreshList}
                   usdtRate={usdtRate}
+                  symbol0={symbol0}
+                  symbol1={symbol1}
                 />
               )}
             </ZapFarmWrapper>

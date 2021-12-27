@@ -102,10 +102,11 @@ const ButtonWrapper = styled.div`
   width: 100%;
   position: relative;
   z-index: 0;
+  display: flex;
 `;
 
 const ApproveButton = styled(ActiveButton)`
-  width: 55%;
+  width: 60%;
   font-size: 16px;
   border-radius: 26px;
   padding: 20px;

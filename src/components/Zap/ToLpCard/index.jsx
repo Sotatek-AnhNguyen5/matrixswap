@@ -11,9 +11,11 @@ import {
 } from "../../../theme/TokenCard";
 import InputNumber from "../../InputNumber";
 import { formatBalance } from "../../../utils";
+import { useWeb3React } from "@web3-react/core";
 
 const DoubleLogoWrapper = styled.div`
   width: 92px;
+  height: 50px;
   position: relative;
 `;
 
@@ -74,6 +76,8 @@ export const BalanceValue = styled.div`
 `;
 
 const ToLpCard = ({ symbol0, symbol1, lpBalance, estimateOutput }) => {
+  const { account } = useWeb3React();
+
   return (
     <TokenCard>
       <TokenLogoWrapper>
@@ -93,14 +97,15 @@ const ToLpCard = ({ symbol0, symbol1, lpBalance, estimateOutput }) => {
           </SelectTokenButton>
           <BorderColor />
         </FlexRow>
-        <div style={{ width: "100%" }}>
+        {account && <div style={{ width: "100%" }}>
           <FlexRow justify="flex-start" marginTop="10px">
             <BalanceValue isNumber>Balance</BalanceValue>
           </FlexRow>
           <FlexRow justify="flex-start">
             <BalanceValue isNumber>{formatBalance(lpBalance)} LP</BalanceValue>
           </FlexRow>
-        </div>
+        </div>}
+
       </SelectTokenWrapper>
       <SliderWrapper>
         <SliderInputWrapper>

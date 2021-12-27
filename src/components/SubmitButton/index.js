@@ -46,7 +46,7 @@ const SubmitButton = ({
       style={style}
       disabled={disabled}
       loading={loading}
-      onClick={() => (!loading ? onClick() : undefined)}
+      onClick={!loading ? () => onClick() : undefined}
     >
       {loading ? `${labelLoading}` : label}
       {loading ? <AiOutlineLoading /> : ""}
