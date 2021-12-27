@@ -65,10 +65,12 @@ export function hashSha3Tokens(token0, token1) {
   return hash.digest({ buffer: Buffer.alloc(32) });
 }
 
-export const removeStakeInfoFromStorage = (farmAddress) => {
+export const removeStakeInfoFromStorage = (farmAddress, pId) => {
   const stakeInfo = JSON.parse(localStorage.getItem("stakeInfo")) || [];
   const farmIndex = findIndex(stakeInfo, (e) => {
-    return e.farmAddress.toLowerCase() === farmAddress.toLowerCase();
+    return (
+      e.farmAddress.toLowerCase() === farmAddress.toLowerCase() && e.pId === pId
+    );
   });
   if (farmIndex !== -1) {
     stakeInfo.splice(farmIndex, 1);
@@ -145,9 +147,9 @@ export const formatNumber = (amount) => {
 };
 
 export const formatCurrency = (amount, decimals = 6) => {
-  const amountBig = new BigNumber(amount)
-  if(amountBig.isZero()) {
-    return "0"
+  const amountBig = new BigNumber(amount);
+  if (amountBig.isZero()) {
+    return "0";
   }
   return new BigNumber(amount).toFixed(decimals, 1);
 };
@@ -157,7 +159,7 @@ export const formatBalance = (amount) => {
   if (!amountBig.isZero() && amountBig.lt(0.000001)) {
     return "0.000000";
   }
-  return amountBig.toFormat(6, 1).replace(/\.0+$/, "")
+  return amountBig.toFormat(6, 1).replace(/\.0+$/, "");
 };
 
 export const formatTokenBalance = (amount) => {

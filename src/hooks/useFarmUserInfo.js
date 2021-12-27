@@ -78,7 +78,7 @@ const useFarmUserInfo = (
     if (new BigNumber(balanceAmount).gt(0) && farmInfo) {
       setStartDate(farmInfo.startDate);
     } else {
-      removeStakeInfoFromStorage(farmAddress);
+      removeStakeInfoFromStorage(farmAddress, pId);
       setStartDate("");
     }
   };
