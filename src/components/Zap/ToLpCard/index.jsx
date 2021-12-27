@@ -10,7 +10,7 @@ import {
   TokenCard,
 } from "../../../theme/TokenCard";
 import InputNumber from "../../InputNumber";
-import { formatBalance } from "../../../utils";
+import { formatBalance, formatTokenBalance } from "../../../utils";
 import { useWeb3React } from "@web3-react/core";
 
 const DoubleLogoWrapper = styled.div`
@@ -97,20 +97,25 @@ const ToLpCard = ({ symbol0, symbol1, lpBalance, estimateOutput }) => {
           </SelectTokenButton>
           <BorderColor />
         </FlexRow>
-        {account && <div style={{ width: "100%" }}>
-          <FlexRow justify="flex-start" marginTop="10px">
-            <BalanceValue isNumber>Balance</BalanceValue>
-          </FlexRow>
-          <FlexRow justify="flex-start">
-            <BalanceValue isNumber>{formatBalance(lpBalance)} LP</BalanceValue>
-          </FlexRow>
-        </div>}
-
+        {account && (
+          <div style={{ width: "100%" }}>
+            <FlexRow justify="flex-start" marginTop="10px">
+              <BalanceValue isNumber>Balance</BalanceValue>
+            </FlexRow>
+            <FlexRow justify="flex-start">
+              <BalanceValue isNumber>
+                {formatBalance(lpBalance)} LP
+              </BalanceValue>
+            </FlexRow>
+          </div>
+        )}
       </SelectTokenWrapper>
       <SliderWrapper>
         <SliderInputWrapper>
           <InputSlideRow>
-            <InputNumber value={estimateOutput} disabled={true} />
+            <div>
+              <input value={formatTokenBalance(estimateOutput)} disabled={true} />
+            </div>
           </InputSlideRow>
         </SliderInputWrapper>
       </SliderWrapper>

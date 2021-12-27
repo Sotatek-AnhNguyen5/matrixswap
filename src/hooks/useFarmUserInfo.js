@@ -84,10 +84,10 @@ const useFarmUserInfo = (
   };
 
   useEffect(() => {
-    if (library && farmAddress) {
+    if (library && farmAddress && account) {
       getData();
     }
-  }, [library, farmAddress]);
+  }, [library, farmAddress, account]);
 
   return [reward, balance, getData, startDate];
 };

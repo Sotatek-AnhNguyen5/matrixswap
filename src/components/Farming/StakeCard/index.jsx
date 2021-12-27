@@ -117,7 +117,7 @@ const StakeCard = ({
     setPercent(percentAmount);
     if (lpBalance) {
       setAmountStake(
-        new BigNumber(lpBalance).times(percentAmount).div(100).toFixed()
+        new BigNumber(lpBalance).times(percentAmount).div(100).toFixed(6, 1)
       );
     }
   };

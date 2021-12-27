@@ -116,7 +116,7 @@ const UnstakeCard = ({
     setPercent(percentAmount);
     if (stakedBalance) {
       setAmountUnstake(
-        new BigNumber(stakedBalance).times(percentAmount).div(100).toFixed()
+        new BigNumber(stakedBalance).times(percentAmount).div(100).toFixed(6, 1)
       );
     }
   };

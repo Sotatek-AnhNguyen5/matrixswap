@@ -47,6 +47,8 @@ export const InputSlideRow = styled.div`
     border: 0;
     outline: 0;
     padding: 10px 20px;
+    box-sizing: border-box;
+    width: 100%;
 
     &::placeholder {
       color: rgba(255, 255, 255, 0.6);

@@ -148,8 +148,6 @@ const TableRecord = ({
     return new BigNumber(stakedBalance).times(usdtRate).toFixed(8);
   }, [stakedBalance, usdtRate]);
 
-  // useLPtoUSDT(lpToken, stakedBalance, FARM_TYPE[type]);
-
   const onFinishGetReward = async () => {
     await refreshFarmInfo();
     toast("Get reward successfully!");

@@ -229,7 +229,7 @@ const ZapTab = ({
       .map((e) =>
         new BigNumber(e.amount)
           .times(new BigNumber(10).pow(e.decimals))
-          .toFixed(0)
+          .toFixed(0, 1)
       );
     return {
       protocolType,

@@ -149,7 +149,7 @@ export const formatCurrency = (amount, decimals = 6) => {
   if(amountBig.isZero()) {
     return "0"
   }
-  return new BigNumber(amount).toFixed(decimals);
+  return new BigNumber(amount).toFixed(decimals, 1);
 };
 
 export const formatBalance = (amount) => {
@@ -157,7 +157,7 @@ export const formatBalance = (amount) => {
   if (!amountBig.isZero() && amountBig.lt(0.000001)) {
     return "0.000000";
   }
-  return amountBig.toFormat(6).replace(/\.0+$/, "")
+  return amountBig.toFormat(6, 1).replace(/\.0+$/, "")
 };
 
 export const formatTokenBalance = (amount) => {
@@ -165,5 +165,5 @@ export const formatTokenBalance = (amount) => {
   if (!amountBig.isZero() && amountBig.lt(0.000001)) {
     return "0.000000...";
   }
-  return new BigNumber(amount).toFixed(6).replace(/\.0+$/, "");
+  return new BigNumber(amount).toFixed(6, 1).replace(/\.0+$/, "");
 };

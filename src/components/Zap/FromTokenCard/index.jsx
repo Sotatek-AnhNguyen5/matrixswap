@@ -161,7 +161,7 @@ const FromTokenCard = ({
       const toValue = new BigNumber(balance)
         .times(percentAmount)
         .div(100)
-        .toFixed();
+        .toFixed(6, 1);
       setAmount(toValue);
       !isZapIn && refreshRatio(toValue);
     }
@@ -205,7 +205,7 @@ const FromTokenCard = ({
 
   useEffect(() => {
     setPercent("0");
-  }, [isZapIn, token.address])
+  }, [isZapIn, token.address]);
 
   return (
     <TokenCard isActiveBg={true}>
