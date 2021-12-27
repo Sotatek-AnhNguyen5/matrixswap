@@ -27,8 +27,8 @@ const useStakeCallback = (farmAddress, value, onFinish, type, pId) => {
           .send({ from: account })
           .on("confirmation", async function (number) {
             if (number === 7) {
+              await onFinish();
               setLoading(false);
-              onFinish();
             }
           })
           .once("error", () => {
