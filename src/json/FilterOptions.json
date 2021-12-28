@@ -1226,5 +1226,13 @@
   {
     "value": "QUICK",
     "label": "QUICK"
+  },
+  {
+    "value": "bct",
+    "label": "BCT"
+  },
+  {
+    "value": "klima",
+    "label": "KLIMA"
   }
 ]

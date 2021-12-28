@@ -20,7 +20,7 @@ const useGetRewardCallback = (farmAddress, type, onFinish, pId) => {
         farmContract.methods[methods](...params)
           .send({ from: account })
           .on("confirmation", async function (number) {
-            if (number === 5) {
+            if (number === 7) {
               await onFinish();
               setLoading(false);
             }
