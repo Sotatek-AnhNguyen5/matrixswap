@@ -20,7 +20,7 @@ const FormatNumber = ({ amount, noFormat }) =>
     return (
       <StyledNumber title={bigAmount.toFixed()} className="styled-number">
         {bigAmount.gte(MIN_NUMBER)
-          ? bigAmount.toFixed(2)
+          ? bigAmount.toFormat(2, 1)
           : formatNumber(bigAmount.toFixed())}
       </StyledNumber>
     );
