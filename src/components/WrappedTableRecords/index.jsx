@@ -18,13 +18,12 @@ import {
   GrayLabelText,
   WhiteLabelText,
 } from "../../theme/components";
-import { forceCheck } from "react-lazyload";
 import FormatNumber from "../FormatNumber";
 import useLPtoUSDT from "../../hooks/useTVL";
 
 const FlexRowData = styled.div`
   margin-top: 15px;
-  display: ${(props) => (props.isShow ? "flex" : "none")};
+  display: flex;
   flex-wrap: wrap;
   border-radius: 12px;
 
@@ -171,35 +170,6 @@ const TableRecord = ({
     poolIndex
   );
 
-  const isShow = useMemo(() => {
-    const isExists = find(
-      filterKey,
-      (e) =>
-        !lpToken.token0.symbol ||
-        [
-          lpToken.token0.symbol.toUpperCase(),
-          lpToken.token1.symbol.toUpperCase(),
-        ].indexOf(e.value.toUpperCase()) !== -1
-    );
-    const noSymbol = find(
-      filterKey,
-      (e) =>
-        ["quickswap", "sushiswap", "apeswap", "curve"].indexOf(e.value) === -1
-    );
-
-    const isMatchProtocol = find(filterKey, (e) => e.value === type);
-    const noProtocol = find(
-      filterKey,
-      (e) =>
-        ["quickswap", "sushiswap", "apeswap", "curve"].indexOf(e.value) !== -1
-    );
-
-    return (
-      isEmpty(filterKey) ||
-      ((!!isExists || !noSymbol) && (!!isMatchProtocol || !noProtocol))
-    );
-  }, [filterKey]);
-
   const daily = useMemo(() => {
     if (new BigNumber(apr).isZero()) {
       return 0;
@@ -217,13 +187,9 @@ const TableRecord = ({
     return [lpToken.token0.symbol, lpToken.token1.symbol];
   }, [lpToken.token0, lpToken.token1]);
 
-  useEffect(() => {
-    forceCheck();
-  }, [filterKey, isShow]);
-
   return (
     <>
-      <FlexRowData hover={!isSelected} isShow={isShow}>
+      <FlexRowData hover={!isSelected}>
         <div
           onClick={() => setIsSelected((value) => !value)}
           className="data-wrapper"

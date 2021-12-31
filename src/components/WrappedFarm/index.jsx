@@ -1,5 +1,5 @@
 import { useState, useEffect, useCallback } from "react";
-import { isEmpty, take, takeWhile, uniqBy, find } from "lodash";
+import { isEmpty } from "lodash";
 import useSushiFarms from "../../hooks/useSushiFarms";
 import useApeSwapFarms from "../../hooks/useApeswapFarms";
 import useQuickSwapFarms from "../../hooks/useQuickSwapFarms";
@@ -7,7 +7,6 @@ import styled from "styled-components";
 import { FlexRow, ProtocolBadger } from "../../theme/components";
 import SearchWrapper from "./SearchWrapper";
 import DataTable from "./DataTable";
-import moment from "moment";
 
 const WrapperFarm = styled.div`
   background: radial-gradient(
@@ -52,10 +51,10 @@ const sortAlpha = (a, b) => {
   const labela = `${a.symbol0} - ${a.symbol1}`;
   const labelb = `${b.symbol0} - ${a.symbol1}`;
   if (labela < labelb) {
-    return 1;
+    return -1;
   }
   if (labela > labelb) {
-    return -1;
+    return 1;
   }
   return 0;
 };
@@ -150,16 +149,6 @@ const WrappedFarm = ({ refetchVolume }) => {
         setData={setData}
         filterKey={filterKey}
       />
-      {/*{data.map((e, index) => {*/}
-      {/*  return (*/}
-      {/*    <TableRecord*/}
-      {/*      key={index}*/}
-      {/*      filterKey={filterKey}*/}
-      {/*      data={e}*/}
-      {/*      type={e.appId}*/}
-      {/*    />*/}
-      {/*  );*/}
-      {/*})}*/}
     </WrapperFarm>
   );
 };

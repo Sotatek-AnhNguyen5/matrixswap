@@ -1,7 +1,7 @@
-import { memo, useMemo } from "react";
+import { useMemo } from "react";
 import styled from "styled-components";
 import BigNumber from "bignumber.js";
-import { formatNumber, formatSmallNumber } from "../../utils";
+import { formatNumber } from "../../utils";
 
 const MIN_NUMBER = 0.01;
 

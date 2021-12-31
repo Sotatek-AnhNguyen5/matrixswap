@@ -1,5 +1,6 @@
 import styled from "styled-components";
 import SubmitButton from "../components/SubmitButton";
+import ReactPaginate from "react-paginate";
 
 export const ProtocolBadger = styled.div`
   display: flex;
@@ -100,8 +101,8 @@ export const MaxButton = styled.button`
   border-radius: 7px;
   cursor: pointer;
   margin-right: auto;
-  opacity: .6;
-  margin-top: ${props => props.marginTop ?? "0"};
+  opacity: 0.6;
+  margin-top: ${(props) => props.marginTop ?? "0"};
 
   &:hover {
     color: rgba(8, 29, 21, 0.6);
@@ -109,7 +110,36 @@ export const MaxButton = styled.button`
   }
 
   background: ${(props) =>
-          props.isActive
-                  ? "#38d740"
-                  : "linear-gradient(90deg, #0A1C1F 0%, #0F2A2E 96.22%)"};
+    props.isActive
+      ? "#38d740"
+      : "linear-gradient(90deg, #0A1C1F 0%, #0F2A2E 96.22%)"};
+`;
+
+export const StyledReactPaginate = styled(ReactPaginate)`
+  display: flex;
+  justify-content: flex-end;
+
+  li {
+    list-style-type: none;
+    background: #182f32;
+    opacity: 0.88;
+    font-size: 16px;
+    cursor: pointer;
+    border-radius: 6px;
+    margin: 0px 5px;
+    padding: 2px 0px;
+
+    a {
+      padding: 10px 10px;
+    }
+
+    &.selected {
+      background: #2a7b81;
+    }
+  }
+
+  .previous,
+  .next {
+    width: auto;
+  }
 `;
