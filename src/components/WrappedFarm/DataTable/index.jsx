@@ -74,12 +74,11 @@ const DataTable = ({ data, setData, filterKey, refetchVolume }) => {
     const bigA = new BigNumber(a[key]);
     const bigB = new BigNumber(b[key]);
     if (bigA.lt(bigB)) {
-      return -1;
+      return sortType === "asc" ? -1 : 1;
     }
     if (bigA.gt(bigB)) {
-      return 1;
+      return sortType === "asc" ? 1 : -1;
     }
-
     return 0;
   };
 
@@ -95,13 +94,9 @@ const DataTable = ({ data, setData, filterKey, refetchVolume }) => {
     );
   };
 
-  useEffect(() => {
+  const sortData = () => {
     let newSortedData = [...data];
-    if (sortType === "desc") {
-      newSortedData = newSortedData.sort(compareFunction).reverse();
-    } else if (sortType === "asc") {
-      newSortedData = newSortedData.sort(compareFunction);
-    }
+    newSortedData = newSortedData.sort(compareFunction);
     if (filterKey.length > 0) {
       newSortedData = newSortedData.filter((farm) => {
         const isExists = find(
@@ -126,14 +121,18 @@ const DataTable = ({ data, setData, filterKey, refetchVolume }) => {
       });
     }
     setSortedData(newSortedData);
+  };
+
+  useEffect(() => {
+    sortData();
   }, [sortType, filterKey]);
 
   //
   useEffect(() => {
-    setItemOffset(0)
+    setItemOffset(0);
     setCurrentItems(sortedData.slice(0, ITEM_PER_PAGE));
     setPageCount(Math.ceil(sortedData.length / ITEM_PER_PAGE));
-    setSelectedPage(0)
+    setSelectedPage(0);
   }, [sortedData]);
   //
 
@@ -144,8 +143,9 @@ const DataTable = ({ data, setData, filterKey, refetchVolume }) => {
     setPageCount(Math.ceil(sortedData.length / ITEM_PER_PAGE));
   }, [itemOffset]);
 
-  useEffect(() => {
+  useEffect(async () => {
     setSortedData(data);
+    sortData();
   }, [data]);
 
   const handlePageClick = (event) => {
