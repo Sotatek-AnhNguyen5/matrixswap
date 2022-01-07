@@ -12,6 +12,7 @@ import StakeCard from "./StakeCard";
 import { ActiveButton } from "../../theme/components";
 import UnstakeCard from "./UnstakeCard";
 import { useWeb3React } from "@web3-react/core";
+import {FARM_TYPE} from "../../const";
 
 const ButtonWrapper = styled.div`
   margin-top: 20px;
@@ -64,6 +65,7 @@ const FarmingTab = ({
   const { account } = useWeb3React();
   const [amountStake, setAmountStake] = useState("");
   const [amountUnstake, setAmountUnStake] = useState("");
+  const [isWithdrawAll, setIsWithdrawAll] = useState(false);
   const [approve, loadingApprove, allowance] = useApproveCallBack(
     lpToken.address,
     farmAddress
@@ -128,6 +130,10 @@ const FarmingTab = ({
   const lpLabel = useMemo(() => {
     return `${lpToken.token0.symbol}-${lpToken.token1.symbol}`;
   }, [lpToken]);
+
+  const isHaveToWithdrawAll = useMemo(() => {
+    return type === FARM_TYPE.quickswap && !isWithdrawAll
+  }, [type, isWithdrawAll])
 
   const isActiveStake = useMemo(() => {
     return !new BigNumber(lpBalance).isZero();
@@ -198,16 +204,19 @@ const FarmingTab = ({
         insuffBalance={inSufficientUnStakeBalance}
         usdtValue={unStakeUsdtAmount}
         labelLP={labelLP}
+        setIsWithdrawAll={setIsWithdrawAll}
       />
       <ButtonWrapper isHide={!isActiveUnstake}>
         <ActiveButton
           label={
             inSufficientUnStakeBalance ? "Insufficient balance" : "Unstake"
           }
+          title={"Selecting unstake will withdraw your LP deposited and all reward"}
           loading={loadingUnstake}
           labelLoading={"Unstaking"}
           onClick={unStakeCallBack}
           disabled={
+            isHaveToWithdrawAll ||
             inSufficientUnStakeBalance ||
             new BigNumber(amountUnstake).isZero() ||
             !amountUnstake

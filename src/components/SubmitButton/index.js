@@ -39,11 +39,13 @@ const SubmitButton = ({
   disabled = false,
   style = {},
   className,
+  title,
 }) => {
   return (
     <ButtonAction
       className={className}
       style={style}
+      title={title}
       disabled={disabled}
       loading={loading}
       onClick={!loading ? () => onClick() : undefined}

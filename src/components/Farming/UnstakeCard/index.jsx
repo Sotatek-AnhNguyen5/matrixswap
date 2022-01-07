@@ -108,12 +108,22 @@ const UnstakeCard = ({
   insuffBalance,
   usdtValue,
   labelLP,
+  setIsWithdrawAll,
 }) => {
   const [percent, setPercent] = useState("0");
   const { account } = useWeb3React();
 
+  const customSetPercent = (amount) => {
+    if (amount === "100") {
+      setIsWithdrawAll(true);
+    }else {
+      setIsWithdrawAll(false);
+    }
+    setPercent(amount);
+  };
+
   const onChangeRangePercent = (percentAmount) => {
-    setPercent(percentAmount);
+    customSetPercent(percentAmount.toString());
     if (stakedBalance) {
       setAmountUnstake(
         new BigNumber(stakedBalance).times(percentAmount).div(100).toFixed(6, 1)
@@ -123,17 +133,17 @@ const UnstakeCard = ({
 
   const onMax = () => {
     setAmountUnstake(stakedBalance);
-    setPercent("100");
+    customSetPercent("100");
   };
 
   const onChangeUnstake = (value) => {
     setAmountUnstake(value);
     if (stakedBalance) {
       const newPercent = new BigNumber(value).div(stakedBalance).times(100);
-      setPercent(
+      customSetPercent(
         newPercent.toFixed(0) === "Infinity" || newPercent.isNaN()
           ? "0"
-          : newPercent.toFixed(0)
+          : newPercent.toFixed(0).toString()
       );
     }
   };

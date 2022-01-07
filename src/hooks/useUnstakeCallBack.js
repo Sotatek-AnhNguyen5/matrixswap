@@ -20,7 +20,7 @@ const useUnStakeCallBack = (farmAddress, value, onFinish, type, pId) => {
         if (type === FARM_TYPE.apeswap || type === FARM_TYPE.sushiswap) {
           params = [pId, amount, account];
         } else {
-          params = [amount];
+          params = [];
         }
         const methods = PROTOCOL_FUNCTION[type].unStake;
         farmContract.methods[methods](...params)

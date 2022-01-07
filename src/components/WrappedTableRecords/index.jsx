@@ -124,7 +124,6 @@ const FarmType = styled.div`
 
 const TableRecord = ({
   data,
-  filterKey,
   type,
   refetchVolume,
   setParentData,
@@ -205,14 +204,14 @@ const TableRecord = ({
                 symbol={symbol1}
               />
               <div>
-                <a
-                  rel="noreferrer"
-                  target="_blank"
-                  href={`https://polygonscan.com/address/${farmAddress}`}
-                  title={poolIndex}
-                >
+                {/*<a*/}
+                {/*  rel="noreferrer"*/}
+                {/*  target="_blank"*/}
+                {/*  href={`https://polygonscan.com/address/${farmAddress}`}*/}
+                {/*  title={poolIndex}*/}
+                {/*>*/}
                   {`${symbol0} - ${symbol1}`}
-                </a>
+                {/*</a>*/}
                 <FarmType>{type}</FarmType>
               </div>
             </div>
