@@ -111,12 +111,13 @@ const UnstakeCard = ({
   setIsWithdrawAll,
 }) => {
   const [percent, setPercent] = useState("0");
+  const [inputAmount, setAmountInput] = useState("");
   const { account } = useWeb3React();
 
   const customSetPercent = (amount) => {
     if (amount === "100") {
       setIsWithdrawAll(true);
-    }else {
+    } else {
       setIsWithdrawAll(false);
     }
     setPercent(amount);
@@ -125,19 +126,21 @@ const UnstakeCard = ({
   const onChangeRangePercent = (percentAmount) => {
     customSetPercent(percentAmount.toString());
     if (stakedBalance) {
-      setAmountUnstake(
-        new BigNumber(stakedBalance).times(percentAmount).div(100).toFixed(6, 1)
-      );
+      const amount = new BigNumber(stakedBalance).times(percentAmount).div(100);
+      setAmountUnstake(amount.toFixed());
+      setAmountInput(amount.toFixed(6, 1));
     }
   };
 
   const onMax = () => {
     setAmountUnstake(stakedBalance);
+    setAmountInput(stakedBalance);
     customSetPercent("100");
   };
 
   const onChangeUnstake = (value) => {
     setAmountUnstake(value);
+    setAmountInput(value);
     if (stakedBalance) {
       const newPercent = new BigNumber(value).div(stakedBalance).times(100);
       customSetPercent(
@@ -151,6 +154,7 @@ const UnstakeCard = ({
   useEffect(() => {
     if (!amountUnstake) {
       setPercent("0");
+      setAmountInput("");
     }
   }, [amountUnstake]);
 
@@ -177,7 +181,7 @@ const UnstakeCard = ({
               {account && <span>{percent} %</span>}
               <InputNumber
                 onChange={onChangeUnstake}
-                value={amountUnstake}
+                value={inputAmount}
                 placeholder={"0.000000"}
               />
             </InputSlideRow>

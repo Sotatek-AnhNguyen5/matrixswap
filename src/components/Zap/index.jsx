@@ -203,7 +203,6 @@ const ZapTab = ({
         return [...newData];
       });
     }
-    changeTab();
   };
 
   const params = useMemo(() => {
@@ -493,6 +492,7 @@ const ZapTab = ({
         lpAddress={lpAddress}
         estimateOutput={totalEstimateOutput}
         toTokensZapOut={toTokensZapOut}
+        onCloseSubmittedModal={changeTab}
       />
     </div>
   );

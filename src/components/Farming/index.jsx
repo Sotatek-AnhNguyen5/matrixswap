@@ -88,7 +88,7 @@ const FarmingTab = ({
   const onFinishUnStake = async () => {
     await Promise.all([getLpBalance(), refreshStakedBalance()]);
     if (new BigNumber(stakedBalance).isZero()) {
-      removeStakeInfoFromStorage();
+      removeStakeInfoFromStorage(farmAddress, pId);
     }
     toast("Withdraw successfully!");
     setAmountUnStake("");

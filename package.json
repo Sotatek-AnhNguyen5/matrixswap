@@ -15,6 +15,7 @@
     "apollo-link": "^1.2.14",
     "axios": "^0.24.0",
     "bignumber.js": "^9.0.1",
+    "ethers": "^5.5.3",
     "graphql": "^16.0.1",
     "lodash": "^4.17.21",
     "moment": "^2.29.1",

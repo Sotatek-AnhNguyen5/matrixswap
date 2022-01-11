@@ -56,6 +56,7 @@ const TransactionStatusModal = ({
   lpAddress,
   isZapIn,
   toTokensZapOut,
+  onCloseSubmittedModal,
 }) => {
   const closeModal = () => setIsModalOpen(false);
 
@@ -169,7 +170,7 @@ const TransactionStatusModal = ({
             label="Close"
             marginTop="40px"
             width="100%"
-            onClick={closeModal}
+            onClick={onCloseSubmittedModal}
           />
         </>
       );

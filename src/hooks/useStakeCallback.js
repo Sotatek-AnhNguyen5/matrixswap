@@ -3,6 +3,7 @@ import { useWeb3React } from "@web3-react/core";
 import BigNumber from "bignumber.js";
 import { FARM_TYPE, PROTOCOL_FUNCTION } from "../const";
 import { useFarmContract } from "./useContract";
+import { ethers } from "ethers";
 
 const useStakeCallback = (farmAddress, value, onFinish, type, pId) => {
   const { account } = useWeb3React();
@@ -10,38 +11,39 @@ const useStakeCallback = (farmAddress, value, onFinish, type, pId) => {
   const farmContract = useFarmContract(farmAddress, type);
 
   return [
-    useCallback(() => {
+    useCallback(async () => {
       setLoading(true);
-      const amount = new BigNumber(value)
-        .times(new BigNumber(10).pow(18))
-        .toFixed(0);
-      let params;
-      if (type === FARM_TYPE.apeswap || type === FARM_TYPE.sushiswap) {
-        params = [pId, amount, account];
-      } else {
-        params = [amount];
-      }
-      const methods = PROTOCOL_FUNCTION[type].stake;
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const contract = new ethers.Contract(
+        farmAddress,
+        PROTOCOL_FUNCTION[type].abi,
+        signer
+      );
       try {
-        farmContract.methods[methods](...params)
-          .send({ from: account })
-          .on("confirmation", async function (number) {
-            if (number === 7) {
-              await onFinish();
-              setLoading(false);
-            }
-          })
-          .once("error", () => {
-            setLoading(false);
-          });
+        const amount = new BigNumber(value)
+          .times(new BigNumber(10).pow(18))
+          .toFixed(0);
+        let params;
+        if (type === FARM_TYPE.apeswap || type === FARM_TYPE.sushiswap) {
+          params = [pId, amount, account];
+        } else {
+          params = [amount];
+        }
+        const methods = PROTOCOL_FUNCTION[type].stake;
+        const tx = await contract[methods](...params);
+        await tx.wait(5);
+        await onFinish();
+        setLoading(false);
       } catch (e) {
-        console.log(e);
+        if(e.message.includes("transaction was replaced")) {
+          await onFinish();
+        }
         setLoading(false);
       }
     }, [farmContract, value, type]),
     loading,
   ];
 };
-
 
 export default useStakeCallback;

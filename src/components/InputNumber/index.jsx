@@ -1,5 +1,4 @@
 import styled from "styled-components";
-import SelectTokenButton from "../SelectTokenModal";
 import {
   isNotValidASCIINumber,
   isPreventASCIICharacters,

@@ -1,6 +1,11 @@
 import styled from "styled-components";
-import {ActiveButton, BalanceLine, FlexRow, MaxButton} from "../../../theme/components";
-import React, {useEffect, useMemo, useState} from "react";
+import {
+  ActiveButton,
+  BalanceLine,
+  FlexRow,
+  MaxButton,
+} from "../../../theme/components";
+import React, { useEffect, useMemo, useState } from "react";
 import InputNumber from "../../InputNumber";
 import Slider from "rc-slider";
 import BigNumber from "bignumber.js";
@@ -111,24 +116,27 @@ const StakeCard = ({
   labelLP,
 }) => {
   const [percent, setPercent] = useState("0");
+  const [inputAmount, setAmountInput] = useState("");
   const { account } = useWeb3React();
 
   const onChangeRangePercent = (percentAmount) => {
     setPercent(percentAmount);
     if (lpBalance) {
-      setAmountStake(
-        new BigNumber(lpBalance).times(percentAmount).div(100).toFixed(6, 1)
-      );
+      const amount = new BigNumber(lpBalance).times(percentAmount).div(100);
+      setAmountStake(amount.toFixed());
+      setAmountInput(amount.toFixed(6, 1));
     }
   };
 
   const onMax = () => {
     setAmountStake(lpBalance);
+    setAmountInput(lpBalance);
     setPercent("100");
   };
 
   const onChangeStake = (value) => {
     setAmountStake(value);
+    setAmountInput(value)
     if (lpBalance) {
       const newPercent = new BigNumber(value).div(lpBalance).times(100);
       setPercent(
@@ -140,10 +148,11 @@ const StakeCard = ({
   };
 
   useEffect(() => {
-    if(!amountStake) {
+    if (!amountStake) {
       setPercent("0");
+      setAmountInput("")
     }
-  }, [amountStake])
+  }, [amountStake]);
 
   return (
     <TokenCard isActive={isActive}>
@@ -167,7 +176,7 @@ const StakeCard = ({
             <InputSlideRow danger={insuffBalance}>
               {account && <span>{percent} %</span>}
               <InputNumber
-                value={amountStake}
+                value={inputAmount}
                 onChange={onChangeStake}
                 placeholder={"0.000000"}
               />
