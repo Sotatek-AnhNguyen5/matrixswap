@@ -1234,5 +1234,13 @@
   {
     "value": "klima",
     "label": "KLIMA"
+  },
+  {
+    "value": "pzug",
+    "label": "pZUG"
+  },
+  {
+    "value": "gohm",
+    "label": "gOHM"
   }
 ]

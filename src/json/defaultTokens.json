@@ -384,7 +384,7 @@
       "symbol": "FXS",
       "decimals": 18,
       "chainId": 137,
-      "logoURI": "https://avatars.githubusercontent.com/u/56005256?s=200&v=4"
+      "logoURI": "https://res.cloudinary.com/sushi-cdn/image/fetch/w_96/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0x45c32fA6DF82ead1e2EF74d17b76547EDdFaFF89/logo.png"
     },
     {
       "name": "GAME Credits",
