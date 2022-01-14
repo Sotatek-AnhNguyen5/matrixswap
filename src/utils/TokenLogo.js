@@ -54,5 +54,9 @@ export const tokensLogoLink = {
   BANANA: "https://s2.coinmarketcap.com/static/img/coins/64x64/8497.png",
   DATA: "https://s2.coinmarketcap.com/static/img/coins/64x64/2143.png",
   PICKLE: "https://s2.coinmarketcap.com/static/img/coins/64x64/7022.png",
+  UGT: "https://s2.coinmarketcap.com/static/img/coins/64x64/11292.png",
+  pZUG: "https://res.cloudinary.com/sushi-cdn/image/fetch/w_128/https://raw.githubusercontent.com/sushiswap/assets/master/blockchains/polygon/assets/0xeb45921FEDaDF41dF0BfCF5c33453aCedDA32441/logo.png",
+  gOHM: "https://s2.coinmarketcap.com/static/img/coins/64x64/16388.png",
+  ibBTC: "https://res.cloudinary.com/sushi-cdn/image/fetch/w_96/https://raw.githubusercontent.com/sushiswap/logos/main/network/matic/0x4EaC4c4e9050464067D673102F8E24b2FccEB350.jpg",
   // ETH2x
 };
