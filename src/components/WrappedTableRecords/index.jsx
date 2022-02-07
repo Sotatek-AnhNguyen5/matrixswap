@@ -4,7 +4,7 @@ import React, { useState, useMemo, useEffect, useCallback } from "react";
 import useFarmUserInfo from "../../hooks/useFarmUserInfo";
 import { toast } from "react-toastify";
 import BigNumber from "bignumber.js";
-import { find, isEmpty, findIndex } from "lodash";
+import { findIndex } from "lodash";
 import { convertDate, moneyFormatter, rewardFormat } from "../../utils";
 import ZapTab from "../Zap";
 import FarmingTab from "../Farming";
@@ -122,12 +122,7 @@ const FarmType = styled.div`
   text-transform: capitalize;
 `;
 
-const TableRecord = ({
-  data,
-  type,
-  refetchVolume,
-  setParentData,
-}) => {
+const TableRecord = ({ data, type, refetchVolume, setParentData }) => {
   const [isSelected, setIsSelected] = useState(false);
   const [isZap, setIsZap] = useState(true);
   const farmAddress = data.rewardAddress;
@@ -210,7 +205,7 @@ const TableRecord = ({
                 {/*  href={`https://polygonscan.com/address/${farmAddress}`}*/}
                 {/*  title={poolIndex}*/}
                 {/*>*/}
-                  {`${symbol0} - ${symbol1}`}
+                {`${symbol0} - ${symbol1}`}
                 {/*</a>*/}
                 <FarmType>{type}</FarmType>
               </div>

@@ -176,6 +176,7 @@ const ZapTab = ({
     }
     return "Zap";
   }, [
+    account,
     noAmountError,
     unSelectedTokenError,
     insuffBalance,

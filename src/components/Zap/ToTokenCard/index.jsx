@@ -73,7 +73,7 @@ const ToTokenCard = ({
   lpToken,
 }) => {
   const { account } = useWeb3React();
-  const usdtValue = useConvertToUSDT(token.amount, token, farmType, true);
+  const usdtValue = useConvertToUSDT(token.amount, token, farmType, false, lpToken);
   const txCost = useConvertToWMATIC(token.amount, token, farmType);
   const [balance, refreshBalance] = useTokenBalance(
     token.address,

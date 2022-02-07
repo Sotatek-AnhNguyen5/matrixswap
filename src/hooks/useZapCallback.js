@@ -26,7 +26,7 @@ const useZapCallback = (params, onFinish, isZapIn) => {
 
       try {
         const tx = await contract[methods](...param);
-        await tx.wait(5);
+        await tx.wait(3);
         await onFinish();
         setLoading(false);
         setStatus(STATUS_ZAP.success);

@@ -53,7 +53,7 @@ const useConvertToUSDT = (amount, token, farmType, isZapIn, lpToken) => {
         getUSDTfromLP(amount, lpToken);
       }
     }
-  }, [amount, token, lpToken]);
+  }, [isZapIn, amount, token, lpToken]);
 
   return uSDTValue;
 };

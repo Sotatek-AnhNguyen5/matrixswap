@@ -1,6 +1,7 @@
 import styled from "styled-components";
 import SubmitButton from "../components/SubmitButton";
 import ReactPaginate from "react-paginate";
+import InputNumber from "../components/InputNumber";
 
 export const ProtocolBadger = styled.div`
   display: flex;
@@ -79,7 +80,9 @@ export const ActiveButton = styled(SubmitButton)`
 export const BalanceLine = styled.div`
   font-size: 14px;
   font-family: ${(props) =>
-    props.isNumber ? "ChakraPetch, sans-serif" : "Ocr-A, serif"};
+    props.isNumber
+      ? "ChakraPetch, sans-                           "
+      : "Ocr-A, serif"};
   color: ${(props) =>
     props.danger ? props.theme.colorDanger : "rgba(18, 70, 46, 0.6)"};
 
@@ -140,6 +143,26 @@ export const StyledReactPaginate = styled(ReactPaginate)`
 
   .previous,
   .next {
+    width: auto;
+  }
+`;
+
+export const InputNumberPercent = styled(InputNumber)`
+  .input-number {
+    color: rgba(18, 70, 46, 0.6);
+    background-color: transparent;
+    border: 0;
+    padding: 0;
+    width: 40px;
+    font-size: 16px;
+    &::placeholder {
+      color: rgba(18, 70, 46, 0.6);
+    }
+  }
+
+  span {
+    color: rgba(18, 70, 46, 0.6);
+    margin-left: 5px;
     width: auto;
   }
 `;

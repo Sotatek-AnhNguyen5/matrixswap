@@ -178,7 +178,7 @@ const SelectTokenModal = ({
   setIsModalOpen,
   selectedToken,
 }) => {
-  const [filterKey, setFilterKey] = useState();
+  const [filterKey, setFilterKey] = useState("");
   const closeModal = () => setIsModalOpen(false);
 
   const onSelectToken = (token) => {
@@ -245,9 +245,10 @@ const SelectTokenModal = ({
             return (
               <TokenRow
                 isShow={
-                  startsWith(e.name, filterKey) ||
-                  startsWith(e.symbol, filterKey) ||
-                  !filterKey
+                  !filterKey ||
+                  startsWith(e.name.toLowerCase(), filterKey.toLowerCase()) ||
+                  startsWith(e.symbol.toLowerCase(), filterKey.toLowerCase()) ||
+                  e.address.toLowerCase() === filterKey.toLowerCase()
                 }
                 isSelected={isSelectedToken(e)}
                 onClick={() => onSelectToken(e)}

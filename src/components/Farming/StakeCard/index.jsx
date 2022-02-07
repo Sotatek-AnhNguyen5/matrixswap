@@ -1,8 +1,8 @@
 import styled from "styled-components";
 import {
-  ActiveButton,
   BalanceLine,
   FlexRow,
+  InputNumberPercent,
   MaxButton,
 } from "../../../theme/components";
 import React, { useEffect, useMemo, useState } from "react";
@@ -60,23 +60,23 @@ const SliderInputWrapper = styled.div`
   flex-flow: column;
   min-height: 54px;
 
-  .input-wrapper {
+  .input-amount {
     width: 100%;
-  }
 
-  input {
-    font-family: ChakraPetch, sans-serif;
-    text-align: right;
-    font-weight: 400;
-    font-size: 18px;
-    color: rgba(255, 255, 255, 0.6);
-    background: transparent;
-    border: 0;
-    outline: 0;
-    padding: 10px 20px;
-
-    &::placeholder {
+    input {
+      font-family: ChakraPetch, sans-serif;
+      text-align: right;
+      font-weight: 400;
+      font-size: 18px;
       color: rgba(255, 255, 255, 0.6);
+      background: transparent;
+      border: 0;
+      outline: 0;
+      padding: 10px 20px;
+
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+      }
     }
   }
 
@@ -136,7 +136,7 @@ const StakeCard = ({
 
   const onChangeStake = (value) => {
     setAmountStake(value);
-    setAmountInput(value)
+    setAmountInput(value);
     if (lpBalance) {
       const newPercent = new BigNumber(value).div(lpBalance).times(100);
       setPercent(
@@ -150,7 +150,7 @@ const StakeCard = ({
   useEffect(() => {
     if (!amountStake) {
       setPercent("0");
-      setAmountInput("")
+      setAmountInput("");
     }
   }, [amountStake]);
 
@@ -174,11 +174,19 @@ const StakeCard = ({
         <SliderWrapper>
           <SliderInputWrapper>
             <InputSlideRow danger={insuffBalance}>
-              {account && <span>{percent} %</span>}
+              {account && (
+                <InputNumberPercent
+                  value={percent}
+                  onChange={(e) => onChangeRangePercent(e)}
+                  placeholder={"0"}
+                  suffix={"%"}
+                />
+              )}
               <InputNumber
                 value={inputAmount}
                 onChange={onChangeStake}
                 placeholder={"0.000000"}
+                className="input-amount"
               />
             </InputSlideRow>
             {account && (

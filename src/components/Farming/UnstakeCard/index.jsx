@@ -57,24 +57,23 @@ const SliderInputWrapper = styled.div`
 
   .input-wrapper {
     width: 100%;
-  }
-
-  input {
-    font-family: ChakraPetch, sans-serif;
-    text-align: right;
-    font-weight: 400;
-    font-size: 18px;
-    color: rgba(255, 255, 255, 0.6);
-    background: transparent;
-    border: 0;
-    outline: 0;
-    padding: 10px 20px;
-
-    &::placeholder {
+    input {
+      font-family: ChakraPetch, sans-serif;
+      text-align: right;
+      font-weight: 400;
+      font-size: 18px;
       color: rgba(255, 255, 255, 0.6);
+      background: transparent;
+      border: 0;
+      outline: 0;
+      padding: 10px 20px;
+
+      &::placeholder {
+        color: rgba(255, 255, 255, 0.6);
+      }
     }
   }
-
+  
   .rc-slider {
     margin-bottom: -5px;
   }

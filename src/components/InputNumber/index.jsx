@@ -31,9 +31,18 @@ const InputWrapper = styled.div`
   }
 `;
 
-const InputNumber = ({ color, inputRef, onChange, disabled, value, placeholder }) => {
+const InputNumber = ({
+  color,
+  inputRef,
+  onChange,
+  disabled,
+  value,
+  placeholder,
+  suffix,
+  className,
+}) => {
   return (
-    <InputWrapper disabled={disabled} color={color} className={"input-wrapper"}>
+    <InputWrapper disabled={disabled} color={color} className={`input-wrapper ${className}`}>
       <input
         onKeyDown={(e) =>
           isNotValidASCIINumber(e.keyCode, true) && e.preventDefault()
@@ -46,6 +55,7 @@ const InputNumber = ({ color, inputRef, onChange, disabled, value, placeholder }
             onChange(e.target.value);
           }
         }}
+        className="input-number"
         ref={inputRef}
         type="number"
         placeholder={placeholder}
@@ -53,6 +63,7 @@ const InputNumber = ({ color, inputRef, onChange, disabled, value, placeholder }
         value={value}
         min="0"
       />
+      {suffix && <span>{suffix}</span>}
     </InputWrapper>
   );
 };

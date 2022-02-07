@@ -32,7 +32,7 @@ const useUnStakeCallBack = (farmAddress, value, onFinish, type, pId) => {
       const methods = PROTOCOL_FUNCTION[type].unStake;
       try {
         const tx = await contract[methods](...params);
-        await tx.wait(5);
+        await tx.wait(3);
         await onFinish();
         setLoading(false);
       } catch (e) {

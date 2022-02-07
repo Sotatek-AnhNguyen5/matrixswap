@@ -135,7 +135,6 @@ const FromTokenCard = ({
     ADDRESS_ZAP,
     token.decimals
   );
-  console.log(allowance)
   const estimateOutput = useEstimateOutput(
     token.amount,
     token,

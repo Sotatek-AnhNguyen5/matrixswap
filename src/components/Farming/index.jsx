@@ -32,7 +32,7 @@ const BlackLine = styled.div`
 `;
 
 const ApproveButton = styled(ActiveButton)`
-  width: 60%;
+  width: ${(props) => (props.isConnectedWallet ? "100%" : "60%")};
   font-size: 16px;
   border-radius: 26px;
   padding: 20px;
@@ -179,6 +179,7 @@ const FarmingTab = ({
             labelLoading={"approving"}
             onClick={approve}
             disabled={!account}
+            isConnectedWallet={!account}
           />
         )}
         {account && (
@@ -191,6 +192,7 @@ const FarmingTab = ({
             labelLoading={"staking"}
             onClick={stake}
             disabled={
+              isHaveToApprove ||
               !isActiveStake ||
               isInsufficientBalanceStake ||
               new BigNumber(amountStake).isZero() ||
