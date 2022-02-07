@@ -122,7 +122,7 @@ export const formatSmallNumber = (amount) => {
     const amountAfterZero = amountSplit[1].split("");
     let number = 0;
     let formattedNumber = "";
-    amountAfterZero.map((e) => {
+    amountAfterZero.forEach((e) => {
       if (number >= 2) return;
       if (e !== "0") {
         number += 1;

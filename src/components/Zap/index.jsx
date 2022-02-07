@@ -145,10 +145,15 @@ const ZapTab = ({
   const [isZapIn, setIsZapIn] = useState(true);
   const [toTokensZapOut, setToTokensZapOut] = useState([]);
 
-  const tokenHaveToApprove = find(
-    selectedTokens,
-    (e) => e.allowance && new BigNumber(e.allowance).isZero()
-  );
+  const tokenHaveToApprove = useMemo(() => {
+    return find(
+      selectedTokens,
+      (e) =>
+        e.allowance &&
+        (new BigNumber(e.allowance).isZero() ||
+          new BigNumber(e.allowance).lt(e.amount))
+    );
+  }, [selectedTokens]);
 
   const selectedListToken = isZapIn ? selectedTokens : toTokensZapOut;
 
@@ -332,7 +337,7 @@ const ZapTab = ({
 
   const totalEstimateOutputUSDT = useMemo(() => {
     return new BigNumber(totalEstimateOutput).times(usdtRate).toFixed();
-  }, [usdtRate, totalEstimateOutput])
+  }, [usdtRate, totalEstimateOutput]);
 
   const totalTxCost = useMemo(() => {
     let total = new BigNumber(0);

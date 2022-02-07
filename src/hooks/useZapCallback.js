@@ -1,8 +1,6 @@
-import { useZapContract } from "./useContract";
-import { useCallback, useEffect, useState } from "react";
-import { useWeb3React } from "@web3-react/core";
+import { useCallback, useState } from "react";
 import { ethers } from "ethers";
-import { ADDRESS_ZAP, PROTOCOL_FUNCTION } from "../const";
+import { ADDRESS_ZAP } from "../const";
 import ZapABI from "../abi/ZapABI.json";
 
 export const STATUS_ZAP = {
@@ -44,7 +42,7 @@ const useZapCallback = (params, onFinish, isZapIn) => {
         console.log(e);
         setLoading(false);
       }
-    }, [params, isZapIn]),
+    }, [params, isZapIn, onFinish]),
     loading,
     status,
     txHash,

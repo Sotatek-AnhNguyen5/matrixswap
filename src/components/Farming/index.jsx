@@ -12,7 +12,7 @@ import StakeCard from "./StakeCard";
 import { ActiveButton } from "../../theme/components";
 import UnstakeCard from "./UnstakeCard";
 import { useWeb3React } from "@web3-react/core";
-import {FARM_TYPE} from "../../const";
+import { FARM_TYPE } from "../../const";
 
 const ButtonWrapper = styled.div`
   margin-top: 20px;
@@ -68,7 +68,8 @@ const FarmingTab = ({
   const [isWithdrawAll, setIsWithdrawAll] = useState(false);
   const [approve, loadingApprove, allowance] = useApproveCallBack(
     lpToken.address,
-    farmAddress
+    farmAddress,
+    18
   );
 
   const stakeUsdtAmount = useMemo(() => {
@@ -132,8 +133,8 @@ const FarmingTab = ({
   }, [lpToken]);
 
   const isHaveToWithdrawAll = useMemo(() => {
-    return type === FARM_TYPE.quickswap && !isWithdrawAll
-  }, [type, isWithdrawAll])
+    return type === FARM_TYPE.quickswap && !isWithdrawAll;
+  }, [type, isWithdrawAll]);
 
   const isActiveStake = useMemo(() => {
     return !new BigNumber(lpBalance).isZero();
@@ -152,8 +153,11 @@ const FarmingTab = ({
   }, [amountUnstake, stakedBalance]);
 
   const isHaveToApprove = useMemo(() => {
-    return new BigNumber(allowance).isZero();
-  }, [allowance]);
+    const bigAllowanceNumber = new BigNumber(allowance);
+    return (
+      new BigNumber(allowance).isZero() || bigAllowanceNumber.lt(amountStake)
+    );
+  }, [allowance, amountStake]);
 
   return (
     <div>
@@ -211,7 +215,9 @@ const FarmingTab = ({
           label={
             inSufficientUnStakeBalance ? "Insufficient balance" : "Unstake"
           }
-          title={"Selecting unstake will withdraw your LP deposited and all reward"}
+          title={
+            "Selecting unstake will withdraw your LP deposited and all reward"
+          }
           loading={loadingUnstake}
           labelLoading={"Unstaking"}
           onClick={unStakeCallBack}
