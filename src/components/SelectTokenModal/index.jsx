@@ -13,7 +13,7 @@ import {
   WETH_TOKEN,
   WMATIC_TOKEN,
 } from "../../const";
-import {formatTokenBalance} from "../../utils";
+import { formatTokenBalance } from "../../utils";
 
 const InputWrapper = styled.div`
   display: flex;
@@ -76,7 +76,7 @@ const TokenRow = styled.div`
         font-family: ChakraPetch, sans-serif;
       }
     }
-    
+
     .token-name {
       font-family: ChakraPetch, sans-serif;
     }
@@ -198,12 +198,17 @@ const SelectTokenModal = ({
     return !!isSelect;
   };
 
+  const onAfterCloseModal = () => {
+    document.body.style.overflow = "unset";
+    setFilterKey("");
+  };
+
   return (
     <Modal
       isOpen={isModalOpen}
       onRequestClose={closeModal}
       onAfterOpen={() => (document.body.style.overflow = "hidden")}
-      onAfterClose={() => (document.body.style.overflow = "unset")}
+      onAfterClose={onAfterCloseModal}
       style={customStyles}
       contentLabel="Select token"
       ariaHideApp={false}
@@ -259,7 +264,9 @@ const SelectTokenModal = ({
                     <img src={e.logoURI} alt="" />
                     <span>{e.symbol}</span>
                   </div>
-                  <div className="token-name">{formatTokenBalance(e.balance)}</div>
+                  <div className="token-name">
+                    {formatTokenBalance(e.balance)}
+                  </div>
                 </div>
               </TokenRow>
             );

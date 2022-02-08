@@ -163,6 +163,9 @@ export const formatBalance = (amount) => {
 };
 
 export const formatTokenBalance = (amount) => {
+  if(!amount) {
+    return "0"
+  }
   const amountBig = new BigNumber(amount);
   if (!amountBig.isZero() && amountBig.lt(0.000001)) {
     return "0.000000...";
