@@ -2,7 +2,6 @@ import { useCallback, useEffect, useState } from "react";
 import { debounce } from "lodash";
 import { convertToUSD } from "../utils/apr";
 import { useFactoryContract, useLibrary } from "./useContract";
-import { USDT_TOKEN } from "../const";
 import { convertLPtoUSDT } from "../utils/deposited";
 import BigNumber from "bignumber.js";
 
@@ -41,11 +40,6 @@ const useConvertToUSDT = (amount, token, farmType, isZapIn, lpToken) => {
   useEffect(() => {
     if (!amount) {
       setUSDTValue(0);
-    } else if (
-      token.address &&
-      token.address.toLowerCase() === USDT_TOKEN.address.toLowerCase()
-    ) {
-      setUSDTValue(amount);
     } else if (amount && token.address) {
       if (isZapIn) {
         getUSDTValue(amount, token);

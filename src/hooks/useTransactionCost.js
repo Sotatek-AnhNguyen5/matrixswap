@@ -28,7 +28,7 @@ const useTransactionCost = (token, lpToken, isZapIn, amount, farmType) => {
 
   const getTxZapOut = useCallback(
     debounce(async (amountToken, lpToken) => {
-      const txCost = new BigNumber(amount).times(TRANSACTION_COST_FEE);
+      const txCost = new BigNumber(amountToken).times(TRANSACTION_COST_FEE);
       if (!amountToken || new BigNumber(amountToken).isZero()) {
         setTxFee(0);
       }

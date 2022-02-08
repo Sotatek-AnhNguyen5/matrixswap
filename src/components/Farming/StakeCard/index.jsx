@@ -115,17 +115,24 @@ const StakeCard = ({
   usdtValue,
   labelLP,
 }) => {
-  const [percent, setPercent] = useState("0");
+  const [percent, setPercent] = useState();
   const [inputAmount, setAmountInput] = useState("");
   const { account } = useWeb3React();
 
   const onChangeRangePercent = (percentAmount) => {
-    setPercent(percentAmount || "0");
+    setPercent(percentAmount);
     if (lpBalance) {
-      const amount = new BigNumber(lpBalance).times(percentAmount || "0").div(100);
+      const amount = new BigNumber(lpBalance)
+        .times(percentAmount || "0")
+        .div(100);
       setAmountStake(amount.toFixed());
       setAmountInput(amount.toFixed(6, 1));
     }
+  };
+
+  const onChangeInputPercent = (amount) => {
+    let fixedAmount = new BigNumber(amount).gt(100) ? "100" : amount;
+    onChangeRangePercent(fixedAmount);
   };
 
   const onMax = () => {
@@ -178,7 +185,7 @@ const StakeCard = ({
                 <InputNumberPercent
                   danger={insuffBalance}
                   value={percent}
-                  onChange={(e) => onChangeRangePercent(e)}
+                  onChange={(e) => onChangeInputPercent(e)}
                   placeholder={"0"}
                   suffix={"%"}
                 />

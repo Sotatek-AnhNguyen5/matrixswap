@@ -1,6 +1,11 @@
 import styled from "styled-components";
 import TokenLogo from "../../TokenLogo";
-import {BalanceLine, FlexRow, InputNumberPercent, MaxButton} from "../../../theme/components";
+import {
+  BalanceLine,
+  FlexRow,
+  InputNumberPercent,
+  MaxButton,
+} from "../../../theme/components";
 import React, {
   useCallback,
   useEffect,
@@ -94,7 +99,7 @@ const FromTokenCard = ({
   selectedTokens,
 }) => {
   const { account } = useWeb3React();
-  const [percent, setPercent] = useState("0");
+  const [percent, setPercent] = useState();
   const usdtValue = useConvertToUSDT(
     token.amount,
     token,
@@ -130,7 +135,7 @@ const FromTokenCard = ({
     });
   };
 
-  const [approve, loading, allowance] = useApproveCallBack(
+  const [approve, loading, allowance, getAllowance] = useApproveCallBack(
     token.address,
     ADDRESS_ZAP,
     token.decimals
@@ -157,7 +162,7 @@ const FromTokenCard = ({
   }, [balance]);
 
   const onChangeRangePercent = (percentAmount) => {
-    setPercent(percentAmount || "0");
+    setPercent(percentAmount);
     if (balance) {
       const toValue = new BigNumber(balance)
         .times(percentAmount || "0")
@@ -166,6 +171,11 @@ const FromTokenCard = ({
       setAmount(toValue);
       !isZapIn && refreshRatio(toValue);
     }
+  };
+
+  const onChangeInputPercent = (amount) => {
+    let fixedAmount = new BigNumber(amount).gt(100) ? "100" : amount;
+    onChangeRangePercent(fixedAmount);
   };
 
   const onChangeAmountValue = (e) => {
@@ -185,6 +195,7 @@ const FromTokenCard = ({
       newData[index].allowance = allowance;
       newData[index].approve = approve;
       newData[index].loading = loading;
+      newData[index].getAllowance = getAllowance;
       newData[index].usdtAmount = usdtValue;
       newData[index].estimateOutput = estimateOutput;
       newData[index].insufficientBalance = insufficientBalance;
@@ -263,7 +274,7 @@ const FromTokenCard = ({
               <InputNumberPercent
                 danger={insufficientBalance}
                 value={percent}
-                onChange={(e) => onChangeRangePercent(e)}
+                onChange={(e) => onChangeInputPercent(e)}
                 placeholder={"0"}
                 suffix={"%"}
               />

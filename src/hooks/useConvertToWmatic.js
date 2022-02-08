@@ -1,7 +1,6 @@
 import { useCallback, useEffect, useState } from "react";
 import { debounce } from "lodash";
 import { useFactoryContract, useLibrary } from "./useContract";
-import { USDT_TOKEN, WMATIC_TOKEN } from "../const";
 import { tokenToWMATIC } from "../utils/tvl";
 import BigNumber from "bignumber.js";
 
@@ -11,15 +10,15 @@ const useConvertToWMATIC = (amount, token, farmType) => {
   const [wmaticValue, setWmaticValue] = useState(0);
   const factoryContract = useFactoryContract(farmType);
 
-  const getUSDTValue = useCallback(
-    debounce(async (amountToken) => {
+  const getWmaticValue = useCallback(
+    debounce(async (amountToken, tokenUse) => {
       const value = await tokenToWMATIC(
         new BigNumber(amountToken).times(TX_COST_FEE).toFixed(),
         library,
-        USDT_TOKEN,
+        tokenUse,
         factoryContract
       );
-      setWmaticValue(value.toFixed(8));
+      setWmaticValue(new BigNumber(value).toFixed(8));
     }, 500),
     []
   );
@@ -27,13 +26,8 @@ const useConvertToWMATIC = (amount, token, farmType) => {
   useEffect(() => {
     if (!amount) {
       setWmaticValue(0);
-    } else if (
-      token.address &&
-      token.address.toLowerCase() === WMATIC_TOKEN.address.toLowerCase()
-    ) {
-      setWmaticValue(amount);
     } else if (amount && token.address) {
-      getUSDTValue(amount);
+      getWmaticValue(amount, token);
     }
   }, [amount, token]);
 

@@ -5,6 +5,7 @@ import {
   FARM_TYPE,
   PROTOCOL_FUNCTION,
   SUSHI_TOKEN,
+  USDT_TOKEN,
 } from "../const";
 import { USDT_ADDRESS } from "../const";
 
@@ -20,6 +21,9 @@ export const convertToUSD = async (
   address,
   factoryContract
 ) => {
+  if (address.toLowerCase() === USDT_TOKEN.address.toLowerCase()) {
+    return new BigNumber(amount);
+  }
   try {
     const pairUSDT = await factoryContract.methods
       .getPair(USDT_ADDRESS, address)

@@ -66,7 +66,7 @@ const FarmingTab = ({
   const [amountStake, setAmountStake] = useState("");
   const [amountUnstake, setAmountUnStake] = useState("");
   const [isWithdrawAll, setIsWithdrawAll] = useState(false);
-  const [approve, loadingApprove, allowance] = useApproveCallBack(
+  const [approve, loadingApprove, allowance, getAllowance] = useApproveCallBack(
     lpToken.address,
     farmAddress,
     18
@@ -82,7 +82,7 @@ const FarmingTab = ({
 
   const onFinishStake = async () => {
     saveToStorage();
-    await Promise.all([refreshStakedBalance(), getLpBalance()]);
+    await Promise.all([refreshStakedBalance(), getLpBalance(), getAllowance()]);
     setAmountStake("");
     toast("Stake successfully!");
   };

@@ -3,10 +3,9 @@ import { useWeb3React } from "@web3-react/core";
 import BigNumber from "bignumber.js";
 import StakingTokenABI from "../abi/stakingRewardABi.json";
 import { ethers } from "ethers";
-import { PROTOCOL_FUNCTION } from "../const";
 
 const useApproveCallBack = (token, toAddress, decimals = 18) => {
-  const { account, library } = useWeb3React();
+  const { account } = useWeb3React();
   const [loading, setLoading] = useState(false);
   const [allowance, setAllowance] = useState(0);
 
@@ -15,11 +14,6 @@ const useApproveCallBack = (token, toAddress, decimals = 18) => {
     const contract = new ethers.Contract(token, StakingTokenABI, provider);
     const allowanceAmount = await contract.allowance(account, toAddress);
     setAllowance(
-      new BigNumber(allowanceAmount._hex)
-        .div(new BigNumber(10).pow(decimals))
-        .toFixed()
-    );
-    console.log(
       new BigNumber(allowanceAmount._hex)
         .div(new BigNumber(10).pow(decimals))
         .toFixed()
@@ -53,6 +47,7 @@ const useApproveCallBack = (token, toAddress, decimals = 18) => {
     }, [token, toAddress]),
     loading,
     allowance,
+    getAllowance,
   ];
 };
 

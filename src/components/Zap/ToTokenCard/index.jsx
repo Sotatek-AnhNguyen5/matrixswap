@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import TokenLogo from "../../TokenLogo";
 import { BalanceLine, FlexRow } from "../../../theme/components";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useMemo } from "react";
 import BigNumber from "bignumber.js";
 import InputNumber from "../../InputNumber";
 import useTokenBalance from "../../../hooks/useTokenBalance";

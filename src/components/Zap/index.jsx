@@ -190,9 +190,10 @@ const ZapTab = ({
     }
     const balanceJob = [];
     selectedTokens.forEach((e) => e.refreshBalance());
+    selectedTokens.forEach((e) => e.getAllowance());
     await Promise.all([getLpBalance(), refreshStakeBalance(), balanceJob]);
     refetchVolume();
-    await setSelectedTokens((old) => {
+    setSelectedTokens((old) => {
       const newData = [...old].map((e) => {
         e.amount = "";
         e.estimateOutput = 0;
@@ -201,7 +202,7 @@ const ZapTab = ({
       return [...newData];
     });
     if (!isZapIn) {
-      await setToTokensZapOut((old) => {
+      setToTokensZapOut((old) => {
         const newData = [...old].map((e) => {
           e.amount = "";
           return e;
