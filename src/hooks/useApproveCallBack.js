@@ -11,15 +11,16 @@ const useApproveCallBack = (token, toAddress, decimals = 18) => {
   const [allowance, setAllowance] = useState(0);
 
   const getAllowance = async () => {
-    const stakingTokenContract = new library.eth.Contract(
-      StakingTokenABI,
-      token
-    );
-    const allowanceAmount = await stakingTokenContract.methods
-      .allowance(account, toAddress)
-      .call();
+    const provider = new ethers.providers.Web3Provider(window.ethereum);
+    const contract = new ethers.Contract(token, StakingTokenABI, provider);
+    const allowanceAmount = await contract.allowance(account, toAddress);
     setAllowance(
-      new BigNumber(allowanceAmount)
+      new BigNumber(allowanceAmount._hex)
+        .div(new BigNumber(10).pow(decimals))
+        .toFixed()
+    );
+    console.log(
+      new BigNumber(allowanceAmount._hex)
         .div(new BigNumber(10).pow(decimals))
         .toFixed()
     );
@@ -42,7 +43,7 @@ const useApproveCallBack = (token, toAddress, decimals = 18) => {
       const contract = new ethers.Contract(token, StakingTokenABI, signer);
       try {
         const tx = await contract.approve(toAddress, value);
-        await tx.wait(3);
+        await tx.wait(2);
         await getAllowance();
         setLoading(false);
       } catch (e) {
