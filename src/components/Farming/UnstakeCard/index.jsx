@@ -1,5 +1,10 @@
 import styled from "styled-components";
-import { BalanceLine, FlexRow, MaxButton } from "../../../theme/components";
+import {
+  BalanceLine,
+  FlexRow,
+  InputNumberPercent,
+  MaxButton,
+} from "../../../theme/components";
 import React, { useEffect, useMemo, useRef, useState } from "react";
 import InputNumber from "../../InputNumber";
 import Slider from "rc-slider";
@@ -55,8 +60,9 @@ const SliderInputWrapper = styled.div`
   flex-flow: column;
   min-height: 54px;
 
-  .input-wrapper {
+  .input-amount {
     width: 100%;
+
     input {
       font-family: ChakraPetch, sans-serif;
       text-align: right;
@@ -73,7 +79,7 @@ const SliderInputWrapper = styled.div`
       }
     }
   }
-  
+
   .rc-slider {
     margin-bottom: -5px;
   }
@@ -123,9 +129,9 @@ const UnstakeCard = ({
   };
 
   const onChangeRangePercent = (percentAmount) => {
-    customSetPercent(percentAmount.toString());
+    customSetPercent(percentAmount || "0");
     if (stakedBalance) {
-      const amount = new BigNumber(stakedBalance).times(percentAmount).div(100);
+      const amount = new BigNumber(stakedBalance).times(percentAmount || "0").div(100);
       setAmountUnstake(amount.toFixed());
       setAmountInput(amount.toFixed(6, 1));
     }
@@ -177,11 +183,20 @@ const UnstakeCard = ({
         <SliderWrapper>
           <SliderInputWrapper>
             <InputSlideRow danger={insuffBalance}>
-              {account && <span>{percent} %</span>}
+              {account && (
+                <InputNumberPercent
+                  danger={insuffBalance}
+                  value={percent}
+                  onChange={(e) => onChangeRangePercent(e)}
+                  placeholder={"0"}
+                  suffix={"%"}
+                />
+              )}
               <InputNumber
                 onChange={onChangeUnstake}
                 value={inputAmount}
                 placeholder={"0.000000"}
+                className="input-amount"
               />
             </InputSlideRow>
             {account && (

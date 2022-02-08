@@ -149,10 +149,11 @@ export const StyledReactPaginate = styled(ReactPaginate)`
 
 export const InputNumberPercent = styled(InputNumber)`
   .input-number {
-    color: rgba(18, 70, 46, 0.6);
+    color: ${(props) =>
+            props.danger ? props.theme.colorDanger : "rgba(18, 70, 46, 0.6)"};
     background-color: transparent;
     border: 0;
-    padding: 0;
+    padding: 0 10px 0 0;
     width: 40px;
     font-size: 16px;
     &::placeholder {
@@ -161,8 +162,9 @@ export const InputNumberPercent = styled(InputNumber)`
   }
 
   span {
-    color: rgba(18, 70, 46, 0.6);
-    margin-left: 5px;
-    width: auto;
+    color: ${(props) =>
+            props.danger ? props.theme.colorDanger : "rgba(18, 70, 46, 0.6)"};
+    margin-left: -5px;
+    width: 20px;
   }
 `;

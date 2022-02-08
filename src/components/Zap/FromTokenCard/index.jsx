@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import TokenLogo from "../../TokenLogo";
-import { BalanceLine, FlexRow, MaxButton } from "../../../theme/components";
+import {BalanceLine, FlexRow, InputNumberPercent, MaxButton} from "../../../theme/components";
 import React, {
   useCallback,
   useEffect,
@@ -157,10 +157,10 @@ const FromTokenCard = ({
   }, [balance]);
 
   const onChangeRangePercent = (percentAmount) => {
-    setPercent(percentAmount);
+    setPercent(percentAmount || "0");
     if (balance) {
       const toValue = new BigNumber(balance)
-        .times(percentAmount)
+        .times(percentAmount || "0")
         .div(100)
         .toFixed(6, 1);
       setAmount(toValue);
@@ -259,11 +259,20 @@ const FromTokenCard = ({
       <SliderWrapper>
         <SliderInputWrapper>
           <InputSlideRow danger={insufficientBalance}>
-            {account && <span>{percent} %</span>}
+            {account && (
+              <InputNumberPercent
+                danger={insufficientBalance}
+                value={percent}
+                onChange={(e) => onChangeRangePercent(e)}
+                placeholder={"0"}
+                suffix={"%"}
+              />
+            )}
             <InputNumber
               value={token.amount}
               onChange={(e) => onChangeAmountValue(e)}
               placeholder={"0.000000"}
+              className="input-amount"
             />
           </InputSlideRow>
           {account && (

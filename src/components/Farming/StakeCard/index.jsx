@@ -120,9 +120,9 @@ const StakeCard = ({
   const { account } = useWeb3React();
 
   const onChangeRangePercent = (percentAmount) => {
-    setPercent(percentAmount);
+    setPercent(percentAmount || "0");
     if (lpBalance) {
-      const amount = new BigNumber(lpBalance).times(percentAmount).div(100);
+      const amount = new BigNumber(lpBalance).times(percentAmount || "0").div(100);
       setAmountStake(amount.toFixed());
       setAmountInput(amount.toFixed(6, 1));
     }
@@ -176,6 +176,7 @@ const StakeCard = ({
             <InputSlideRow danger={insuffBalance}>
               {account && (
                 <InputNumberPercent
+                  danger={insuffBalance}
                   value={percent}
                   onChange={(e) => onChangeRangePercent(e)}
                   placeholder={"0"}
