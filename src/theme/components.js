@@ -155,7 +155,9 @@ export const InputNumberPercent = styled(InputNumber)`
     border: 0;
     padding: 0 10px 0 0;
     width: 40px;
+    text-align: start;
     font-size: 16px;
+    font-family: ChakraPetch, sans-serif;
     &::placeholder {
       color: rgba(18, 70, 46, 0.6);
     }
@@ -165,6 +167,8 @@ export const InputNumberPercent = styled(InputNumber)`
     color: ${(props) =>
             props.danger ? props.theme.colorDanger : "rgba(18, 70, 46, 0.6)"};
     margin-left: -5px;
+    font-size: 16px;
     width: 20px;
+    font-family: ChakraPetch, sans-serif;
   }
 `;

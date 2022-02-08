@@ -216,7 +216,7 @@ const FromTokenCard = ({
   ]);
 
   useEffect(() => {
-    setPercent("0");
+    setPercent("");
   }, [isZapIn, token.address]);
 
   return (

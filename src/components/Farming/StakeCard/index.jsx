@@ -156,7 +156,7 @@ const StakeCard = ({
 
   useEffect(() => {
     if (!amountStake) {
-      setPercent("0");
+      setPercent("");
       setAmountInput("");
     }
   }, [amountStake]);

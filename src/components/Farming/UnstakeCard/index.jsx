@@ -163,7 +163,7 @@ const UnstakeCard = ({
 
   useEffect(() => {
     if (!amountUnstake) {
-      setPercent("0");
+      setPercent("");
       setAmountInput("");
     }
   }, [amountUnstake]);
