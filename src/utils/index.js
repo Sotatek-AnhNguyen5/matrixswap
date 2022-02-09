@@ -146,12 +146,11 @@ export const formatNumber = (amount) => {
   return amount;
 };
 
-export const formatCurrency = (amount, decimals = 6) => {
-  const amountBig = new BigNumber(amount);
-  if (amountBig.isZero()) {
+export const formatCurrency = (amount, decimals = 6, roundingMode = 1) => {
+  if (new BigNumber(amount).isZero()) {
     return "0";
   }
-  return new BigNumber(amount).toFixed(decimals, 1);
+  return new BigNumber(amount).toFixed(decimals, roundingMode);
 };
 
 export const formatBalance = (amount) => {

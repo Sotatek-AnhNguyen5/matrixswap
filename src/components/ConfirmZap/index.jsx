@@ -21,6 +21,8 @@ const customStyles = {
   },
 };
 
+const ROUND_HALF_UP = 4;
+
 const ModalHeader = styled.div`
   text-align: center;
   background-color: #0a1e20;
@@ -227,7 +229,7 @@ const ConfirmZap = ({
                 <RightTokenWrapper>
                   <SmallWhiteText isNumber>{e.amount}</SmallWhiteText>
                   <SmallerGrayText>
-                    {formatCurrency(e.usdtAmount, 2)} $
+                    {formatCurrency(e.usdtAmount, 2, ROUND_HALF_UP)} $
                   </SmallerGrayText>
                 </RightTokenWrapper>
               </TokenCard>
@@ -270,7 +272,12 @@ const ConfirmZap = ({
                   {fromTokenList[0].amount}
                 </SmallWhiteText>
                 <SmallerGrayText>
-                  {formatCurrency(fromTokenList[0].usdtAmount, 2)} $
+                  {formatCurrency(
+                    fromTokenList[0].usdtAmount,
+                    2,
+                    ROUND_HALF_UP
+                  )}
+                  $
                 </SmallerGrayText>
               </RightTokenWrapper>
             </TokenCard>
@@ -286,7 +293,7 @@ const ConfirmZap = ({
                 <RightTokenWrapper>
                   <SmallWhiteText isNumber>{e.estimateValue}</SmallWhiteText>
                   <SmallerGrayText isNumber>
-                    {formatCurrency(e.usdtAmount, 2)} $
+                    {formatCurrency(e.usdtAmount, 2, ROUND_HALF_UP)} $
                   </SmallerGrayText>
                 </RightTokenWrapper>
               </TokenCard>
