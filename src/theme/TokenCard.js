@@ -65,11 +65,11 @@ export const SliderInputWrapper = styled.div`
   min-height: 65px;
 
   .input-amount {
-    width: 75%;
+    width: 100%;
     margin-left: auto;
   }
   .input-percent {
-    width: 25%;
+    width: 50px;
   }
 
   .rc-slider {

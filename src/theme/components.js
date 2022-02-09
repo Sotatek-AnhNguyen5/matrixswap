@@ -166,7 +166,7 @@ export const InputNumberPercent = styled(InputNumber)`
   span {
     color: ${(props) =>
             props.danger ? props.theme.colorDanger : "rgba(18, 70, 46, 0.6)"};
-    margin-left: -10px;
+    margin-left: -12px;
     font-size: 16px;
     width: 20px !important;
     font-family: ChakraPetch, sans-serif;

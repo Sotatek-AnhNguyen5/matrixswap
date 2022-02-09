@@ -65,11 +65,11 @@ const SliderInputWrapper = styled.div`
   min-height: 54px;
 
   .input-percent {
-    width: 20%;
+    width: 50px;
   }
 
   .input-amount {
-    width: 80%;
+    width: 100%;
 
     input {
       font-family: ChakraPetch, sans-serif;
