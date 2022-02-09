@@ -46,7 +46,7 @@ export const InputSlideRow = styled.div`
     background: transparent;
     border: 0;
     outline: 0;
-    padding: 10px 20px;
+    padding: 10px 20px 10px 5px;
     box-sizing: border-box;
     width: 100%;
 
@@ -64,9 +64,12 @@ export const SliderInputWrapper = styled.div`
   flex-flow: column;
   min-height: 65px;
 
-  .input-wrapper {
-    width: 90%;
+  .input-amount {
+    width: 75%;
     margin-left: auto;
+  }
+  .input-percent {
+    width: 25%;
   }
 
   .rc-slider {

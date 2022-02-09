@@ -4,7 +4,7 @@ import { ActiveButton, FlexRow } from "../../theme/components";
 import TokenLogo from "../TokenLogo";
 import { useMemo, useState } from "react";
 import BigNumber from "bignumber.js";
-import { formatCurrency } from "../../utils";
+import {formatCurrency, ROUND_HALF_UP_MODE} from "../../utils";
 
 const customStyles = {
   content: {
@@ -20,8 +20,6 @@ const customStyles = {
     padding: 0,
   },
 };
-
-const ROUND_HALF_UP = 4;
 
 const ModalHeader = styled.div`
   text-align: center;
@@ -229,7 +227,7 @@ const ConfirmZap = ({
                 <RightTokenWrapper>
                   <SmallWhiteText isNumber>{e.amount}</SmallWhiteText>
                   <SmallerGrayText>
-                    {formatCurrency(e.usdtAmount, 2, ROUND_HALF_UP)} $
+                    {formatCurrency(e.usdtAmount, 2, ROUND_HALF_UP_MODE)} $
                   </SmallerGrayText>
                 </RightTokenWrapper>
               </TokenCard>
@@ -275,7 +273,7 @@ const ConfirmZap = ({
                   {formatCurrency(
                     fromTokenList[0].usdtAmount,
                     2,
-                    ROUND_HALF_UP
+                    ROUND_HALF_UP_MODE
                   )}
                   $
                 </SmallerGrayText>
@@ -293,7 +291,7 @@ const ConfirmZap = ({
                 <RightTokenWrapper>
                   <SmallWhiteText isNumber>{e.estimateValue}</SmallWhiteText>
                   <SmallerGrayText isNumber>
-                    {formatCurrency(e.usdtAmount, 2, ROUND_HALF_UP)} $
+                    {formatCurrency(e.usdtAmount, 2, ROUND_HALF_UP_MODE)} $
                   </SmallerGrayText>
                 </RightTokenWrapper>
               </TokenCard>

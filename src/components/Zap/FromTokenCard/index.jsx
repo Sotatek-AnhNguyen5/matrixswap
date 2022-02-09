@@ -10,7 +10,6 @@ import React, {
   useCallback,
   useEffect,
   useMemo,
-  useRef,
   useState,
 } from "react";
 import Slider from "rc-slider";
@@ -31,7 +30,7 @@ import {
   TokenCard,
   WrappedStyledImage,
 } from "../../../theme/TokenCard";
-import { formatBalance, formatCurrency } from "../../../utils";
+import {formatBalance, formatCurrency, ROUND_HALF_UP_MODE} from "../../../utils";
 import useTransactionCost from "../../../hooks/useTransactionCost";
 import { useWeb3React } from "@web3-react/core";
 
@@ -277,6 +276,7 @@ const FromTokenCard = ({
                 onChange={(e) => onChangeInputPercent(e)}
                 placeholder={"0"}
                 suffix={"%"}
+                className="input-percent"
               />
             )}
             <InputNumber
@@ -302,7 +302,7 @@ const FromTokenCard = ({
               MAX
             </MaxButton>
             <BalanceLine isNumber>
-              = $ {formatCurrency(usdtValue, 2)}
+              = $ {formatCurrency(usdtValue, 2, ROUND_HALF_UP_MODE)}
             </BalanceLine>
           </FlexRow>
         )}

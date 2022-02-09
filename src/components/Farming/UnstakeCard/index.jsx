@@ -5,12 +5,16 @@ import {
   InputNumberPercent,
   MaxButton,
 } from "../../../theme/components";
-import React, { useEffect, useMemo, useRef, useState } from "react";
+import React, { useEffect, useState } from "react";
 import InputNumber from "../../InputNumber";
 import Slider from "rc-slider";
 import BigNumber from "bignumber.js";
 import { useWeb3React } from "@web3-react/core";
-import { formatBalance, formatCurrency } from "../../../utils";
+import {
+  formatBalance,
+  formatCurrency,
+  ROUND_HALF_UP_MODE,
+} from "../../../utils";
 
 const TokenCard = styled.div`
   display: ${(props) => (props.isActive ? "flex" : "none")};
@@ -60,8 +64,12 @@ const SliderInputWrapper = styled.div`
   flex-flow: column;
   min-height: 54px;
 
+  .input-percent {
+    width: 20%;
+  }
+
   .input-amount {
-    width: 100%;
+    width: 80%;
 
     input {
       font-family: ChakraPetch, sans-serif;
@@ -131,7 +139,9 @@ const UnstakeCard = ({
   const onChangeRangePercent = (percentAmount) => {
     customSetPercent(percentAmount);
     if (stakedBalance) {
-      const amount = new BigNumber(stakedBalance).times(percentAmount || "0").div(100);
+      const amount = new BigNumber(stakedBalance)
+        .times(percentAmount || "0")
+        .div(100);
       setAmountUnstake(amount.toFixed());
       setAmountInput(amount.toFixed(6, 1));
     }
@@ -195,6 +205,7 @@ const UnstakeCard = ({
                   onChange={(e) => onChangeInputPercent(e)}
                   placeholder={"0"}
                   suffix={"%"}
+                  className="input-percent"
                 />
               )}
               <InputNumber
@@ -220,7 +231,7 @@ const UnstakeCard = ({
                 MAX
               </MaxButton>
               <BalanceLine isNumber>
-                = $ {formatCurrency(usdtValue, 2)}
+                = $ {formatCurrency(usdtValue, 2, ROUND_HALF_UP_MODE)}
               </BalanceLine>
             </FlexRow>
           )}

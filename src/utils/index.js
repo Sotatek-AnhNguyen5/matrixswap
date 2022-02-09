@@ -6,6 +6,7 @@ import ERC20ABI from "../abi/IERC20ABI.json";
 import BigNumber from "bignumber.js";
 
 const zero_address = "0x0000000000000000000000000000000000000000";
+export const ROUND_HALF_UP_MODE = 4;
 
 export function getLibrary(provider, connector) {
   return new web3(provider);
@@ -162,8 +163,8 @@ export const formatBalance = (amount) => {
 };
 
 export const formatTokenBalance = (amount) => {
-  if(!amount) {
-    return "0"
+  if (!amount) {
+    return "0";
   }
   const amountBig = new BigNumber(amount);
   if (!amountBig.isZero() && amountBig.lt(0.000001)) {

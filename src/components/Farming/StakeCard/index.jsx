@@ -10,7 +10,7 @@ import InputNumber from "../../InputNumber";
 import Slider from "rc-slider";
 import BigNumber from "bignumber.js";
 import { useWeb3React } from "@web3-react/core";
-import { formatBalance, formatCurrency } from "../../../utils";
+import {formatBalance, formatCurrency, ROUND_HALF_UP_MODE} from "../../../utils";
 
 const TokenCard = styled.div`
   display: flex;
@@ -59,9 +59,13 @@ const SliderInputWrapper = styled.div`
   display: flex;
   flex-flow: column;
   min-height: 54px;
+  
+  .input-percent {
+    width: 20%;
+  }
 
   .input-amount {
-    width: 100%;
+    width: 80%;
 
     input {
       font-family: ChakraPetch, sans-serif;
@@ -188,6 +192,7 @@ const StakeCard = ({
                   onChange={(e) => onChangeInputPercent(e)}
                   placeholder={"0"}
                   suffix={"%"}
+                  className="input-percent"
                 />
               )}
               <InputNumber
@@ -213,7 +218,7 @@ const StakeCard = ({
                 MAX
               </MaxButton>
               <BalanceLine isNumber>
-                = $ {formatCurrency(usdtValue, 2)}
+                = $ {formatCurrency(usdtValue, 2, ROUND_HALF_UP_MODE)}
               </BalanceLine>
             </FlexRow>
           )}
