@@ -1,7 +1,7 @@
 import { useWeb3React } from "@web3-react/core";
 import { useCallback, useEffect, useMemo } from "react";
 import styled, { useTheme } from "styled-components";
-import { injected, supportedChainIds } from "../../utils/connectors";
+import { injected } from "../../utils/connectors";
 
 const AddressLabel = styled.div`
   font-weight: 400;
@@ -34,9 +34,10 @@ const ConnectButton = () => {
   const { active, account, activate, error } = useWeb3React();
   const theme = useTheme();
 
-  const connect = useCallback(() => {
+  const connect = useCallback(async () => {
     try {
-      activate(injected);
+      await activate(injected);
+      localStorage.setItem("isConnected", "true");
     } catch (ex) {
       console.log(ex);
     }
@@ -51,14 +52,16 @@ const ConnectButton = () => {
     return "";
   }, [account]);
 
-  // useEffect(() => {
-  //   connect();
-  // }, [connect]);
+  useEffect(() => {
+    const isConnected = localStorage.getItem("isConnected");
+    if (isConnected) {
+      connect();
+    }
+  }, [connect]);
 
   const isWrongNetWork = useMemo(() => {
     return error && error.message.startsWith("Unsupported chain id");
   }, [error]);
-
 
   return (
     <Wrapper onClick={connect} isWrongNetWork={isWrongNetWork}>
