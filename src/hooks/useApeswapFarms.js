@@ -48,7 +48,10 @@ const useApeSwapFarms = () => {
           FARM_TYPE.apeswap,
           listTVL[index],
           factoryContract,
-          library
+          library,
+          data.miniChefs[0],
+          item.allocPoint,
+          item.rewarder,
         )
       )
     );

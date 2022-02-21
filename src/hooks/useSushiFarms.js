@@ -38,7 +38,10 @@ const useSushiFarms = () => {
           FARM_TYPE.sushiswap,
           listTVL[index],
           factoryContract,
-          library
+          library,
+          data.miniChefs[0],
+          item.allocPoint,
+          item.rewarder
         )
       )
     );
@@ -48,7 +51,14 @@ const useSushiFarms = () => {
     if (account) {
       listDeposited = await Promise.all(
         data.pools.map((item, index) =>
-          getDeposited(library, item.miniChef.id, item.id, account, factoryContract, listLpToken[index])
+          getDeposited(
+            library,
+            item.miniChef.id,
+            item.id,
+            account,
+            factoryContract,
+            listLpToken[index]
+          )
         )
       );
 

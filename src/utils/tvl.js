@@ -112,7 +112,17 @@ export const calculateTVL = async (
       lpTokenContract.methods.balanceOf(farmAddress).call(),
     ]);
     if (isValidAddress(pairAddress2) || isValidAddress(pairAddress1)) {
-      const isUsedToken0 = isValidAddress(pairAddress1);
+      let isUsedToken0;
+      if (lpToken.token0.symbol === "WETH" && isValidAddress(pairAddress1)) {
+        isUsedToken0 = true;
+      } else if (
+        lpToken.token1.symbol === "WETH" &&
+        isValidAddress(pairAddress2)
+      ) {
+        isUsedToken0 = false;
+      } else {
+        isUsedToken0 = isValidAddress(pairAddress1);
+      }
       const pairContract = new library.eth.Contract(
         QuickSwapPair,
         isUsedToken0 ? pairAddress1 : pairAddress2

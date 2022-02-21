@@ -30,6 +30,7 @@ export const GET_SUSHI_FARMS = gql`
     }
     pools {
       id
+      allocPoint
       miniChef {
         id
       }
@@ -37,6 +38,7 @@ export const GET_SUSHI_FARMS = gql`
       rewarder {
         id
         rewardToken
+        rewardPerSecond
       }
     }
   }
@@ -52,6 +54,7 @@ export const GET_APESWAP_FARMS = gql`
     }
     pools {
       id
+      allocPoint
       miniChef {
         id
       }
@@ -59,8 +62,8 @@ export const GET_APESWAP_FARMS = gql`
       rewarder {
         id
         rewardToken
+        rewardPerSecond
       }
     }
   }
 `;
-

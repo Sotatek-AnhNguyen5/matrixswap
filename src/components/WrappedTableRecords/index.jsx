@@ -199,14 +199,14 @@ const TableRecord = ({ data, type, refetchVolume, setParentData }) => {
                 symbol={symbol1}
               />
               <div>
-                {/*<a*/}
-                {/*  rel="noreferrer"*/}
-                {/*  target="_blank"*/}
-                {/*  href={`https://polygonscan.com/address/${farmAddress}`}*/}
-                {/*  title={poolIndex}*/}
-                {/*>*/}
+                <a
+                  rel="noreferrer"
+                  target="_blank"
+                  href={`https://polygonscan.com/address/${farmAddress}`}
+                  title={poolIndex}
+                >
                 {`${symbol0} - ${symbol1}`}
-                {/*</a>*/}
+                </a>
                 <FarmType>{type}</FarmType>
               </div>
             </div>

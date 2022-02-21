@@ -8,6 +8,7 @@ import {
   USDT_TOKEN,
 } from "../const";
 import { USDT_ADDRESS } from "../const";
+import { isValidAddress } from "./index";
 
 const rewardFunctionMap = {
   sushi: "sushiPerSecond",
@@ -54,13 +55,15 @@ export const calculateAPR = async (
   type,
   tvl,
   factoryContract,
-  library
+  library,
+  miniChefts,
+  allocPoint,
+  rewarder
 ) => {
   try {
     if (new BigNumber(tvl).isZero()) {
       return 0;
     }
-
     const farmContract = new library.eth.Contract(
       PROTOCOL_FUNCTION[type].abi,
       farmAddress
@@ -68,8 +71,10 @@ export const calculateAPR = async (
     if (type === FARM_TYPE.sushiswap || type === FARM_TYPE.apeswap) {
       const rewardToken =
         FARM_TYPE.sushiswap === type ? SUSHI_TOKEN : BANANA_TOKEN;
-      const method = rewardFunctionMap[type];
-      const rewardRate = await farmContract.methods[method]().call();
+      const rewardRate =
+        FARM_TYPE.sushiswap === type
+          ? miniChefts.sushiPerSecond
+          : miniChefts.bananaPerSecond;
       const rewardRatePerYear = new BigNumber(rewardRate)
         .div(new BigNumber(10).pow(18))
         .times(86400)
@@ -81,7 +86,29 @@ export const calculateAPR = async (
         rewardToken.address,
         factoryContract
       );
-      return rewardToUSD.div(tvl).times(100).toFixed(2);
+      let reward2ToUSD = 0;
+      if (
+        new BigNumber(rewarder.rewardPerSecond).gt(0) &&
+        isValidAddress(rewarder.rewardToken)
+      ) {
+        const reward2PerYear = new BigNumber(rewarder.rewardPerSecond)
+          .div(new BigNumber(10).pow(18))
+          .times(86400)
+          .times(365);
+        reward2ToUSD = await convertToUSD(
+          reward2PerYear,
+          18,
+          library,
+          rewarder.rewardToken,
+          factoryContract
+        );
+      }
+      return rewardToUSD
+        .plus(reward2ToUSD)
+        .div(tvl)
+        .times(100)
+        .times(new BigNumber(allocPoint).div(miniChefts.totalAllocPoint))
+        .toFixed(2);
     } else {
       const [rewardsToken, rewardRate] = await Promise.all([
         farmContract.methods.rewardsToken().call(),
