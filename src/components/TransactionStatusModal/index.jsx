@@ -60,6 +60,7 @@ const TransactionStatusModal = ({
 }) => {
   const closeModal = () => setIsModalOpen(false);
 
+
   const onAddLpToWallet = useCallback(async () => {
     try {
       let toMetamaskSymbol = `LP ${token0.symbol}-${token1.symbol}`;
@@ -182,6 +183,7 @@ const TransactionStatusModal = ({
       isOpen={isModalOpen}
       style={customStyles}
       contentLabel="Select token"
+      onRequestClose={closeModal}
       ariaHideApp={false}
       onAfterOpen={() => (document.body.style.overflow = "hidden")}
       onAfterClose={() => (document.body.style.overflow = "unset")}

@@ -248,7 +248,7 @@ const ConfirmZap = ({
               <RightTokenWrapper>
                 <SmallWhiteText isNumber>{estimateOutput}</SmallWhiteText>
                 <SmallerGrayText>
-                  {formatCurrency(totalEstimateOutputUSDT, 2)} $
+                  {formatCurrency(totalEstimateOutputUSDT, 2, ROUND_HALF_UP_MODE)} $
                 </SmallerGrayText>
               </RightTokenWrapper>
             </TokenCard>

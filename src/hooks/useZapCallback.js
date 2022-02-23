@@ -9,7 +9,7 @@ export const STATUS_ZAP = {
   error: "error",
 };
 
-const useZapCallback = (params, onFinish, isZapIn) => {
+const useZapCallback = (params, onFinish, isZapIn, onFail) => {
   const [loading, setLoading] = useState(false);
   const [txHash, setTxHash] = useState(false);
   const [status, setStatus] = useState(STATUS_ZAP.waiting);
@@ -38,6 +38,7 @@ const useZapCallback = (params, onFinish, isZapIn) => {
           setTxHash(e.replacement.hash);
         } else {
           setStatus(STATUS_ZAP.error);
+          onFail();
         }
         console.log(e);
         setLoading(false);

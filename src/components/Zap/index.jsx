@@ -186,12 +186,18 @@ const ZapTab = ({
 
   const onFinishZap = async () => {
     if (!isZapIn) {
+      setToTokensZapOut((old) => {
+        const newData = [...old].map((e) => {
+          e.amount = "";
+          return e;
+        });
+        return [...newData];
+      });
       toTokensZapOut.forEach((e) => e.refreshBalance());
     }
-    const balanceJob = [];
     selectedTokens.forEach((e) => e.refreshBalance());
     selectedTokens.forEach((e) => e.getAllowance());
-    await Promise.all([getLpBalance(), refreshStakeBalance(), balanceJob]);
+    await Promise.all([getLpBalance(), refreshStakeBalance()]);
     refetchVolume();
     setSelectedTokens((old) => {
       const newData = [...old].map((e) => {
@@ -201,15 +207,6 @@ const ZapTab = ({
       });
       return [...newData];
     });
-    if (!isZapIn) {
-      setToTokensZapOut((old) => {
-        const newData = [...old].map((e) => {
-          e.amount = "";
-          return e;
-        });
-        return [...newData];
-      });
-    }
   };
 
   const params = useMemo(() => {
@@ -246,10 +243,15 @@ const ZapTab = ({
     };
   }, [type, selectedTokens, toTokensZapOut, isZapIn]);
 
+  const onFail = () => {
+    setIsOpenTxStatusModal(true);
+  };
+
   const [onZap, zapLoading, zapStatus, txHash] = useZapCallback(
     params,
     onFinishZap,
-    isZapIn
+    isZapIn,
+    onFail
   );
 
   const onAddTokens = () => {
@@ -338,8 +340,12 @@ const ZapTab = ({
   }, [selectedTokens]);
 
   const totalEstimateOutputUSDT = useMemo(() => {
-    return new BigNumber(totalEstimateOutput).times(usdtRate).toFixed();
-  }, [usdtRate, totalEstimateOutput]);
+    let total = new BigNumber(0);
+    selectedTokens
+      .filter((e) => e.usdtAmount)
+      .forEach((e) => (total = total.plus(e.usdtAmount)));
+    return total;
+  }, [selectedTokens]);
 
   const totalTxCost = useMemo(() => {
     let total = new BigNumber(0);

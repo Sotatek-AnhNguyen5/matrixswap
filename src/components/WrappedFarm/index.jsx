@@ -1,12 +1,12 @@
 import { useState, useEffect, useCallback } from "react";
 import { isEmpty } from "lodash";
 import useSushiFarms from "../../hooks/useSushiFarms";
-import useApeSwapFarms from "../../hooks/useApeswapFarms";
-import useQuickSwapFarms from "../../hooks/useQuickSwapFarms";
 import styled from "styled-components";
 import { FlexRow, ProtocolBadger } from "../../theme/components";
 import SearchWrapper from "./SearchWrapper";
 import DataTable from "./DataTable";
+import useQuickSwapFarms from "../../hooks/useQuickSwapFarms";
+import useApeSwapFarms from "../../hooks/useApeswapFarms";
 
 const WrapperFarm = styled.div`
   background: radial-gradient(
@@ -62,23 +62,23 @@ const sortAlpha = (a, b) => {
 const WrappedFarm = ({ refetchVolume }) => {
   const [filterKey, setFilterKey] = useState([]);
   const [data, setData] = useState([]);
-  // const apeSwapFarms = useApeSwapFarms();
+  const apeSwapFarms = useApeSwapFarms();
   const sushiFarms = useSushiFarms();
-  // const quickSwapFarms = useQuickSwapFarms();
-  // const sushiFarms = [];
-  // const quickSwapFarms = [];
+  const quickSwapFarms = useQuickSwapFarms();
 
   useEffect(() => {
     if (
-      !isEmpty(sushiFarms)
-      // !isEmpty(sushiFarms) &&
-      // !isEmpty(quickSwapFarms)
+      !isEmpty(sushiFarms) &&
+      !isEmpty(apeSwapFarms) &&
+      !isEmpty(quickSwapFarms)
     ) {
-      const newData = [...sushiFarms].sort(sortAlpha);
+      const newData = [...sushiFarms, ...apeSwapFarms, ...quickSwapFarms].sort(
+        sortAlpha
+      );
 
       setData((old) => newData);
     }
-  }, [sushiFarms]);
+  }, [sushiFarms, apeSwapFarms, quickSwapFarms]);
 
   const isActiveFilter = useCallback(
     (key) => {
