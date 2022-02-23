@@ -27,10 +27,10 @@ const useZapCallback = (params, onFinish, isZapIn, onFail) => {
       try {
         const tx = await contract[methods](...param);
         await tx.wait(2);
-        await onFinish();
+        setTxHash(tx.hash);
         setLoading(false);
         setStatus(STATUS_ZAP.success);
-        setTxHash(tx.hash);
+        await onFinish();
       } catch (e) {
         if (e.message.includes("transaction was replaced")) {
           await onFinish();
