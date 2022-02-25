@@ -6,10 +6,11 @@ import {
   PROTOCOL_FUNCTION,
   SUSHI_TOKEN,
   USDT_TOKEN,
+  WETH_ADDRESS,
 } from "../const";
 import { USDT_ADDRESS } from "../const";
 import { isValidAddress } from "./index";
-
+import { tokenToWeth, WETHtoUSDT } from "./tvl";
 
 export const convertToUSD = async (
   amount,
@@ -25,22 +26,33 @@ export const convertToUSD = async (
     const pairUSDT = await factoryContract.methods
       .getPair(USDT_ADDRESS, address)
       .call();
+    if (isValidAddress(pairUSDT)) {
+      const pairUsdtContract = new library.eth.Contract(
+        QuickSwapPair,
+        pairUSDT
+      );
 
-    const pairUsdtContract = new library.eth.Contract(QuickSwapPair, pairUSDT);
+      const [token0, reserves] = await Promise.all([
+        pairUsdtContract.methods.token0().call(),
+        pairUsdtContract.methods.getReserves().call(),
+      ]);
 
-    const [token0, reserves] = await Promise.all([
-      pairUsdtContract.methods.token0().call(),
-      pairUsdtContract.methods.getReserves().call(),
-    ]);
+      const isToken0Usdt = token0.toLowerCase() === USDT_ADDRESS.toLowerCase();
+      const tokenRate = isToken0Usdt
+        ? new BigNumber(reserves._reserve0).div(reserves._reserve1)
+        : new BigNumber(reserves._reserve1).div(reserves._reserve0);
 
-    const isToken0Usdt = token0.toLowerCase() === USDT_ADDRESS.toLowerCase();
-    const tokenRate = isToken0Usdt
-      ? new BigNumber(reserves._reserve0).div(reserves._reserve1)
-      : new BigNumber(reserves._reserve1).div(reserves._reserve0);
+      return new BigNumber(amount)
+        .times(tokenRate)
+        .times(new BigNumber(10).pow(decimals - 6));
+    }
 
-    return new BigNumber(amount)
-      .times(tokenRate)
-      .times(new BigNumber(10).pow(decimals - 6));
+    const totalAmountWETH = await tokenToWeth(amount, library, { address });
+    const totalAmountUsdt = await WETHtoUSDT(
+      new BigNumber(totalAmountWETH).div(new BigNumber(10).pow(18 - decimals)),
+      library
+    );
+    return totalAmountUsdt.times(new BigNumber(10).pow(12));
   } catch (e) {
     console.log(e);
   }
