@@ -67,17 +67,17 @@ const WrappedFarm = ({ refetchVolume }) => {
   const quickSwapFarms = useQuickSwapFarms();
 
   useEffect(() => {
-    if (
-      !isEmpty(sushiFarms) &&
-      !isEmpty(apeSwapFarms) &&
-      !isEmpty(quickSwapFarms)
-    ) {
-      const newData = [...sushiFarms, ...apeSwapFarms, ...quickSwapFarms].sort(
-        sortAlpha
-      );
+    // if (
+    //   !isEmpty(sushiFarms) &&
+    //   !isEmpty(apeSwapFarms) &&
+    //   !isEmpty(quickSwapFarms)
+    // ) {
+    const newData = [...sushiFarms, ...apeSwapFarms, ...quickSwapFarms].sort(
+      sortAlpha
+    );
 
-      setData((old) => newData);
-    }
+    setData((old) => newData);
+    // }
   }, [sushiFarms, apeSwapFarms, quickSwapFarms]);
 
   const isActiveFilter = useCallback(

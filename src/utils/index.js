@@ -4,6 +4,9 @@ import { Keccak } from "sha3";
 import { find, findIndex } from "lodash";
 import ERC20ABI from "../abi/IERC20ABI.json";
 import BigNumber from "bignumber.js";
+import tokenInfoList from "../json/tokenInfo.json";
+import lpTokenInfo from "../json/lpTokenInfo.json";
+import PairABI from "../abi/QuickSwapPair.json";
 
 const zero_address = "0x0000000000000000000000000000000000000000";
 export const ROUND_HALF_UP_MODE = 4;
@@ -90,10 +93,30 @@ export const putDataToStorage = (keyType, data) => {
   return true;
 };
 
+export const getTokenAddressFromLp = async (lpAddress, library) => {
+  const dataFromJson = find(lpTokenInfo, { lpAddress });
+  if (dataFromJson) {
+    const { token0Address, token1Address } = dataFromJson;
+    return {
+      token0Address,
+      token1Address,
+    };
+  }
+  const lpContract = new library.eth.Contract(PairABI, lpAddress);
+  const [token0Address, token1Address] = await Promise.all([
+    lpContract.methods.token0().call(),
+    lpContract.methods.token1().call(),
+  ]);
+  return {
+    token0Address,
+    token1Address,
+  };
+};
+
 export const getTokenInfo = async (address, library) => {
-  const dataFromStorage = getDataFromStorage("tokenInfo", { address });
-  if (dataFromStorage) {
-    const { name, decimals, symbol, address } = dataFromStorage;
+  const dataFromJson = find(tokenInfoList, { address });
+  if (dataFromJson) {
+    const { name, decimals, symbol, address } = dataFromJson;
     return {
       name,
       decimals,
@@ -107,14 +130,12 @@ export const getTokenInfo = async (address, library) => {
     token0Contract.methods.symbol().call(),
     token0Contract.methods.decimals().call(),
   ]);
-  const data = {
+  return {
     name,
     symbol,
     decimals,
     address,
   };
-  putDataToStorage("tokenInfo", data);
-  return data;
 };
 
 export const formatSmallNumber = (amount) => {

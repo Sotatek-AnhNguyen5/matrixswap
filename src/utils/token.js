@@ -1,20 +1,18 @@
 import PairABI from "../abi/QuickSwapPair.json";
-import { getTokenInfo } from "./index";
+import { getTokenAddressFromLp, getTokenInfo } from "./index";
 import BigNumber from "bignumber.js";
 
 export const getDataToken = async (address, library) => {
   try {
     const lpContract = new library.eth.Contract(PairABI, address);
-    const [token0Address, token1Address, totalSupply, reserves] =
-      await Promise.all([
-        lpContract.methods.token0().call(),
-        lpContract.methods.token1().call(),
-        lpContract.methods.totalSupply().call(),
-        lpContract.methods.getReserves().call(),
-      ]);
+    const [lpTokenAddress, totalSupply, reserves] = await Promise.all([
+      getTokenAddressFromLp(address, library),
+      lpContract.methods.totalSupply().call(),
+      lpContract.methods.getReserves().call(),
+    ]);
     const [token0, token1] = await Promise.all([
-      getTokenInfo(token0Address, library),
-      getTokenInfo(token1Address, library),
+      getTokenInfo(lpTokenAddress.token0Address, library),
+      getTokenInfo(lpTokenAddress.token1Address, library),
     ]);
     return {
       token0,
@@ -24,7 +22,7 @@ export const getDataToken = async (address, library) => {
       address,
     };
   } catch (e) {
-    return {};
+    throw e
   }
 };
 

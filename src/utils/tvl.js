@@ -1,6 +1,7 @@
 import QuickSwapFactoryABI from "../abi/quickswapFactoryABI.json";
 import {
   QUICKSWAP_FACTORY_ADDRESS,
+  QUICKSWAP_USDT_WETH_PAIR,
   USDT_ADDRESS,
   WETH_ADDRESS,
   WMATIC_TOKEN,
@@ -8,6 +9,10 @@ import {
 import QuickSwapPair from "../abi/QuickSwapPair.json";
 import BigNumber from "bignumber.js";
 import { isValidAddress } from "./index";
+
+export const rateConvert = {
+  WETHtoUSDT: "",
+};
 
 export const tokenToWMATIC = async (
   amount,
@@ -73,16 +78,13 @@ export const tokenToWeth = async (amount, library, token) => {
 };
 
 export const WETHtoUSDT = async (amount, library) => {
-  const factoryContract = new library.eth.Contract(
-    QuickSwapFactoryABI,
-    QUICKSWAP_FACTORY_ADDRESS
+  if (rateConvert.WETHtoUSDT) {
+    new BigNumber(amount).times(rateConvert.WETHtoUSDT);
+  }
+  const pairContract = new library.eth.Contract(
+    QuickSwapPair,
+    QUICKSWAP_USDT_WETH_PAIR
   );
-
-  const pairWETH = await factoryContract.methods
-    .getPair(WETH_ADDRESS, USDT_ADDRESS)
-    .call();
-
-  const pairContract = new library.eth.Contract(QuickSwapPair, pairWETH);
 
   const [reserves] = await Promise.all([
     pairContract.methods.getReserves().call(),

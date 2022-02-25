@@ -10,33 +10,21 @@ import { calculateTVL } from "../utils/tvl";
 import { calculateAPR } from "../utils/apr";
 import { getDepositedQuickSwap } from "../utils/deposited";
 import { useWeb3React } from "@web3-react/core";
+import quickswapFarmData from "../json/quickswapFarmData.json"
 
 const useQuickSwapFarms = () => {
   const library = useLibrary();
   const [quickSwapFarms, setQuickSwapFarms] = useState([]);
-  const stakingInfoContract = useQuickSwapStakingInfoContract();
+  // const stakingInfoContract = useQuickSwapStakingInfoContract();
   const factoryContract = useFactoryContract(FARM_TYPE.quickswap);
   const { account } = useWeb3React();
 
   const getData = async () => {
-    const res = await Promise.all(
-      DEFAULT_PAIR.map((item) => {
-        return stakingInfoContract.methods
-          .stakingRewardsInfoByStakingToken(item.id)
-          .call();
-      })
-    );
-    const resWithTokenAddress = DEFAULT_PAIR.map((e, index) => {
-      return {
-        ...e,
-        ...res[index],
-      };
-    });
     const listLpToken = await Promise.all(
-      resWithTokenAddress.map((item) => getDataToken(item.id, library))
+      quickswapFarmData.map((item) => getDataToken(item.id, library))
     );
     const listTVL = await Promise.all(
-      resWithTokenAddress.map((item, index) =>
+      quickswapFarmData.map((item, index) =>
         calculateTVL(
           listLpToken[index],
           item.stakingRewards,
@@ -46,7 +34,7 @@ const useQuickSwapFarms = () => {
       )
     );
     const listAPR = await Promise.all(
-      resWithTokenAddress.map((item, index) =>
+      quickswapFarmData.map((item, index) =>
         calculateAPR(
           item.stakingRewards,
           FARM_TYPE.quickswap,
@@ -61,7 +49,7 @@ const useQuickSwapFarms = () => {
     let listLpBalance = [];
     if (account) {
       listDeposited = await Promise.all(
-        resWithTokenAddress.map((item, index) =>
+        quickswapFarmData.map((item, index) =>
           getDepositedQuickSwap(
             library,
             item.stakingRewards,
@@ -76,7 +64,7 @@ const useQuickSwapFarms = () => {
       );
     }
 
-    const convertedData = resWithTokenAddress.map((item, index) => {
+    const convertedData = quickswapFarmData.map((item, index) => {
       return {
         ...item,
         lpToken: listLpToken[index],

@@ -10,10 +10,6 @@ import {
 import { USDT_ADDRESS } from "../const";
 import { isValidAddress } from "./index";
 
-const rewardFunctionMap = {
-  sushi: "sushiPerSecond",
-  apes: "bananaPerSecond",
-};
 
 export const convertToUSD = async (
   amount,
