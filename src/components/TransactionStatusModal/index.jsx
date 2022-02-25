@@ -183,7 +183,7 @@ const TransactionStatusModal = ({
       isOpen={isModalOpen}
       style={customStyles}
       contentLabel="Select token"
-      onRequestClose={closeModal}
+      // onRequestClose={closeModal}
       ariaHideApp={false}
       onAfterOpen={() => (document.body.style.overflow = "hidden")}
       onAfterClose={() => (document.body.style.overflow = "unset")}
