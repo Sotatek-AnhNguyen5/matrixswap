@@ -1,10 +1,10 @@
 import styled from "styled-components";
-import { useEffect, useMemo, useState } from "react";
+import { useMemo, useState } from "react";
 import Modal from "react-modal";
 import DefaultToken from "../../json/defaultTokens.json";
 import { find, startsWith } from "lodash";
 import useListTokenWithBalance from "../../hooks/useListTokenWithBalance";
-import { FlexRow, GridContainer } from "../../theme/components";
+import { GridContainer } from "../../theme/components";
 import TokenLogo from "../TokenLogo";
 import {
   DAI_TOKEN,

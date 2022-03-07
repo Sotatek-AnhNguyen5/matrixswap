@@ -24,12 +24,6 @@
     "address": "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"
   },
   {
-    "name": "USD Coin (PoS)",
-    "symbol": "USDC",
-    "decimals": "6",
-    "address": "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"
-  },
-  {
     "name": "CRV (PoS)",
     "symbol": "CRV",
     "decimals": "18",
@@ -196,12 +190,6 @@
     "symbol": "WETH",
     "decimals": "18",
     "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
-  },
-  {
-    "name": "USD Coin (PoS)",
-    "symbol": "USDC",
-    "decimals": "6",
-    "address": "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"
   },
   {
     "name": "Wrapped Matic",

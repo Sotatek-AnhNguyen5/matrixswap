@@ -5,7 +5,7 @@ import {
   InputNumberPercent,
   MaxButton,
 } from "../../../theme/components";
-import React, { useEffect, useMemo, useState } from "react";
+import React, { useEffect, useState } from "react";
 import InputNumber from "../../InputNumber";
 import Slider from "rc-slider";
 import BigNumber from "bignumber.js";

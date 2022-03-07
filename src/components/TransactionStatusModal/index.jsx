@@ -4,7 +4,7 @@ import GreenSpin from "../GreenSpin";
 import styled from "styled-components";
 import { useCallback, useMemo } from "react";
 import { STATUS_ZAP } from "../../hooks/useZapCallback";
-import { formatBalance, formatTokenBalance } from "../../utils";
+import { formatTokenBalance } from "../../utils";
 
 const ActiveTitle = styled(FlexRow)`
   color: ${(props) => props.theme.colorMainGreen};
@@ -158,12 +158,13 @@ const TransactionStatusModal = ({
             Transaction Submitted
           </ActiveTitle>
           <WhiteTitle justify="center" marginTop="20px">
-            <a target="_blank" href={`https://polygonscan.com/tx/${txHash}`}>
+            <a rel="noreferrer" target="_blank" href={`https://polygonscan.com/tx/${txHash}`}>
               View on Explorer
             </a>
           </WhiteTitle>
           <WhiteTitle justify="center" marginTop="20px">
-            <a onClick={onAddLpToWallet}>
+            {/* eslint-disable-next-line jsx-a11y/anchor-is-valid */}
+            <a rel="noreferrer" onClick={onAddLpToWallet}>
               Add {`LP ${token0.symbol}-${token1.symbol}`} to Metamask
             </a>
           </WhiteTitle>

@@ -43,7 +43,7 @@ const useZapCallback = (params, onFinish, isZapIn, onFail) => {
         console.log(e);
         setLoading(false);
       }
-    }, [params, isZapIn, onFinish]),
+    }, [onFail, params, isZapIn, onFinish]),
     loading,
     status,
     txHash,

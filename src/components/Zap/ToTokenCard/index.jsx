@@ -21,6 +21,7 @@ import {
 import { formatBalance, formatCurrency } from "../../../utils";
 import useConvertToWMATIC from "../../../hooks/useConvertToWmatic";
 import { useWeb3React } from "@web3-react/core";
+import useUsdtToToken from "../../../hooks/useUsdtToToken";
 
 const LogoBorder = styled.div`
   background: rgba(1, 3, 4, 0.2);
@@ -73,13 +74,20 @@ const ToTokenCard = ({
   lpToken,
 }) => {
   const { account } = useWeb3React();
-  const usdtValue = useConvertToUSDT(token.amount, token, farmType, false, lpToken);
+  const usdtValue = useConvertToUSDT(
+    token.amount,
+    token,
+    farmType,
+    false,
+    lpToken
+  );
   const txCost = useConvertToWMATIC(token.amount, token, farmType);
   const [balance, refreshBalance] = useTokenBalance(
     token.address,
     token.decimals
   );
-  const estimateOutput = useEstimateOutput(1, token, lpToken, farmType);
+  // const estimateOutput = useEstimateOutput(1, token, lpToken, farmType);
+  const rateUSDTto = useUsdtToToken(1, token, farmType);
   const isZapAble = useCheckZapToken(
     token,
     lpToken.token0,
@@ -92,11 +100,8 @@ const ToTokenCard = ({
   }, [toTokensZapOut]);
 
   const estimateValue = useMemo(() => {
-    return new BigNumber(1)
-      .div(estimateOutput)
-      .times(token.amount || 0)
-      .toFixed(8);
-  }, [token.amount, estimateOutput]);
+    return new BigNumber(usdtValue).times(rateUSDTto).toFixed(8);
+  }, [usdtValue, rateUSDTto]);
 
   const onChangeAmountValue = async (e) => {
     await setSelectedTokens((old) => {

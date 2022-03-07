@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from "react";
-import { useWeb3React } from "@web3-react/core";
 import QuickSwapPair from "../abi/QuickSwapPair.json";
 import BigNumber from "bignumber.js";
 import { useFactoryContract, useLibrary } from "./useContract";

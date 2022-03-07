@@ -76,6 +76,21 @@ export const tokenToWeth = async (amount, library, token) => {
       : new BigNumber(reserves._reserve1).div(reserves._reserve0);
   return new BigNumber(amount).times(tokenRate);
 };
+export const usdtToWETH = async (amount, library) => {
+  const pairContract = new library.eth.Contract(
+    QuickSwapPair,
+    QUICKSWAP_USDT_WETH_PAIR
+  );
+
+  const [reserves] = await Promise.all([
+    pairContract.methods.getReserves().call(),
+  ]);
+  const tokenRate = new BigNumber(reserves._reserve0).div(reserves._reserve1);
+  return new BigNumber(amount)
+    .times(tokenRate)
+    .times(new BigNumber(10).pow(-12))
+    .toFixed()
+};
 
 export const WETHtoUSDT = async (amount, library) => {
   if (rateConvert.WETHtoUSDT) {

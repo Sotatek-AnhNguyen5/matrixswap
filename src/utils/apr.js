@@ -6,7 +6,6 @@ import {
   PROTOCOL_FUNCTION,
   SUSHI_TOKEN,
   USDT_TOKEN,
-  WETH_ADDRESS,
 } from "../const";
 import { USDT_ADDRESS } from "../const";
 import { isValidAddress } from "./index";
