@@ -32,8 +32,13 @@ const useSushiFarms = () => {
       )
     );
     const listAPR = await Promise.all(
-      data.pools.map((item, index) =>
-        calculateAPR(
+      data.pools.map((item, index) => {
+        const rewarder = { ...item.rewarder };
+        if (item.id === "47") {
+          rewarder.rewardToken = "0xd8ca34fd379d9ca3c6ee3b3905678320f5b45195";
+          rewarder.rewardPerSecond = "4629629630000";
+        }
+        return calculateAPR(
           item.miniChef.id,
           FARM_TYPE.sushiswap,
           listTVL[index],
@@ -41,11 +46,11 @@ const useSushiFarms = () => {
           library,
           data.miniChefs[0],
           item.allocPoint,
-          item.rewarder
-        )
-      )
+          rewarder,
+          item.id
+        );
+      })
     );
-
     let listDeposited = [];
     let listLpBalance = [];
     if (account) {

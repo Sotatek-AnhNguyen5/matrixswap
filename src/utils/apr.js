@@ -53,7 +53,7 @@ export const convertToUSD = async (
     );
     return totalAmountUsdt.times(new BigNumber(10).pow(12));
   } catch (e) {
-    console.log(e);
+    return new BigNumber(0);
   }
 };
 
@@ -65,7 +65,8 @@ export const calculateAPR = async (
   library,
   miniChefts,
   allocPoint,
-  rewarder
+  rewarder,
+  poolId
 ) => {
   try {
     if (new BigNumber(tvl).isZero()) {
@@ -110,6 +111,19 @@ export const calculateAPR = async (
           factoryContract
         );
       }
+      //aloct point for 1 reward ???
+      if (
+        (type === FARM_TYPE.apeswap && poolId === "7") ||
+        (type === FARM_TYPE.sushiswap && poolId === "47")
+      ) {
+        return rewardToUSD
+          .times(new BigNumber(allocPoint).div(miniChefts.totalAllocPoint))
+          .plus(reward2ToUSD)
+          .div(tvl)
+          .times(100)
+          .toFixed(2);
+      }
+
       return rewardToUSD
         .plus(reward2ToUSD)
         .div(tvl)

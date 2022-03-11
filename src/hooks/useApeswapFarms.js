@@ -42,8 +42,16 @@ const useApeSwapFarms = () => {
       )
     );
     const listAPR = await Promise.all(
-      data.pools.map((item, index) =>
-        calculateAPR(
+      data.pools.map((item, index) => {
+        const rewarder = { ...item.rewarder };
+        if (item.id === "7") {
+          rewarder.rewardToken = "0x76bf0c28e604cc3fe9967c83b3c3f31c213cfe64";
+          rewarder.rewardPerSecond = "53592110339506000";
+        } else if (item.id === "11") {
+          rewarder.rewardToken = "0x8623e66bea0dce41b6d47f9c44e806a115babae0";
+          rewarder.rewardPerSecond = "12345679012345700";
+        }
+        return calculateAPR(
           item.miniChef.id,
           FARM_TYPE.apeswap,
           listTVL[index],
@@ -51,9 +59,10 @@ const useApeSwapFarms = () => {
           library,
           data.miniChefs[0],
           item.allocPoint,
-          item.rewarder,
-        )
-      )
+          rewarder,
+          item.id
+        );
+      })
     );
 
     let listDeposited = [];
