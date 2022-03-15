@@ -2,7 +2,6 @@ import QuickSwapFactoryABI from "../abi/quickswapFactoryABI.json";
 import {
   QUICKSWAP_FACTORY_ADDRESS,
   QUICKSWAP_USDT_WETH_PAIR,
-  USDT_ADDRESS,
   WETH_ADDRESS,
   WMATIC_TOKEN,
 } from "../const";
@@ -112,37 +111,27 @@ export const calculateTVL = async (
   lpToken,
   farmAddress,
   factoryContract,
-  library
+  library,
+  totalSupply,
+  pairToken0UsdtAddress,
+  pairToken1UsdtAddress
 ) => {
   try {
-    const lpTokenContract = new library.eth.Contract(
-      QuickSwapPair,
-      lpToken.address
-    );
-    let [pairAddress1, pairAddress2, totalSupply] = await Promise.all([
-      factoryContract.methods
-        .getPair(lpToken.token0.address, USDT_ADDRESS)
-        .call(),
-      factoryContract.methods
-        .getPair(lpToken.token1.address, USDT_ADDRESS)
-        .call(),
-      lpTokenContract.methods.balanceOf(farmAddress).call(),
-    ]);
-    if (isValidAddress(pairAddress2) || isValidAddress(pairAddress1)) {
+    if (isValidAddress(pairToken1UsdtAddress) || isValidAddress(pairToken0UsdtAddress)) {
       let isUsedToken0;
-      if (lpToken.token0.symbol === "WETH" && isValidAddress(pairAddress1)) {
+      if (lpToken.token0.symbol === "WETH" && isValidAddress(pairToken0UsdtAddress)) {
         isUsedToken0 = true;
       } else if (
         lpToken.token1.symbol === "WETH" &&
-        isValidAddress(pairAddress2)
+        isValidAddress(pairToken1UsdtAddress)
       ) {
         isUsedToken0 = false;
       } else {
-        isUsedToken0 = isValidAddress(pairAddress1);
+        isUsedToken0 = isValidAddress(pairToken0UsdtAddress);
       }
       const pairContract = new library.eth.Contract(
         QuickSwapPair,
-        isUsedToken0 ? pairAddress1 : pairAddress2
+        isUsedToken0 ? pairToken0UsdtAddress : pairToken1UsdtAddress
       );
 
       const [reverse] = await Promise.all([

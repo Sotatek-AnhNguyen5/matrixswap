@@ -28,7 +28,7 @@ export const GET_SUSHI_FARMS = gql`
       sushiPerSecond
       totalAllocPoint
     }
-    pools {
+    pools(where: {allocPoint_gt: 0}) {
       id
       allocPoint
       miniChef {
@@ -52,7 +52,7 @@ export const GET_APESWAP_FARMS = gql`
       bananaPerSecond
       totalAllocPoint
     }
-    pools {
+    pools(where: {allocPoint_gt: 0}) {
       id
       allocPoint
       miniChef {

@@ -1,5 +1,4 @@
 import { useState, useEffect, useCallback } from "react";
-import { isEmpty } from "lodash";
 import useSushiFarms from "../../hooks/useSushiFarms";
 import styled from "styled-components";
 import { FlexRow, ProtocolBadger } from "../../theme/components";

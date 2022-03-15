@@ -1,7 +1,7 @@
 import styled from "styled-components";
 import TokenLogo from "../../TokenLogo";
 import React from "react";
-import { BalanceLine, FlexRow } from "../../../theme/components";
+import { FlexRow } from "../../../theme/components";
 import {
   InputSlideRow,
   SelectTokenWrapper,
@@ -9,7 +9,6 @@ import {
   SliderWrapper,
   TokenCard,
 } from "../../../theme/TokenCard";
-import InputNumber from "../../InputNumber";
 import { formatBalance, formatTokenBalance } from "../../../utils";
 import { useWeb3React } from "@web3-react/core";
 

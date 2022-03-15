@@ -2,18 +2,27 @@ import { useQuery } from "@apollo/client";
 import { GET_SUSHI_FARMS } from "../graphql";
 import { useEffect, useState } from "react";
 import { isEmpty } from "lodash";
-import { FARM_TYPE, SUSHI_TOKEN, WMATIC_TOKEN } from "../const";
-import { getDataToken, getLPBalance } from "../utils/token";
+import { FARM_TYPE, SUSHI_TOKEN, USDT_ADDRESS, WMATIC_TOKEN } from "../const";
+import {
+  convertMultipleCallParams,
+  getDataToken,
+} from "../utils/token";
 import { calculateTVL } from "../utils/tvl";
 import { calculateAPR } from "../utils/apr";
-import { useFactoryContract, useLibrary } from "./useContract";
-import { getDeposited } from "../utils/deposited";
+import { useFactoryContract, useLibrary, useMulticall } from "./useContract";
+import {
+  convertLpStakedContext,
+  convertLPtoUSDT,
+} from "../utils/deposited";
 import { useWeb3React } from "@web3-react/core";
+import { convertMultipleResultCall, convertSingleResultCall } from "../utils";
+import BigNumber from "bignumber.js";
 
 const useSushiFarms = () => {
   const library = useLibrary();
+  const multicall = useMulticall();
   const factoryContract = useFactoryContract(FARM_TYPE.sushiswap);
-  const { loading, error, data } = useQuery(GET_SUSHI_FARMS);
+  const { data } = useQuery(GET_SUSHI_FARMS);
   const [sushiFarm, setSushiFarm] = useState([]);
   const { account } = useWeb3React();
 
@@ -21,13 +30,78 @@ const useSushiFarms = () => {
     const listLpToken = await Promise.all(
       data.pools.map((item) => getDataToken(item.pair, library))
     );
+
+    const tvlPairContextParams = data.pools.map((item, index) => ({
+      reference: listLpToken[index].address,
+      contractAddress: factoryContract._address,
+      abi: [
+        {
+          constant: true,
+          inputs: [
+            { internalType: "address", name: "", type: "address" },
+            { internalType: "address", name: "", type: "address" },
+          ],
+          name: "getPair",
+          outputs: [{ internalType: "address", name: "", type: "address" }],
+          payable: false,
+          stateMutability: "view",
+          type: "function",
+        },
+      ],
+      calls: [
+        {
+          reference: "pairToken0Usdt",
+          methodName: "getPair",
+          methodParameters: [listLpToken[index].token0.address, USDT_ADDRESS],
+        },
+        {
+          reference: "pairToken1Usdt",
+          methodName: "getPair",
+          methodParameters: [listLpToken[index].token1.address, USDT_ADDRESS],
+        },
+      ],
+    }));
+    const pairTVL = await multicall.call(tvlPairContextParams);
+    const convertedPairTVL = convertMultipleResultCall(pairTVL.results);
+    const tvlLpBalance = data.pools.map((item, index) => ({
+      reference: `${item.miniChef.id}-${item.id}`,
+      contractAddress: listLpToken[index].address,
+      abi: [
+        {
+          constant: true,
+          inputs: [
+            { internalType: "address", name: "account", type: "address" },
+          ],
+          name: "balanceOf",
+          outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+          payable: false,
+          stateMutability: "view",
+          type: "function",
+        },
+      ],
+      calls: [
+        {
+          reference: "balanceOf",
+          methodName: "balanceOf",
+          methodParameters: [item.miniChef.id],
+        },
+      ],
+    }));
+    const resultTVL = await multicall.call(tvlLpBalance);
+    const listTotalSupply = convertSingleResultCall(resultTVL.results).map(
+      (big) => new BigNumber(big[0].hex).toFixed()
+    );
+
     const listTVL = await Promise.all(
       data.pools.map((item, index) =>
         calculateTVL(
           listLpToken[index],
           item.miniChef.id,
           factoryContract,
-          library
+          library,
+          listTotalSupply[index],
+          convertedPairTVL[index].pairToken0Usdt[0],
+          convertedPairTVL[index].pairToken1Usdt[0]
         )
       )
     );
@@ -54,21 +128,32 @@ const useSushiFarms = () => {
     let listDeposited = [];
     let listLpBalance = [];
     if (account) {
+      const lpDepositedContext = data.pools.map((item) =>
+        convertLpStakedContext(item.miniChef.id, account, item.id)
+      );
+      const lpCallContext = data.pools.map((item) =>
+        convertMultipleCallParams(item.pair, account)
+      );
+      const [resultBalance, resultDeposited] = await Promise.all([
+        multicall.call(lpCallContext),
+        multicall.call(lpDepositedContext),
+      ]);
+      listLpBalance = convertSingleResultCall(resultBalance.results).map(
+        (big) =>
+          new BigNumber(big[0].hex).div(new BigNumber(10).pow(18)).toFixed()
+      );
+      const convertDeposited = convertSingleResultCall(
+        resultDeposited.results
+      ).map((big) => new BigNumber(big[0].hex).toFixed());
       listDeposited = await Promise.all(
         data.pools.map((item, index) =>
-          getDeposited(
-            library,
-            item.miniChef.id,
-            item.id,
-            account,
+          convertLPtoUSDT(
             factoryContract,
-            listLpToken[index]
+            listLpToken[index],
+            convertDeposited[index],
+            library
           )
         )
-      );
-
-      listLpBalance = await Promise.all(
-        data.pools.map((item) => getLPBalance(item.pair, library, account))
       );
     }
 

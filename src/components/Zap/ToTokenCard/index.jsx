@@ -6,7 +6,6 @@ import BigNumber from "bignumber.js";
 import InputNumber from "../../InputNumber";
 import useTokenBalance from "../../../hooks/useTokenBalance";
 import useConvertToUSDT from "../../../hooks/useConvertToUSDT";
-import useEstimateOutput from "../../../hooks/useEstimateOutput";
 import useCheckZapToken from "../../../hooks/useCheckZapToken";
 import {
   InputSlideRow,
@@ -86,7 +85,7 @@ const ToTokenCard = ({
     token.address,
     token.decimals
   );
-  // const estimateOutput = useEstimateOutput(1, token, lpToken, farmType);
+
   const rateUSDTto = useUsdtToToken(1, token, farmType);
   const isZapAble = useCheckZapToken(
     token,

@@ -1,6 +1,6 @@
 import styled from "styled-components";
 import { FaAngleDown, FaAngleRight } from "react-icons/fa";
-import React, { useState, useMemo, useEffect, useCallback } from "react";
+import React, { useState, useMemo, useCallback } from "react";
 import useFarmUserInfo from "../../hooks/useFarmUserInfo";
 import { toast } from "react-toastify";
 import BigNumber from "bignumber.js";

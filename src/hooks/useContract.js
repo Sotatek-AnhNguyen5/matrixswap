@@ -9,6 +9,7 @@ import { useMemo } from "react";
 import QuickSwapFactoryABI from "../abi/quickswapFactoryABI.json";
 import Web3 from "web3";
 import ABI from "../abi/QuickSwapStakingInfoABI.json";
+import {Multicall} from "ethereum-multicall";
 
 const web3 = new Web3(
   new Web3.providers.HttpProvider("https://polygon-rpc.com/")
@@ -36,7 +37,7 @@ export const useFactoryContract = (type) => {
       QuickSwapFactoryABI,
       PROTOCOL_FUNCTION[type].factoryAddress
     );
-  }, [library, type, QuickSwapFactoryABI]);
+  }, [library, type]);
 };
 
 export const useFarmContract = (farmAddress, type) => {
@@ -58,4 +59,9 @@ export const useLibrary = () => {
   return useMemo(() => {
     return library || web3;
   }, [library]);
+};
+
+export const useMulticall = () => {
+  const web3Instance = useLibrary();
+  return new Multicall({ web3Instance, tryAggregate: true });
 };

@@ -1,6 +1,6 @@
 import React, { useEffect, useMemo, useState } from "react";
 import styled from "styled-components";
-import { ADDRESS_ZAP, PROTOCOL_FUNCTION, WMATIC_TOKEN } from "../../const";
+import { PROTOCOL_FUNCTION, WMATIC_TOKEN } from "../../const";
 import useZapCallback from "../../hooks/useZapCallback";
 import FromTokenCard from "./FromTokenCard";
 import { ActiveButton, FlexRow, StyledButton } from "../../theme/components";

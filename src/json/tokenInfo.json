@@ -18,6 +18,12 @@
     "address": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270"
   },
   {
+    "name": "Wrapped Ether",
+    "symbol": "WETH",
+    "decimals": "18",
+    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
+  },
+  {
     "name": "USD Coin (PoS)",
     "symbol": "USDC",
     "decimals": "6",
@@ -28,12 +34,6 @@
     "symbol": "CRV",
     "decimals": "18",
     "address": "0x172370d5Cd63279eFa6d502DAB29171933a610AF"
-  },
-  {
-    "name": "Wrapped Matic",
-    "symbol": "WMATIC",
-    "decimals": "18",
-    "address": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270"
   },
   {
     "name": "Klima DAO",
@@ -54,28 +54,10 @@
     "address": "0x8623e66Bea0DCe41B6d47f9C44e806A115baBae0"
   },
   {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
-  },
-  {
     "name": "Kommunitas",
     "symbol": "KOM",
     "decimals": "8",
     "address": "0xC004e2318722EA2b15499D6375905d75Ee5390B8"
-  },
-  {
-    "name": "Wrapped Matic",
-    "symbol": "WMATIC",
-    "decimals": "18",
-    "address": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270"
-  },
-  {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
   },
   {
     "name": "Toucan Protocol: Base Carbon Tonne",
@@ -90,18 +72,6 @@
     "address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063"
   },
   {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
-  },
-  {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
-  },
-  {
     "name": "USD Coin (PoS)",
     "symbol": "USDC",
     "decimals": "6",
@@ -112,18 +82,6 @@
     "symbol": "ABR",
     "decimals": "18",
     "address": "0x04429fbb948BBD09327763214b45e505A5293346"
-  },
-  {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
-  },
-  {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
   },
   {
     "name": "Woofy",
@@ -138,106 +96,10 @@
     "address": "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"
   },
   {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
-  },
-  {
-    "name": "Wrapped Matic",
-    "symbol": "WMATIC",
-    "decimals": "18",
-    "address": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270"
-  },
-  {
     "name": "(PoS) Wrapped BTC",
     "symbol": "WBTC",
     "decimals": "8",
     "address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6"
-  },
-  {
-    "name": "Wrapped Matic",
-    "symbol": "WMATIC",
-    "decimals": "18",
-    "address": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270"
-  },
-  {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
-  },
-  {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
-  },
-  {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
-  },
-  {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
-  },
-  {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
-  },
-  {
-    "name": "Wrapped Matic",
-    "symbol": "WMATIC",
-    "decimals": "18",
-    "address": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270"
-  },
-  {
-    "name": "Wrapped Matic",
-    "symbol": "WMATIC",
-    "decimals": "18",
-    "address": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270"
-  },
-  {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
-  },
-  {
-    "name": "Wrapped Matic",
-    "symbol": "WMATIC",
-    "decimals": "18",
-    "address": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270"
-  },
-  {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
-  },
-  {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
-  },
-  {
-    "name": "Wrapped Matic",
-    "symbol": "WMATIC",
-    "decimals": "18",
-    "address": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270"
-  },
-  {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
   },
   {
     "name": "USD Coin (PoS)",
@@ -264,22 +126,10 @@
     "address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39"
   },
   {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
-  },
-  {
     "name": "Interest-Bearing BTC",
     "symbol": "ibBTC",
     "decimals": "18",
     "address": "0x4EaC4c4e9050464067D673102F8E24b2FccEB350"
-  },
-  {
-    "name": "Wrapped Matic",
-    "symbol": "WMATIC",
-    "decimals": "18",
-    "address": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270"
   },
   {
     "name": "dHEDGE Top Index (PoS)",
@@ -288,46 +138,10 @@
     "address": "0x0361BdEAB89DF6BBcc52c43589FABba5143d19dD"
   },
   {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
-  },
-  {
-    "name": "Wrapped Matic",
-    "symbol": "WMATIC",
-    "decimals": "18",
-    "address": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270"
-  },
-  {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
-  },
-  {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
-  },
-  {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
-  },
-  {
     "name": "(PoS) Wrapped BTC",
     "symbol": "WBTC",
     "decimals": "8",
     "address": "0x1BFD67037B42Cf73acF2047067bd4F2C47D9BfD6"
-  },
-  {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
   },
   {
     "name": "USD Coin (PoS)",
@@ -378,12 +192,6 @@
     "address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F"
   },
   {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
-  },
-  {
     "name": "Aave (PoS)",
     "symbol": "AAVE",
     "decimals": "18",
@@ -426,40 +234,10 @@
     "address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F"
   },
   {
-    "name": "Quickswap",
-    "symbol": "QUICK",
-    "decimals": "18",
-    "address": "0x831753DD7087CaC61aB5644b308642cc1c33Dc13"
-  },
-  {
     "name": "yieldwatch",
     "symbol": "WATCH",
     "decimals": "18",
     "address": "0x09211Dc67f9fe98Fb7bBB91Be0ef05f4a12FA2b2"
-  },
-  {
-    "name": "Quickswap",
-    "symbol": "QUICK",
-    "decimals": "18",
-    "address": "0x831753DD7087CaC61aB5644b308642cc1c33Dc13"
-  },
-  {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
-  },
-  {
-    "name": "Quickswap",
-    "symbol": "QUICK",
-    "decimals": "18",
-    "address": "0x831753DD7087CaC61aB5644b308642cc1c33Dc13"
-  },
-  {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
   },
   {
     "name": "Frax Share",
@@ -468,40 +246,10 @@
     "address": "0x1a3acf6D19267E2d3e7f898f42803e90C9219062"
   },
   {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
-  },
-  {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
-  },
-  {
-    "name": "Quickswap",
-    "symbol": "QUICK",
-    "decimals": "18",
-    "address": "0x831753DD7087CaC61aB5644b308642cc1c33Dc13"
-  },
-  {
     "name": "(PoS) Dai Stablecoin",
     "symbol": "DAI",
     "decimals": "18",
     "address": "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063"
-  },
-  {
-    "name": "Quickswap",
-    "symbol": "QUICK",
-    "decimals": "18",
-    "address": "0x831753DD7087CaC61aB5644b308642cc1c33Dc13"
-  },
-  {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
   },
   {
     "name": "Furucombo (PoS)",
@@ -546,12 +294,6 @@
     "address": "0x53E0bca35eC356BD5ddDFebbD1Fc0fD03FaBad39"
   },
   {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
-  },
-  {
     "name": "dHedge DAO Token (PoS)",
     "symbol": "DHT",
     "decimals": "18",
@@ -574,12 +316,6 @@
     "symbol": "USDC",
     "decimals": "6",
     "address": "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174"
-  },
-  {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
   },
   {
     "name": "(PoS) Tether USD",
@@ -612,18 +348,6 @@
     "address": "0x09211Dc67f9fe98Fb7bBB91Be0ef05f4a12FA2b2"
   },
   {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
-  },
-  {
-    "name": "Quickswap",
-    "symbol": "QUICK",
-    "decimals": "18",
-    "address": "0x831753DD7087CaC61aB5644b308642cc1c33Dc13"
-  },
-  {
     "name": "USD Coin (PoS)",
     "symbol": "USDC",
     "decimals": "6",
@@ -648,34 +372,10 @@
     "address": "0x3e121107F6F22DA4911079845a470757aF4e1A1b"
   },
   {
-    "name": "Quickswap",
-    "symbol": "QUICK",
-    "decimals": "18",
-    "address": "0x831753DD7087CaC61aB5644b308642cc1c33Dc13"
-  },
-  {
-    "name": "Quickswap",
-    "symbol": "QUICK",
-    "decimals": "18",
-    "address": "0x831753DD7087CaC61aB5644b308642cc1c33Dc13"
-  },
-  {
     "name": "Dogelon (PoS)",
     "symbol": "ELON",
     "decimals": "18",
     "address": "0xE0339c80fFDE91F3e20494Df88d4206D86024cdF"
-  },
-  {
-    "name": "Quickswap",
-    "symbol": "QUICK",
-    "decimals": "18",
-    "address": "0x831753DD7087CaC61aB5644b308642cc1c33Dc13"
-  },
-  {
-    "name": "Wrapped Matic",
-    "symbol": "WMATIC",
-    "decimals": "18",
-    "address": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270"
   },
   {
     "name": "Impermax (PoS)",
@@ -720,12 +420,6 @@
     "address": "0x3dc6052a693E4a2fc28Eb2Ea12fe0CfD3BD221D1"
   },
   {
-    "name": "Quickswap",
-    "symbol": "QUICK",
-    "decimals": "18",
-    "address": "0x831753DD7087CaC61aB5644b308642cc1c33Dc13"
-  },
-  {
     "name": "Axie Infinity Shard (PoS)",
     "symbol": "AXS",
     "decimals": "18",
@@ -736,12 +430,6 @@
     "symbol": "renDOGE",
     "decimals": "8",
     "address": "0xcE829A89d4A55a63418bcC43F00145adef0eDB8E"
-  },
-  {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
   },
   {
     "name": "ETH 2x Flexible Leverage Index",
@@ -756,28 +444,10 @@
     "address": "0x3c205C8B3e02421Da82064646788c82f7bd753B9"
   },
   {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
-  },
-  {
     "name": "SifChain (erowan) (PoS)",
     "symbol": "EROWAN",
     "decimals": "18",
     "address": "0xa7051C5a22d963b81D71C2BA64D46a877fBc1821"
-  },
-  {
-    "name": "Wrapped Matic",
-    "symbol": "WMATIC",
-    "decimals": "18",
-    "address": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270"
-  },
-  {
-    "name": "Wrapped Matic",
-    "symbol": "WMATIC",
-    "decimals": "18",
-    "address": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270"
   },
   {
     "name": "Morpheus Infrastructure Token (PoS)",
@@ -804,12 +474,6 @@
     "address": "0xa7051C5a22d963b81D71C2BA64D46a877fBc1821"
   },
   {
-    "name": "Wrapped Matic",
-    "symbol": "WMATIC",
-    "decimals": "18",
-    "address": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270"
-  },
-  {
     "name": "ApeSwapFinance Banana",
     "symbol": "BANANA",
     "decimals": "18",
@@ -826,12 +490,6 @@
     "symbol": "USDT",
     "decimals": "6",
     "address": "0xc2132D05D31c914a87C6611C10748AEb04B58e8F"
-  },
-  {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
   },
   {
     "name": "TrueUSD (PoS)",
@@ -940,12 +598,6 @@
     "symbol": "PLR",
     "decimals": "18",
     "address": "0xa6b37fC85d870711C56FbcB8afe2f8dB049AE774"
-  },
-  {
-    "name": "Wrapped Ether",
-    "symbol": "WETH",
-    "decimals": "18",
-    "address": "0x7ceB23fD6bC0adD59E62ac25578270cFf1b9f619"
   },
   {
     "name": "pZUG",
@@ -1260,12 +912,6 @@
     "address": "0xB85517b87BF64942adf3A0B9E4c71E4Bc5Caa4e5"
   },
   {
-    "name": "Wrapped Matic",
-    "symbol": "WMATIC",
-    "decimals": "18",
-    "address": "0x0d500B1d8E8eF31E21C99d1Db9A6444d3ADf1270"
-  },
-  {
     "name": "rUSD",
     "symbol": "rUSD",
     "decimals": "18",
@@ -1354,12 +1000,6 @@
     "symbol": "EZ",
     "decimals": "18",
     "address": "0x34C1b299A74588D6Abdc1b85A53345A48428a521"
-  },
-  {
-    "name": "Quickswap",
-    "symbol": "QUICK",
-    "decimals": "18",
-    "address": "0x831753DD7087CaC61aB5644b308642cc1c33Dc13"
   },
   {
     "name": "MeebMaster.com Token",

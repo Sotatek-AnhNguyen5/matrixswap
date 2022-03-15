@@ -4,7 +4,6 @@ import {
   USDT_ADDRESS,
   WETH_ADDRESS,
 } from "../const";
-import FarmABI from "../abi/SushiFarmABI.json";
 import BigNumber from "bignumber.js";
 import { isValidAddress } from "./index";
 import QuickSwapPair from "../abi/QuickSwapPair.json";
@@ -13,17 +12,18 @@ import { tokenToWeth, WETHtoUSDT } from "./tvl";
 export const getDeposited = async (
   library,
   farmAddress,
-  pId,
+  stakedBalance,
   account,
   factoryContract,
   lpToken
 ) => {
-  const farmContract = new library.eth.Contract(FarmABI, farmAddress);
-  const stakedBalance = await farmContract.methods
-    .userInfo(pId, account)
-    .call();
 
-  return convertLPtoUSDT(factoryContract, lpToken, stakedBalance.amount, library);
+  return convertLPtoUSDT(
+    factoryContract,
+    lpToken,
+    stakedBalance.amount,
+    library
+  );
 };
 
 export const getDepositedQuickSwap = async (
@@ -108,4 +108,49 @@ export const convertLPtoUSDT = async (
     );
     return totalSupplyToUSDT.times(2).div(new BigNumber(10).pow(6)).toFixed();
   }
+};
+
+export const convertLpStakedContext = (farmAddress, account, pid) => {
+  return {
+    reference: `${farmAddress}-${pid}`,
+    contractAddress: farmAddress,
+    abi: [
+      {
+        inputs: [
+          {
+            internalType: "uint256",
+            name: "",
+            type: "uint256",
+          },
+          {
+            internalType: "address",
+            name: "",
+            type: "address",
+          },
+        ],
+        name: "userInfo",
+        outputs: [
+          {
+            internalType: "uint256",
+            name: "amount",
+            type: "uint256",
+          },
+          {
+            internalType: "int256",
+            name: "rewardDebt",
+            type: "int256",
+          },
+        ],
+        stateMutability: "view",
+        type: "function",
+      },
+    ],
+    calls: [
+      {
+        reference: "userInfo",
+        methodName: "userInfo",
+        methodParameters: [pid, account],
+      },
+    ],
+  };
 };

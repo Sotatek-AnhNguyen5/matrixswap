@@ -11,7 +11,7 @@ import PairABI from "../abi/QuickSwapPair.json";
 const zero_address = "0x0000000000000000000000000000000000000000";
 export const ROUND_HALF_UP_MODE = 4;
 
-export function getLibrary(provider, connector) {
+export function getLibrary(provider) {
   return new web3(provider);
 }
 
@@ -192,4 +192,24 @@ export const formatTokenBalance = (amount) => {
     return "0.000000...";
   }
   return new BigNumber(amount).toFixed(6, 1).replace(/\.0+$/, "");
+};
+
+export const convertSingleResultCall = (results) => {
+  const data = [];
+  for (const [, value] of Object.entries(results)) {
+    data.push(value.callsReturnContext[0].returnValues);
+  }
+  return data;
+};
+
+export const convertMultipleResultCall = (results) => {
+  const data = [];
+  for (const [, value] of Object.entries(results)) {
+    const childData = {};
+    for (const result of value.callsReturnContext) {
+      childData[result.reference] = result.returnValues;
+    }
+    data.push(childData);
+  }
+  return data;
 };
