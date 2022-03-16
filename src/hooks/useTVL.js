@@ -67,7 +67,7 @@ const useLPtoUSDT = (lpToken, amount, type) => {
         .times(
           isUsedToken0 ? lpToken.reserves._reserve0 : lpToken.reserves._reserve1
         );
-      const totalSupplyToETH = await tokenToWeth(tokenHold, library, usedToken);
+      const totalSupplyToETH = await tokenToWeth(tokenHold, library, usedToken, factoryContract);
       const totalSupplyToUSDT = await WETHtoUSDT(
         totalSupplyToETH,
         library,

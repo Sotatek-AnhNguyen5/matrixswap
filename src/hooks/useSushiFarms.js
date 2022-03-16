@@ -3,17 +3,11 @@ import { GET_SUSHI_FARMS } from "../graphql";
 import { useEffect, useState } from "react";
 import { isEmpty } from "lodash";
 import { FARM_TYPE, SUSHI_TOKEN, USDT_ADDRESS, WMATIC_TOKEN } from "../const";
-import {
-  convertMultipleCallParams,
-  getDataToken,
-} from "../utils/token";
+import { convertMultipleCallParams, getDataToken } from "../utils/token";
 import { calculateTVL } from "../utils/tvl";
 import { calculateAPR } from "../utils/apr";
 import { useFactoryContract, useLibrary, useMulticall } from "./useContract";
-import {
-  convertLpStakedContext,
-  convertLPtoUSDT,
-} from "../utils/deposited";
+import { convertLpStakedContext, convertLPtoUSDT } from "../utils/deposited";
 import { useWeb3React } from "@web3-react/core";
 import { convertMultipleResultCall, convertSingleResultCall } from "../utils";
 import BigNumber from "bignumber.js";
@@ -91,6 +85,8 @@ const useSushiFarms = () => {
     const listTotalSupply = convertSingleResultCall(resultTVL.results).map(
       (big) => new BigNumber(big[0].hex).toFixed()
     );
+
+    console.log("totalSupply :", listTotalSupply);
 
     const listTVL = await Promise.all(
       data.pools.map((item, index) =>

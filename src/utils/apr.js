@@ -46,7 +46,12 @@ export const convertToUSD = async (
         .times(new BigNumber(10).pow(decimals - 6));
     }
 
-    const totalAmountWETH = await tokenToWeth(amount, library, { address });
+    const totalAmountWETH = await tokenToWeth(
+      amount,
+      library,
+      { address },
+      factoryContract
+    );
     const totalAmountUsdt = await WETHtoUSDT(
       new BigNumber(totalAmountWETH).div(new BigNumber(10).pow(18 - decimals)),
       library

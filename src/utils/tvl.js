@@ -1,7 +1,6 @@
-import QuickSwapFactoryABI from "../abi/quickswapFactoryABI.json";
 import {
-  QUICKSWAP_FACTORY_ADDRESS,
   QUICKSWAP_USDT_WETH_PAIR,
+  USDT_ADDRESS,
   WETH_ADDRESS,
   WMATIC_TOKEN,
 } from "../const";
@@ -52,12 +51,7 @@ export const tokenToWMATIC = async (
   return new BigNumber(amount).times(tokenRate);
 };
 
-export const tokenToWeth = async (amount, library, token) => {
-  const factoryContract = new library.eth.Contract(
-    QuickSwapFactoryABI,
-    QUICKSWAP_FACTORY_ADDRESS
-  );
-
+export const tokenToWeth = async (amount, library, token, factoryContract) => {
   const pairWETH = await factoryContract.methods
     .getPair(WETH_ADDRESS, token.address)
     .call();
@@ -88,7 +82,7 @@ export const usdtToWETH = async (amount, library) => {
   return new BigNumber(amount)
     .times(tokenRate)
     .times(new BigNumber(10).pow(-12))
-    .toFixed()
+    .toFixed();
 };
 
 export const WETHtoUSDT = async (amount, library) => {
@@ -117,9 +111,32 @@ export const calculateTVL = async (
   pairToken1UsdtAddress
 ) => {
   try {
-    if (isValidAddress(pairToken1UsdtAddress) || isValidAddress(pairToken0UsdtAddress)) {
+    if (
+      lpToken.token0.address.toLowerCase() === USDT_ADDRESS.toLowerCase() ||
+      lpToken.token1.address.toLowerCase() === USDT_ADDRESS.toLowerCase()
+    ) {
+      const isToken0Usdt =
+        lpToken.token0.address.toLowerCase() === USDT_ADDRESS.toLowerCase();
+      const tokenHold = new BigNumber(totalSupply)
+        .div(lpToken.totalSupply)
+        .times(
+          new BigNumber(
+            isToken0Usdt
+              ? lpToken.reserves._reserve0
+              : lpToken.reserves._reserve1
+          ).div(new BigNumber(10).pow(6))
+        );
+      return new BigNumber(tokenHold).times(2);
+    }
+    if (
+      isValidAddress(pairToken1UsdtAddress) ||
+      isValidAddress(pairToken0UsdtAddress)
+    ) {
       let isUsedToken0;
-      if (lpToken.token0.symbol === "WETH" && isValidAddress(pairToken0UsdtAddress)) {
+      if (
+        lpToken.token0.symbol === "WETH" &&
+        isValidAddress(pairToken0UsdtAddress)
+      ) {
         isUsedToken0 = true;
       } else if (
         lpToken.token1.symbol === "WETH" &&
@@ -168,7 +185,12 @@ export const calculateTVL = async (
         .times(
           isUsedToken0 ? lpToken.reserves._reserve0 : lpToken.reserves._reserve1
         );
-      const totalSupplyToETH = await tokenToWeth(tokenHold, library, usedToken);
+      const totalSupplyToETH = await tokenToWeth(
+        tokenHold,
+        library,
+        usedToken,
+        factoryContract
+      );
       const totalSupplyToUSDT = await WETHtoUSDT(totalSupplyToETH, library);
       return totalSupplyToUSDT
         .times(2)

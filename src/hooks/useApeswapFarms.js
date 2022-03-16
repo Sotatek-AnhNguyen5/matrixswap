@@ -13,7 +13,6 @@ import {
 import {
   convertMultipleCallParams,
   getDataToken,
-  getLPBalance,
 } from "../utils/token";
 import { calculateTVL } from "../utils/tvl";
 import { useFactoryContract, useLibrary, useMulticall } from "./useContract";
@@ -21,14 +20,8 @@ import { calculateAPR } from "../utils/apr";
 import {
   convertLpStakedContext,
   convertLPtoUSDT,
-  getDeposited,
 } from "../utils/deposited";
 import { useWeb3React } from "@web3-react/core";
-import {
-  Multicall,
-  ContractCallResults,
-  ContractCallContext,
-} from "ethereum-multicall";
 import { convertMultipleResultCall, convertSingleResultCall } from "../utils";
 import BigNumber from "bignumber.js";
 
