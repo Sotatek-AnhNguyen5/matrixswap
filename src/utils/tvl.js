@@ -101,6 +101,24 @@ export const WETHtoUSDT = async (amount, library) => {
   return new BigNumber(amount).times(tokenRate);
 };
 
+export const wMaticToUSDT = async (amount, library) => {
+  if (rateConvert.WETHtoUSDT) {
+    new BigNumber(amount).times(rateConvert.WETHtoUSDT);
+  }
+  const pairContract = new library.eth.Contract(
+    QuickSwapPair,
+    "0x604229c960e5CACF2aaEAc8Be68Ac07BA9dF81c3"
+  );
+
+  const [reserves] = await Promise.all([
+    pairContract.methods.getReserves().call(),
+  ]);
+  const tokenRate = new BigNumber(reserves._reserve1).div(reserves._reserve0);
+  return new BigNumber(amount)
+    .times(tokenRate)
+    .times(new BigNumber(10).pow(12));
+};
+
 export const calculateTVL = async (
   lpToken,
   farmAddress,

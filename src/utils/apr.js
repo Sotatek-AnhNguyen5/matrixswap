@@ -6,10 +6,11 @@ import {
   PROTOCOL_FUNCTION,
   SUSHI_TOKEN,
   USDT_TOKEN,
+  WMATIC_TOKEN,
 } from "../const";
 import { USDT_ADDRESS } from "../const";
 import { isValidAddress } from "./index";
-import { tokenToWeth, WETHtoUSDT } from "./tvl";
+import { tokenToWeth, tokenToWMATIC, WETHtoUSDT, wMaticToUSDT } from "./tvl";
 
 export const convertToUSD = async (
   amount,
@@ -25,7 +26,11 @@ export const convertToUSD = async (
     const pairUSDT = await factoryContract.methods
       .getPair(USDT_ADDRESS, address)
       .call();
-    if (isValidAddress(pairUSDT)) {
+    if (
+      isValidAddress(pairUSDT) &&
+      address.toLowerCase() !==
+        "0x104592a158490a9228070E0A8e5343B499e125D0".toLowerCase()
+    ) {
       const pairUsdtContract = new library.eth.Contract(
         QuickSwapPair,
         pairUSDT
@@ -44,6 +49,19 @@ export const convertToUSD = async (
       return new BigNumber(amount)
         .times(tokenRate)
         .times(new BigNumber(10).pow(decimals - 6));
+    }
+
+    const pairWMATIC = await factoryContract.methods
+      .getPair(WMATIC_TOKEN.address, address)
+      .call();
+    if (isValidAddress(pairWMATIC)) {
+      const valueInWmatic = await tokenToWMATIC(
+        amount,
+        library,
+        { address, decimals },
+        factoryContract
+      );
+      return await wMaticToUSDT(valueInWmatic, library);
     }
 
     const totalAmountWETH = await tokenToWeth(
@@ -118,7 +136,7 @@ export const calculateAPR = async (
       }
       //aloct point for 1 reward ???
       if (
-        (type === FARM_TYPE.apeswap && poolId === "7") ||
+        (type === FARM_TYPE.apeswap && ["7", "11"].indexOf(poolId) > -1) ||
         (type === FARM_TYPE.sushiswap && poolId === "47")
       ) {
         return rewardToUSD

@@ -12,16 +12,8 @@
     "label": "Apeswap"
   },
   {
-    "value": "WMATIC",
-    "label": "WMATIC"
-  },
-  {
     "value": "BANANA",
     "label": "BANANA"
-  },
-  {
-    "value": "WMATIC",
-    "label": "WMATIC"
   },
   {
     "value": "CRYSTL",
@@ -32,52 +24,24 @@
     "label": "WATCH"
   },
   {
-    "value": "WMATIC",
-    "label": "WMATIC"
-  },
-  {
-    "value": "WMATIC",
-    "label": "WMATIC"
-  },
-  {
     "value": "DAI",
     "label": "DAI"
-  },
-  {
-    "value": "WMATIC",
-    "label": "WMATIC"
   },
   {
     "value": "WOOFY",
     "label": "WOOFY"
   },
   {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
     "value": "USDT",
     "label": "USDT"
-  },
-  {
-    "value": "WETH",
-    "label": "WETH"
   },
   {
     "value": "IRON",
     "label": "IRON"
   },
   {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
     "value": "USDT",
     "label": "USDT"
-  },
-  {
-    "value": "WMATIC",
-    "label": "WMATIC"
   },
   {
     "value": "JDI",
@@ -86,10 +50,6 @@
   {
     "value": "dTOP",
     "label": "dTOP"
-  },
-  {
-    "value": "WETH",
-    "label": "WETH"
   },
   {
     "value": "USDC",
@@ -134,14 +94,6 @@
   {
     "value": "USDC",
     "label": "USDC"
-  },
-  {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
-    "value": "WMATIC",
-    "label": "WMATIC"
   },
   {
     "value": "BNB",
@@ -192,32 +144,12 @@
     "label": "LINK"
   },
   {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
     "value": "LINK",
     "label": "LINK"
   },
   {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
     "value": "ARPA",
     "label": "ARPA"
-  },
-  {
-    "value": "WMATIC",
-    "label": "WMATIC"
-  },
-  {
-    "value": "WETH",
-    "label": "WETH"
   },
   {
     "value": "IRIS",
@@ -228,48 +160,20 @@
     "label": "EROWAN"
   },
   {
-    "value": "WMATIC",
-    "label": "WMATIC"
-  },
-  {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
     "value": "USDC",
     "label": "USDC"
-  },
-  {
-    "value": "WETH",
-    "label": "WETH"
   },
   {
     "value": "SNX",
     "label": "SNX"
   },
   {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
     "value": "GRT",
     "label": "GRT"
   },
   {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
     "value": "renDOGE",
     "label": "renDOGE"
-  },
-  {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
-    "value": "WETH",
-    "label": "WETH"
   },
   {
     "value": "ADDY",
@@ -280,20 +184,12 @@
     "label": "$ANRX"
   },
   {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
     "value": "miMATIC",
     "label": "miMATIC"
   },
   {
     "value": "USDT",
     "label": "USDT"
-  },
-  {
-    "value": "WMATIC",
-    "label": "WMATIC"
   },
   {
     "value": "miMATIC",
@@ -308,16 +204,8 @@
     "label": "ETHA"
   },
   {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
     "value": "DHT",
     "label": "DHT"
-  },
-  {
-    "value": "WETH",
-    "label": "WETH"
   },
   {
     "value": "renDOGE",
@@ -326,14 +214,6 @@
   {
     "value": "MITx",
     "label": "MITx"
-  },
-  {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
-    "value": "WMATIC",
-    "label": "WMATIC"
   },
   {
     "value": "ODDZ",
@@ -348,32 +228,16 @@
     "label": "REVV"
   },
   {
-    "value": "WMATIC",
-    "label": "WMATIC"
-  },
-  {
     "value": "USDT",
     "label": "USDT"
-  },
-  {
-    "value": "WMATIC",
-    "label": "WMATIC"
   },
   {
     "value": "SOL",
     "label": "SOL"
   },
   {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
     "value": "UNI",
     "label": "UNI"
-  },
-  {
-    "value": "WMATIC",
-    "label": "WMATIC"
   },
   {
     "value": "WBTC",
@@ -396,32 +260,16 @@
     "label": "rUSD"
   },
   {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
     "value": "DPI",
     "label": "DPI"
-  },
-  {
-    "value": "WETH",
-    "label": "WETH"
   },
   {
     "value": "AAVE",
     "label": "AAVE"
   },
   {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
     "value": "WFIL",
     "label": "WFIL"
-  },
-  {
-    "value": "WETH",
-    "label": "WETH"
   },
   {
     "value": "AAVE",
@@ -440,20 +288,12 @@
     "label": "WBTC"
   },
   {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
     "value": "WBTC",
     "label": "WBTC"
   },
   {
     "value": "USDC",
     "label": "USDC"
-  },
-  {
-    "value": "WETH",
-    "label": "WETH"
   },
   {
     "value": "DAI",
@@ -484,20 +324,12 @@
     "label": "DAI"
   },
   {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
     "value": "DAI",
     "label": "DAI"
   },
   {
     "value": "WOO",
     "label": "WOO"
-  },
-  {
-    "value": "WETH",
-    "label": "WETH"
   },
   {
     "value": "USDC",
@@ -512,10 +344,6 @@
     "label": "USDC"
   },
   {
-    "value": "QUICK",
-    "label": "QUICK"
-  },
-  {
     "value": "USDC",
     "label": "USDC"
   },
@@ -524,32 +352,12 @@
     "label": "WOW"
   },
   {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
-    "value": "QUICK",
-    "label": "QUICK"
-  },
-  {
-    "value": "QUICK",
-    "label": "QUICK"
-  },
-  {
     "value": "PolyDoge",
     "label": "PolyDoge"
   },
   {
-    "value": "QUICK",
-    "label": "QUICK"
-  },
-  {
     "value": "UNI",
     "label": "UNI"
-  },
-  {
-    "value": "QUICK",
-    "label": "QUICK"
   },
   {
     "value": "EROWAN",
@@ -560,36 +368,16 @@
     "label": "XCASH"
   },
   {
-    "value": "QUICK",
-    "label": "QUICK"
-  },
-  {
     "value": "DHV",
     "label": "DHV"
-  },
-  {
-    "value": "QUICK",
-    "label": "QUICK"
   },
   {
     "value": "EZ",
     "label": "EZ"
   },
   {
-    "value": "QUICK",
-    "label": "QUICK"
-  },
-  {
     "value": "XED",
     "label": "XED"
-  },
-  {
-    "value": "QUICK",
-    "label": "QUICK"
-  },
-  {
-    "value": "QUICK",
-    "label": "QUICK"
   },
   {
     "value": "OOE",
@@ -600,28 +388,12 @@
     "label": "MITx"
   },
   {
-    "value": "QUICK",
-    "label": "QUICK"
-  },
-  {
     "value": "TRADE",
     "label": "TRADE"
   },
   {
-    "value": "QUICK",
-    "label": "QUICK"
-  },
-  {
-    "value": "QUICK",
-    "label": "QUICK"
-  },
-  {
     "value": "WOW",
     "label": "WOW"
-  },
-  {
-    "value": "WETH",
-    "label": "WETH"
   },
   {
     "value": "MANA",
@@ -640,10 +412,6 @@
     "label": "DATA"
   },
   {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
     "value": "PBR",
     "label": "PBR"
   },
@@ -652,24 +420,12 @@
     "label": "USDT"
   },
   {
-    "value": "QUICK",
-    "label": "QUICK"
-  },
-  {
     "value": "CNTR",
     "label": "CNTR"
   },
   {
-    "value": "QUICK",
-    "label": "QUICK"
-  },
-  {
     "value": "GMEE",
     "label": "GMEE"
-  },
-  {
-    "value": "WMATIC",
-    "label": "WMATIC"
   },
   {
     "value": "PIXEL",
@@ -680,14 +436,6 @@
     "label": "QI"
   },
   {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
     "value": "IDLE",
     "label": "IDLE"
   },
@@ -696,28 +444,12 @@
     "label": "polyBUNNY"
   },
   {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
     "value": "renDGB",
     "label": "renDGB"
   },
   {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
     "value": "NEXO",
     "label": "NEXO"
-  },
-  {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
-    "value": "QUICK",
-    "label": "QUICK"
   },
   {
     "value": "KOM",
@@ -730,10 +462,6 @@
   {
     "value": "FXS",
     "label": "FXS"
-  },
-  {
-    "value": "WMATIC",
-    "label": "WMATIC"
   },
   {
     "value": "SHIB",
@@ -752,16 +480,8 @@
     "label": "ODDZ"
   },
   {
-    "value": "QUICK",
-    "label": "QUICK"
-  },
-  {
     "value": "WBTC",
     "label": "WBTC"
-  },
-  {
-    "value": "WETH",
-    "label": "WETH"
   },
   {
     "value": "USDC",
@@ -772,20 +492,12 @@
     "label": "SNE"
   },
   {
-    "value": "WMATIC",
-    "label": "WMATIC"
-  },
-  {
     "value": "FTM",
     "label": "FTM"
   },
   {
     "value": "CRV",
     "label": "CRV"
-  },
-  {
-    "value": "WETH",
-    "label": "WETH"
   },
   {
     "value": "TCP",
@@ -820,24 +532,12 @@
     "label": "XPRT"
   },
   {
-    "value": "WMATIC",
-    "label": "WMATIC"
-  },
-  {
     "value": "PHX",
     "label": "PHX"
   },
   {
-    "value": "WMATIC",
-    "label": "WMATIC"
-  },
-  {
     "value": "COMBO",
     "label": "COMBO"
-  },
-  {
-    "value": "QUICK",
-    "label": "QUICK"
   },
   {
     "value": "DES",
@@ -852,20 +552,12 @@
     "label": "MASK"
   },
   {
-    "value": "QUICK",
-    "label": "QUICK"
-  },
-  {
     "value": "PERA",
     "label": "PERA"
   },
   {
     "value": "KNIGHT",
     "label": "KNIGHT"
-  },
-  {
-    "value": "WETH",
-    "label": "WETH"
   },
   {
     "value": "USDC",
@@ -876,16 +568,8 @@
     "label": "BNB"
   },
   {
-    "value": "WMATIC",
-    "label": "WMATIC"
-  },
-  {
     "value": "AVAX",
     "label": "AVAX"
-  },
-  {
-    "value": "QUICK",
-    "label": "QUICK"
   },
   {
     "value": "UGT",
@@ -896,16 +580,8 @@
     "label": "ANGEL"
   },
   {
-    "value": "QUICK",
-    "label": "QUICK"
-  },
-  {
     "value": "polyBUNNY",
     "label": "polyBUNNY"
-  },
-  {
-    "value": "WETH",
-    "label": "WETH"
   },
   {
     "value": "DAI",
@@ -920,16 +596,8 @@
     "label": "TRADE"
   },
   {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
     "value": "REVV",
     "label": "REVV"
-  },
-  {
-    "value": "QUICK",
-    "label": "QUICK"
   },
   {
     "value": "ETHA",
@@ -940,40 +608,16 @@
     "label": "QUICK"
   },
   {
-    "value": "AVAX",
-    "label": "AVAX"
-  },
-  {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
     "value": "polyBUNNY",
     "label": "polyBUNNY"
-  },
-  {
-    "value": "QUICK",
-    "label": "QUICK"
-  },
-  {
-    "value": "WETH",
-    "label": "WETH"
   },
   {
     "value": "UGT",
     "label": "UGT"
   },
   {
-    "value": "WMATIC",
-    "label": "WMATIC"
-  },
-  {
     "value": "$DG",
     "label": "$DG"
-  },
-  {
-    "value": "WMATIC",
-    "label": "WMATIC"
   },
   {
     "value": "UFI",
@@ -992,20 +636,8 @@
     "label": "JRT"
   },
   {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
     "value": "POOL",
     "label": "POOL"
-  },
-  {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
-    "value": "WETH",
-    "label": "WETH"
   },
   {
     "value": "MCASH",
@@ -1020,24 +652,12 @@
     "label": "WETH"
   },
   {
-    "value": "QUICK",
-    "label": "QUICK"
-  },
-  {
     "value": "OM",
     "label": "OM"
   },
   {
-    "value": "QUICK",
-    "label": "QUICK"
-  },
-  {
     "value": "REI",
     "label": "REI"
-  },
-  {
-    "value": "WMATIC",
-    "label": "WMATIC"
   },
   {
     "value": "D11",
@@ -1048,14 +668,6 @@
     "label": "UCO"
   },
   {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
-    "value": "QUICK",
-    "label": "QUICK"
-  },
-  {
     "value": "PLR",
     "label": "PLR"
   },
@@ -1064,20 +676,8 @@
     "label": "ELET"
   },
   {
-    "value": "QUICK",
-    "label": "QUICK"
-  },
-  {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
     "value": "RAMP",
     "label": "RAMP"
-  },
-  {
-    "value": "QUICK",
-    "label": "QUICK"
   },
   {
     "value": "RELAY",
@@ -1096,10 +696,6 @@
     "label": "UMA"
   },
   {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
     "value": "WMATIC",
     "label": "WMATIC"
   },
@@ -1108,16 +704,8 @@
     "label": "GHST"
   },
   {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
     "value": "MVI",
     "label": "MVI"
-  },
-  {
-    "value": "QUICK",
-    "label": "QUICK"
   },
   {
     "value": "ATOM",
@@ -1132,24 +720,12 @@
     "label": "ATOM"
   },
   {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
     "value": "ALN",
     "label": "ALN"
   },
   {
     "value": "SWAP",
     "label": "SWAP"
-  },
-  {
-    "value": "QUICK",
-    "label": "QUICK"
-  },
-  {
-    "value": "WETH",
-    "label": "WETH"
   },
   {
     "value": "SAND",
@@ -1160,40 +736,20 @@
     "label": "WATCH"
   },
   {
-    "value": "QUICK",
-    "label": "QUICK"
-  },
-  {
     "value": "POOL",
     "label": "POOL"
-  },
-  {
-    "value": "WETH",
-    "label": "WETH"
   },
   {
     "value": "IMX",
     "label": "IMX"
   },
   {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
     "value": "START",
     "label": "START"
   },
   {
-    "value": "QUICK",
-    "label": "QUICK"
-  },
-  {
     "value": "FOX",
     "label": "FOX"
-  },
-  {
-    "value": "WETH",
-    "label": "WETH"
   },
   {
     "value": "USDC",
@@ -1204,10 +760,6 @@
     "label": "XCAD"
   },
   {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
     "value": "ELON",
     "label": "ELON"
   },
@@ -1216,16 +768,8 @@
     "label": "AXS"
   },
   {
-    "value": "WETH",
-    "label": "WETH"
-  },
-  {
     "value": "MOONED",
     "label": "MOONED"
-  },
-  {
-    "value": "QUICK",
-    "label": "QUICK"
   },
   {
     "value": "bct",

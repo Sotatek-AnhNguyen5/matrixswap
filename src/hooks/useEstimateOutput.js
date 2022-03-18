@@ -160,7 +160,11 @@ const useEstimateOutput = (amountToken, token, lpToken, type) => {
 
   useEffect(() => {
     if (amountToken && token.address) {
-      estimateOutput(lpToken, amountToken, token);
+      try {
+        estimateOutput(lpToken, amountToken, token);
+      } catch (e) {
+        setValue(0);
+      }
     } else {
       setValue(0);
     }

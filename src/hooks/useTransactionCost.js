@@ -15,13 +15,18 @@ const useTransactionCost = (token, lpToken, isZapIn, amount, farmType) => {
 
   const getTxFee = useCallback(
     debounce(async (amountToken, lpToken, usedToken) => {
-      let txWMATIC = new BigNumber(0);
-      const [txCost1, txCost2] = await Promise.all([
-        calculateCost(usedToken, lpToken.token0, amountToken),
-        calculateCost(usedToken, lpToken.token1, amountToken),
-      ]);
-      txWMATIC = txWMATIC.plus(txCost1).plus(txCost2);
-      setTxFee(txWMATIC.toFixed());
+      try {
+        let txWMATIC = new BigNumber(0);
+        const [txCost1, txCost2] = await Promise.all([
+          calculateCost(usedToken, lpToken.token0, amountToken),
+          calculateCost(usedToken, lpToken.token1, amountToken),
+        ]);
+        txWMATIC = txWMATIC.plus(txCost1).plus(txCost2);
+        setTxFee(txWMATIC.toFixed());
+      }catch(e) {
+        console.log('transaction cost estimate error')
+        // console.log(e)
+      }
     }, 500),
     []
   );

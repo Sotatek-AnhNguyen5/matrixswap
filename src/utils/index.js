@@ -213,3 +213,7 @@ export const convertMultipleResultCall = (results) => {
   }
   return data;
 };
+
+export const fetchBestTrade = (token, paths) => {
+
+}
