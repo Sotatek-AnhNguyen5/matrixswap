@@ -4,6 +4,8 @@ import {FlexRow, ProtocolBadger} from "../../theme/components";
 import SearchWrapper from "./SearchWrapper";
 import DataTable from "./DataTable";
 import useSushiFarms from "../../hooks/useSushiFarms";
+import useApeSwapFarms from "../../hooks/useApeswapFarms";
+import useQuickSwapFarms from "../../hooks/useQuickSwapFarms";
 
 const WrapperFarm = styled.div`
   background: radial-gradient(44.18% 217.01% at 50.03% 50%,
