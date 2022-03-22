@@ -27,6 +27,16 @@ export const PBNB_TOKEN = {
   "logoURI": "https://assets.coingecko.com/coins/images/825/small/binance-coin-logo.png?1547034615"
 }
 
+
+export const USDC_TOKEN = {
+  name: "USD Coin",
+  address: "0x2791Bca1f2de4661ED88A30C99A7a9449Aa84174",
+  symbol: "USDC",
+  decimals: 6,
+  chainId: 137,
+  logoURI: "https://raw.githubusercontent.com/trustwallet/assets/master/blockchains/ethereum/assets/0xA0b86991c6218b36c1d19D4a2e9Eb0cE3606eB48/logo.png"
+};
+
 export const DAI_TOKEN = {
   name: "Dai Stablecoin",
   address: "0x8f3Cf7ad23Cd3CaDbD9735AFf958023239c6A063",
@@ -106,6 +116,9 @@ export const FARM_TYPE = {
   sushiswap: "sushi",
   apeswap: "apes",
 };
+
+export const BASE_TOKENS_SORT = [DAI_TOKEN, WETH_TOKEN, USDT_TOKEN, USDC_TOKEN, WMATIC_TOKEN, DRAGON_QUICK_TOKEN]
+
 
 export const PROTOCOL_FUNCTION = {
   [FARM_TYPE.quickswap]: {

@@ -11,6 +11,7 @@ import { convertLpStakedContext, convertLPtoUSDT } from "../utils/deposited";
 import { useWeb3React } from "@web3-react/core";
 import { convertMultipleResultCall, convertSingleResultCall } from "../utils";
 import BigNumber from "bignumber.js";
+import rewarderABI from "../abi/RewarderABI.json";
 
 const useSushiFarms = () => {
   const library = useLibrary();
@@ -86,8 +87,6 @@ const useSushiFarms = () => {
       (big) => new BigNumber(big[0].hex).toFixed()
     );
 
-    console.log("totalSupply :", listTotalSupply);
-
     const listTVL = await Promise.all(
       data.pools.map((item, index) =>
         calculateTVL(
@@ -101,12 +100,30 @@ const useSushiFarms = () => {
         )
       )
     );
+    const rewarderContextParams = data.pools.map((item) => ({
+      reference: `${item.miniChef.id}-${item.id}`,
+      contractAddress: item.rewarder.id,
+      abi: rewarderABI,
+      calls: [
+        {
+          reference: "rewardToken",
+          methodName: "rewardToken",
+          methodParameters: [],
+        },
+        {
+          reference: "rewardPerSecond",
+          methodName: "rewardPerSecond",
+          methodParameters: [],
+        },
+      ],
+    }));
+    const rewarderRes = await multicall.call(rewarderContextParams);
+    const rewarderList = convertMultipleResultCall(rewarderRes.results)
     const listAPR = await Promise.all(
       data.pools.map((item, index) => {
-        const rewarder = { ...item.rewarder };
-        if (item.id === "47") {
-          rewarder.rewardToken = "0xd8ca34fd379d9ca3c6ee3b3905678320f5b45195";
-          rewarder.rewardPerSecond = "4629629630000";
+        const rewarder = {
+          rewardToken: rewarderList[index].rewardToken[0],
+          rewardPerSecond: new BigNumber(rewarderList[index].rewardPerSecond[0].hex).toFixed()
         }
         return calculateAPR(
           item.miniChef.id,

@@ -13,7 +13,7 @@
       },
       {
         "internalType": "address",
-        "name": "_MASTERCHEF_V2",
+        "name": "_MINIAPE_V2",
         "type": "address"
       }
     ],
@@ -132,7 +132,7 @@
       {
         "indexed": false,
         "internalType": "uint256",
-        "name": "accSushiPerShare",
+        "name": "accBananaPerShare",
         "type": "uint256"
       }
     ],
@@ -157,6 +157,19 @@
     ],
     "name": "OwnershipTransferred",
     "type": "event"
+  },
+  {
+    "inputs": [],
+    "name": "MINIAPE_V2",
+    "outputs": [
+      {
+        "internalType": "address",
+        "name": "",
+        "type": "address"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
   },
   {
     "inputs": [
@@ -224,7 +237,7 @@
         "type": "uint256"
       }
     ],
-    "name": "onSushiReward",
+    "name": "onBananaReward",
     "outputs": [],
     "stateMutability": "nonpayable",
     "type": "function"
@@ -344,7 +357,7 @@
     "outputs": [
       {
         "internalType": "uint128",
-        "name": "accSushiPerShare",
+        "name": "accBananaPerShare",
         "type": "uint128"
       },
       {
@@ -382,6 +395,19 @@
         "internalType": "uint256",
         "name": "",
         "type": "uint256"
+      }
+    ],
+    "stateMutability": "view",
+    "type": "function"
+  },
+  {
+    "inputs": [],
+    "name": "rewardToken",
+    "outputs": [
+      {
+        "internalType": "contract IERC20",
+        "name": "",
+        "type": "address"
       }
     ],
     "stateMutability": "view",
@@ -455,7 +481,7 @@
         "components": [
           {
             "internalType": "uint128",
-            "name": "accSushiPerShare",
+            "name": "accBananaPerShare",
             "type": "uint128"
           },
           {
@@ -469,7 +495,7 @@
             "type": "uint64"
           }
         ],
-        "internalType": "struct ComplexRewarderTime.PoolInfo",
+        "internalType": "struct MiniComplexRewarderTime.PoolInfo",
         "name": "pool",
         "type": "tuple"
       }

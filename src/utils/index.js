@@ -7,6 +7,7 @@ import BigNumber from "bignumber.js";
 import tokenInfoList from "../json/tokenInfo.json";
 import lpTokenInfo from "../json/lpTokenInfo.json";
 import PairABI from "../abi/QuickSwapPair.json";
+import {BASE_TOKENS_SORT} from "../const";
 
 const zero_address = "0x0000000000000000000000000000000000000000";
 export const ROUND_HALF_UP_MODE = 4;
@@ -213,7 +214,3 @@ export const convertMultipleResultCall = (results) => {
   }
   return data;
 };
-
-export const fetchBestTrade = (token, paths) => {
-
-}

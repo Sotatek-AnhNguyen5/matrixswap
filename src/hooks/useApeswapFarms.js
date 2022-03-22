@@ -1,28 +1,16 @@
-import { useQuery } from "@apollo/client";
-import { GET_APESWAP_FARMS } from "../graphql";
-import { useEffect, useState } from "react";
-import { isEmpty } from "lodash";
-import {
-  ABR_TOKEN,
-  BANANA_TOKEN,
-  FARM_TYPE,
-  USDT_ADDRESS,
-  WATCH_TOKEN,
-  WMATIC_TOKEN,
-} from "../const";
-import {
-  convertMultipleCallParams,
-  getDataToken,
-} from "../utils/token";
-import { calculateTVL } from "../utils/tvl";
-import { useFactoryContract, useLibrary, useMulticall } from "./useContract";
-import { calculateAPR } from "../utils/apr";
-import {
-  convertLpStakedContext,
-  convertLPtoUSDT,
-} from "../utils/deposited";
-import { useWeb3React } from "@web3-react/core";
-import { convertMultipleResultCall, convertSingleResultCall } from "../utils";
+import {useQuery} from "@apollo/client";
+import {GET_APESWAP_FARMS} from "../graphql";
+import {useEffect, useState} from "react";
+import {isEmpty} from "lodash";
+import rewarderABI from "../abi/RewarderABI.json";
+import {ABR_TOKEN, BANANA_TOKEN, FARM_TYPE, USDT_ADDRESS, WATCH_TOKEN, WMATIC_TOKEN,} from "../const";
+import {convertMultipleCallParams, getDataToken,} from "../utils/token";
+import {calculateTVL} from "../utils/tvl";
+import {useFactoryContract, useLibrary, useMulticall} from "./useContract";
+import {calculateAPR} from "../utils/apr";
+import {convertLpStakedContext, convertLPtoUSDT,} from "../utils/deposited";
+import {useWeb3React} from "@web3-react/core";
+import {convertMultipleResultCall, convertSingleResultCall} from "../utils";
 import BigNumber from "bignumber.js";
 
 const ABR_USDC_POOL_INDEX = "10";
@@ -31,11 +19,11 @@ const useApeSwapFarms = () => {
   const library = useLibrary();
   const multicall = useMulticall();
   const factoryContract = useFactoryContract(FARM_TYPE.apeswap);
-  const { loading, error, data } = useQuery(GET_APESWAP_FARMS, {
-    context: { clientName: "apesFarm" },
+  const {loading, error, data} = useQuery(GET_APESWAP_FARMS, {
+    context: {clientName: "apesFarm"},
   });
   const [apeSwapFarms, setApeSwapFarm] = useState([]);
-  const { account } = useWeb3React();
+  const {account} = useWeb3React();
 
   const getFarmData = async () => {
     const listLpToken = await Promise.all(
@@ -49,11 +37,11 @@ const useApeSwapFarms = () => {
         {
           constant: true,
           inputs: [
-            { internalType: "address", name: "", type: "address" },
-            { internalType: "address", name: "", type: "address" },
+            {internalType: "address", name: "", type: "address"},
+            {internalType: "address", name: "", type: "address"},
           ],
           name: "getPair",
-          outputs: [{ internalType: "address", name: "", type: "address" }],
+          outputs: [{internalType: "address", name: "", type: "address"}],
           payable: false,
           stateMutability: "view",
           type: "function",
@@ -81,10 +69,10 @@ const useApeSwapFarms = () => {
         {
           constant: true,
           inputs: [
-            { internalType: "address", name: "account", type: "address" },
+            {internalType: "address", name: "account", type: "address"},
           ],
           name: "balanceOf",
-          outputs: [{ internalType: "uint256", name: "", type: "uint256" }],
+          outputs: [{internalType: "uint256", name: "", type: "uint256"}],
           payable: false,
           stateMutability: "view",
           type: "function",
@@ -116,15 +104,31 @@ const useApeSwapFarms = () => {
         )
       )
     );
+    const rewarderContextParams = data.pools.map((item) => ({
+      reference: `${item.miniChef.id}-${item.id}`,
+      contractAddress: item.rewarder.id,
+      abi: rewarderABI,
+      calls: [
+        {
+          reference: "rewardToken",
+          methodName: "rewardToken",
+          methodParameters: [],
+        },
+        {
+          reference: "rewardPerSecond",
+          methodName: "rewardPerSecond",
+          methodParameters: [],
+        },
+      ],
+    }));
+    const rewarderRes = await multicall.call(rewarderContextParams);
+    const rewarderList = convertMultipleResultCall(rewarderRes.results)
+
     const listAPR = await Promise.all(
       data.pools.map((item, index) => {
-        const rewarder = { ...item.rewarder };
-        if (item.id === "7") {
-          rewarder.rewardToken = "0x76bf0c28e604cc3fe9967c83b3c3f31c213cfe64";
-          rewarder.rewardPerSecond = "53592110339506000";
-        } else if (item.id === "11") {
-          rewarder.rewardToken = "0x8623e66bea0dce41b6d47f9c44e806a115babae0";
-          rewarder.rewardPerSecond = "12345679012345700";
+        const rewarder = {
+          rewardToken: rewarderList[index].rewardToken[0],
+          rewardPerSecond: new BigNumber(rewarderList[index].rewardPerSecond[0].hex).toFixed()
         }
         return calculateAPR(
           item.miniChef.id,

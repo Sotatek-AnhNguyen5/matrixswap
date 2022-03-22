@@ -1,18 +1,14 @@
-import { useState, useEffect, useCallback } from "react";
-import useSushiFarms from "../../hooks/useSushiFarms";
+import {useCallback, useEffect, useState} from "react";
 import styled from "styled-components";
-import { FlexRow, ProtocolBadger } from "../../theme/components";
+import {FlexRow, ProtocolBadger} from "../../theme/components";
 import SearchWrapper from "./SearchWrapper";
 import DataTable from "./DataTable";
-import useQuickSwapFarms from "../../hooks/useQuickSwapFarms";
-import useApeSwapFarms from "../../hooks/useApeswapFarms";
+import useSushiFarms from "../../hooks/useSushiFarms";
 
 const WrapperFarm = styled.div`
-  background: radial-gradient(
-    44.18% 217.01% at 50.03% 50%,
-    #0c1615 0%,
-    #08171a 100%
-  );
+  background: radial-gradient(44.18% 217.01% at 50.03% 50%,
+  #0c1615 0%,
+  #08171a 100%);
   box-shadow: 0px 20px 21px rgba(0, 0, 0, 0.25);
   border-radius: 47px;
   min-height: 600px;
@@ -58,20 +54,21 @@ const sortAlpha = (a, b) => {
   return 0;
 };
 
-const WrappedFarm = ({ refetchVolume }) => {
+const WrappedFarm = ({refetchVolume}) => {
   const [filterKey, setFilterKey] = useState([]);
   const [data, setData] = useState([]);
-  const apeSwapFarms = useApeSwapFarms();
+  // const apeSwapFarms = useApeSwapFarms();
   const sushiFarms = useSushiFarms();
-  const quickSwapFarms = useQuickSwapFarms();
+  // const quickSwapFarms = useQuickSwapFarms();
 
   useEffect(() => {
-    const newData = [...sushiFarms, ...apeSwapFarms, ...quickSwapFarms].sort(
-      sortAlpha
-    );
+    // const newData = [...sushiFarms, ...apeSwapFarms, ...quickSwapFarms].sort(
+    //   sortAlpha
+    // );
+    const newData = sushiFarms;
 
     setData((old) => newData);
-  }, [sushiFarms, apeSwapFarms, quickSwapFarms]);
+  }, [sushiFarms]);
 
   const isActiveFilter = useCallback(
     (key) => {
@@ -110,32 +107,32 @@ const WrappedFarm = ({ refetchVolume }) => {
       <FlexRow>
         <LeftFilter>
           <div className="label">Farming</div>
-          <WhiteColumn />
+          <WhiteColumn/>
           <ProtocolBadger
             onClick={() => toogleFilter("sushiswap")}
             isActive={isActiveFilter("sushiswap")}
           >
-            <img src="./images/protocols/sushiswap.png" alt="" />
+            <img src="./images/protocols/sushiswap.png" alt=""/>
             Sushiswap
           </ProtocolBadger>
           <ProtocolBadger
             onClick={() => toogleFilter("quickswap")}
             isActive={isActiveFilter("quickswap")}
           >
-            <img src="./images/protocols/quickswap.png" alt="" />
+            <img src="./images/protocols/quickswap.png" alt=""/>
             Quickswap
           </ProtocolBadger>
           <ProtocolBadger
             onClick={() => toogleFilter("apeswap")}
             isActive={isActiveFilter("apeswap")}
           >
-            <img src="./images/protocols/apeswap.png" alt="" />
+            <img src="./images/protocols/apeswap.png" alt=""/>
             Apeswap
           </ProtocolBadger>
         </LeftFilter>
-        <SearchWrapper filterKey={filterKey} onChange={setFilterKey} />
+        <SearchWrapper filterKey={filterKey} onChange={setFilterKey}/>
       </FlexRow>
-      <BlackLine />
+      <BlackLine/>
       <DataTable
         refetchVolume={refetchVolume}
         data={data}

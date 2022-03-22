@@ -1,12 +1,15 @@
 import {
+  BASE_TOKENS_SORT,
   QUICKSWAP_USDT_WETH_PAIR,
+  USDC_TOKEN,
   USDT_ADDRESS,
   WETH_ADDRESS,
   WMATIC_TOKEN,
 } from "../const";
 import QuickSwapPair from "../abi/QuickSwapPair.json";
 import BigNumber from "bignumber.js";
-import { isValidAddress } from "./index";
+import {isValidAddress} from "./index";
+import {find} from "lodash";
 
 export const rateConvert = {
   WETHtoUSDT: "",
@@ -35,19 +38,19 @@ export const tokenToWMATIC = async (
   const tokenRate =
     token0.toLowerCase() === WMATIC_TOKEN.address.toLowerCase()
       ? new BigNumber(
-          new BigNumber(reserves._reserve0).div(new BigNumber(10).pow(18))
-        ).div(
-          new BigNumber(reserves._reserve1).div(
-            new BigNumber(10).pow(token.decimals)
-          )
+        new BigNumber(reserves._reserve0).div(new BigNumber(10).pow(18))
+      ).div(
+        new BigNumber(reserves._reserve1).div(
+          new BigNumber(10).pow(token.decimals)
         )
+      )
       : new BigNumber(
-          new BigNumber(reserves._reserve1).div(new BigNumber(10).pow(18))
-        ).div(
-          new BigNumber(reserves._reserve0).div(
-            new BigNumber(10).pow(token.decimals)
-          )
-        );
+        new BigNumber(reserves._reserve1).div(new BigNumber(10).pow(18))
+      ).div(
+        new BigNumber(reserves._reserve0).div(
+          new BigNumber(10).pow(token.decimals)
+        )
+      );
   return new BigNumber(amount).times(tokenRate);
 };
 
@@ -130,11 +133,10 @@ export const calculateTVL = async (
 ) => {
   try {
     if (
-      lpToken.token0.address.toLowerCase() === USDT_ADDRESS.toLowerCase() ||
-      lpToken.token1.address.toLowerCase() === USDT_ADDRESS.toLowerCase()
+      [lpToken.token0.address.toLowerCase(), lpToken.token1.address.toLowerCase()].indexOf(USDC_TOKEN.address.toLowerCase()) !== -1 ||
+      [lpToken.token0.address.toLowerCase(), lpToken.token1.address.toLowerCase()].indexOf(USDT_ADDRESS.toLowerCase()) !== -1
     ) {
-      const isToken0Usdt =
-        lpToken.token0.address.toLowerCase() === USDT_ADDRESS.toLowerCase();
+      const isToken0Usdt = [USDC_TOKEN.address.toLowerCase(), USDT_ADDRESS.toLowerCase()].indexOf(lpToken.token0.address.toLowerCase()) !== -1
       const tokenHold = new BigNumber(totalSupply)
         .div(lpToken.totalSupply)
         .times(
@@ -151,13 +153,19 @@ export const calculateTVL = async (
       isValidAddress(pairToken0UsdtAddress)
     ) {
       let isUsedToken0;
+      const token0IsPopular = !!find(BASE_TOKENS_SORT, e => {
+        return e.address.toLowerCase() === lpToken.token0.address.toLowerCase();
+      })
+      const token1IsPopular = !!find(BASE_TOKENS_SORT, e => {
+        return e.address.toLowerCase() === lpToken.token1.address.toLowerCase();
+      })
       if (
-        lpToken.token0.symbol === "WETH" &&
+        token0IsPopular &&
         isValidAddress(pairToken0UsdtAddress)
       ) {
         isUsedToken0 = true;
       } else if (
-        lpToken.token1.symbol === "WETH" &&
+        token1IsPopular &&
         isValidAddress(pairToken1UsdtAddress)
       ) {
         isUsedToken0 = false;

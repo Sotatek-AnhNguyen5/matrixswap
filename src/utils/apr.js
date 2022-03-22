@@ -5,12 +5,13 @@ import {
   FARM_TYPE,
   PROTOCOL_FUNCTION,
   SUSHI_TOKEN,
+  USDC_TOKEN,
+  USDT_ADDRESS,
   USDT_TOKEN,
   WMATIC_TOKEN,
 } from "../const";
-import { USDT_ADDRESS } from "../const";
-import { isValidAddress } from "./index";
-import { tokenToWeth, tokenToWMATIC, WETHtoUSDT, wMaticToUSDT } from "./tvl";
+import {isValidAddress} from "./index";
+import {tokenToWeth, tokenToWMATIC, WETHtoUSDT, wMaticToUSDT} from "./tvl";
 
 export const convertToUSD = async (
   amount,
@@ -19,7 +20,9 @@ export const convertToUSD = async (
   address,
   factoryContract
 ) => {
-  if (address.toLowerCase() === USDT_TOKEN.address.toLowerCase()) {
+  if (
+    [USDT_TOKEN.address.toLowerCase(), USDC_TOKEN.address.toLowerCase()].indexOf(address.toLowerCase()) !== -1
+  ) {
     return new BigNumber(amount);
   }
   try {
@@ -29,7 +32,7 @@ export const convertToUSD = async (
     if (
       isValidAddress(pairUSDT) &&
       address.toLowerCase() !==
-        "0x104592a158490a9228070E0A8e5343B499e125D0".toLowerCase()
+      "0x104592a158490a9228070E0A8e5343B499e125D0".toLowerCase()
     ) {
       const pairUsdtContract = new library.eth.Contract(
         QuickSwapPair,
@@ -58,7 +61,7 @@ export const convertToUSD = async (
       const valueInWmatic = await tokenToWMATIC(
         amount,
         library,
-        { address, decimals },
+        {address, decimals},
         factoryContract
       );
       return await wMaticToUSDT(valueInWmatic, library);
@@ -67,7 +70,7 @@ export const convertToUSD = async (
     const totalAmountWETH = await tokenToWeth(
       amount,
       library,
-      { address },
+      {address},
       factoryContract
     );
     const totalAmountUsdt = await WETHtoUSDT(
@@ -136,7 +139,7 @@ export const calculateAPR = async (
       }
       //aloct point for 1 reward ???
       if (
-        (type === FARM_TYPE.apeswap && ["7", "11"].indexOf(poolId) > -1) ||
+        (type === FARM_TYPE.apeswap) ||
         (type === FARM_TYPE.sushiswap && poolId === "47")
       ) {
         return rewardToUSD
