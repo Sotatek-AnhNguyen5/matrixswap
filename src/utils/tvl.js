@@ -8,7 +8,7 @@ import {
 } from "../const";
 import QuickSwapPair from "../abi/QuickSwapPair.json";
 import BigNumber from "bignumber.js";
-import {isValidAddress} from "./index";
+import {isStableCoin, isValidAddress} from "./index";
 import {find} from "lodash";
 
 export const rateConvert = {
@@ -133,18 +133,18 @@ export const calculateTVL = async (
 ) => {
   try {
     if (
-      [lpToken.token0.address.toLowerCase(), lpToken.token1.address.toLowerCase()].indexOf(USDC_TOKEN.address.toLowerCase()) !== -1 ||
-      [lpToken.token0.address.toLowerCase(), lpToken.token1.address.toLowerCase()].indexOf(USDT_ADDRESS.toLowerCase()) !== -1
+      isStableCoin(lpToken.token0.address) ||
+      isStableCoin(lpToken.token1.address)
     ) {
-      const isToken0Usdt = [USDC_TOKEN.address.toLowerCase(), USDT_ADDRESS.toLowerCase()].indexOf(lpToken.token0.address.toLowerCase()) !== -1
+      const isToken0StableCoin = isStableCoin(lpToken.token0.address)
       const tokenHold = new BigNumber(totalSupply)
         .div(lpToken.totalSupply)
         .times(
           new BigNumber(
-            isToken0Usdt
+            isToken0StableCoin
               ? lpToken.reserves._reserve0
               : lpToken.reserves._reserve1
-          ).div(new BigNumber(10).pow(6))
+          ).div(new BigNumber(10).pow(isToken0StableCoin ? lpToken.token0.decimals : lpToken.token1.decimals))
         );
       return new BigNumber(tokenHold).times(2);
     }

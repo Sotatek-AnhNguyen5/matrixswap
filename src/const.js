@@ -97,6 +97,13 @@ export const DRAGON_QUICK_TOKEN = {
   name: "Dragon QUICK",
 };
 
+export const FRAX_TOKEN = {
+  address: "0x45c32fA6DF82ead1e2EF74d17b76547EDdFaFF89",
+  symbol: "FRAX",
+  decimals: "18",
+  name: "FRAX",
+};
+
 export const WATCH_TOKEN = {
   address: "0x09211dc67f9fe98fb7bbb91be0ef05f4a12fa2b2",
   symbol: "WATCH",
@@ -117,7 +124,7 @@ export const FARM_TYPE = {
   apeswap: "apes",
 };
 
-export const BASE_TOKENS_SORT = [DAI_TOKEN, WETH_TOKEN, USDT_TOKEN, USDC_TOKEN, WMATIC_TOKEN, DRAGON_QUICK_TOKEN]
+export const BASE_TOKENS_SORT = [DAI_TOKEN, WETH_TOKEN, USDT_TOKEN, USDC_TOKEN, WMATIC_TOKEN, DRAGON_QUICK_TOKEN, FRAX_TOKEN]
 
 
 export const PROTOCOL_FUNCTION = {

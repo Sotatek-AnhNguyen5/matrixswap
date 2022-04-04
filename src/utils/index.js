@@ -1,13 +1,13 @@
 import web3 from "web3";
 import moment from "moment";
-import { Keccak } from "sha3";
-import { find, findIndex } from "lodash";
+import {Keccak} from "sha3";
+import {find, findIndex} from "lodash";
 import ERC20ABI from "../abi/IERC20ABI.json";
 import BigNumber from "bignumber.js";
 import tokenInfoList from "../json/tokenInfo.json";
 import lpTokenInfo from "../json/lpTokenInfo.json";
 import PairABI from "../abi/QuickSwapPair.json";
-import {BASE_TOKENS_SORT} from "../const";
+import {FRAX_TOKEN, USDC_TOKEN, USDT_ADDRESS} from "../const";
 
 const zero_address = "0x0000000000000000000000000000000000000000";
 export const ROUND_HALF_UP_MODE = 4;
@@ -31,13 +31,13 @@ export function moneyFormatter(num, digits = 2) {
   }
 
   const lookup = [
-    { value: 1, symbol: "" },
-    { value: 1e3, symbol: "k" },
-    { value: 1e6, symbol: "M" },
-    { value: 1e9, symbol: "B" },
-    { value: 1e12, symbol: "T" },
-    { value: 1e15, symbol: "P" },
-    { value: 1e18, symbol: "E" },
+    {value: 1, symbol: ""},
+    {value: 1e3, symbol: "k"},
+    {value: 1e6, symbol: "M"},
+    {value: 1e9, symbol: "B"},
+    {value: 1e12, symbol: "T"},
+    {value: 1e15, symbol: "P"},
+    {value: 1e18, symbol: "E"},
   ];
   const rx = /\.0+$|(\.[0-9]*[1-9])0+$/;
   var item = lookup
@@ -67,7 +67,7 @@ export function convertDate(input) {
 export function hashSha3Tokens(token0, token1) {
   const hash = new Keccak(256);
   hash.update(token0 + token1);
-  return hash.digest({ buffer: Buffer.alloc(32) });
+  return hash.digest({buffer: Buffer.alloc(32)});
 }
 
 export const removeStakeInfoFromStorage = (farmAddress, pId) => {
@@ -95,9 +95,9 @@ export const putDataToStorage = (keyType, data) => {
 };
 
 export const getTokenAddressFromLp = async (lpAddress, library) => {
-  const dataFromJson = find(lpTokenInfo, { lpAddress });
+  const dataFromJson = find(lpTokenInfo, {lpAddress});
   if (dataFromJson) {
-    const { token0Address, token1Address } = dataFromJson;
+    const {token0Address, token1Address} = dataFromJson;
     return {
       token0Address,
       token1Address,
@@ -115,9 +115,9 @@ export const getTokenAddressFromLp = async (lpAddress, library) => {
 };
 
 export const getTokenInfo = async (address, library) => {
-  const dataFromJson = find(tokenInfoList, { address });
+  const dataFromJson = find(tokenInfoList, {address});
   if (dataFromJson) {
-    const { name, decimals, symbol, address } = dataFromJson;
+    const {name, decimals, symbol, address} = dataFromJson;
     return {
       name,
       decimals,
@@ -214,3 +214,7 @@ export const convertMultipleResultCall = (results) => {
   }
   return data;
 };
+
+export const isStableCoin = (tokenAddress) => {
+  return [USDC_TOKEN.address, FRAX_TOKEN.address, USDT_ADDRESS].map(e => e.toLowerCase()).indexOf(tokenAddress.toLowerCase()) !== -1
+}

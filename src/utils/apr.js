@@ -5,12 +5,10 @@ import {
   FARM_TYPE,
   PROTOCOL_FUNCTION,
   SUSHI_TOKEN,
-  USDC_TOKEN,
   USDT_ADDRESS,
-  USDT_TOKEN,
   WMATIC_TOKEN,
 } from "../const";
-import {isValidAddress} from "./index";
+import {isStableCoin, isValidAddress} from "./index";
 import {tokenToWeth, tokenToWMATIC, WETHtoUSDT, wMaticToUSDT} from "./tvl";
 
 export const convertToUSD = async (
@@ -21,7 +19,7 @@ export const convertToUSD = async (
   factoryContract
 ) => {
   if (
-    [USDT_TOKEN.address.toLowerCase(), USDC_TOKEN.address.toLowerCase()].indexOf(address.toLowerCase()) !== -1
+    isStableCoin(address)
   ) {
     return new BigNumber(amount);
   }
